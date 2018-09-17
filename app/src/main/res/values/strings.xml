@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">SFSample</string>
+    <string name="app_name">MM拍</string>
 
     <!--消息设置-->
     <string name="real_photo_message">只接受真实头像的消息</string>

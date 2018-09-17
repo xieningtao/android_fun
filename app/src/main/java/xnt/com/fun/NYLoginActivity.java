@@ -11,8 +11,14 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.basesmartframe.baseui.BaseActivity;
+import com.nostra13.universalimageloader.utils.L;
 import com.sf.utils.baseutil.SFToast;
 import com.sflib.CustomView.baseview.EditTextClearDroidView;
+
+import cn.bmob.v3.BmobUser;
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.SaveListener;
+import xnt.com.fun.bean.NYBmobUser;
 
 /**
  * Created by NetEase on 2016/11/29 0029.
@@ -72,8 +78,25 @@ public class NYLoginActivity extends BaseActivity {
         mPwd.getEditText().addTextChangedListener(mTextWatcher);
     }
 
-    private void doLogin(final String userName, final String pwd) {
+    private void doLogin(final String email, final String pwd) {
+        BmobUser use = new BmobUser();
+        use.setUsername(email);
+        use.setPassword(pwd);
+        use.login(new SaveListener<BmobUser>() {
 
+            @Override
+            public void done(BmobUser bmobUser, BmobException e) {
+                if(e==null){
+                    SFToast.showToast("登录成功:");
+                    //通过BmobUser user = BmobUser.getCurrentUser()获取登录成功后的本地用户信息
+                    //如果是自定义用户对象MyUser，可通过MyUser user = BmobUser.getCurrentUser(MyUser.class)获取自定义用户信息
+                    NYBmobUser user = BmobUser.getCurrentUser(NYBmobUser.class);
+                    L.i(TAG,"cur user info : "+user);
+                }else{
+                    L.e(e);
+                }
+            }
+        });
     }
 
     private void doChatLogin(String username, String password) {

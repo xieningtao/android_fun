@@ -36,11 +36,11 @@ dependencies {
         exclude group: 'org.json', module: 'json'
         exclude group: 'com.squareup.okhttp',module: 'okhttp'
     }
-    compile "com.squareup.okhttp3:okhttp:3.2.0"
+//    compile "com.squareup.okhttp3:okhttp:3.2.0"
 
     compile 'com.google.android:android:4.1.1.4@jar'
     compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.4@jar'
-    compile 'com.google.code.gson:gson:2.2.4@jar'
+//    compile 'com.google.code.gson:gson:2.2.4@jar'
     compile 'com.android.support:recyclerview-v7:22.2.0'
     //compile 'com.android.support:leanback-v17:22.2.0'
     compile 'com.android.support:support-v4:22.0.0@aar'
@@ -64,4 +64,12 @@ dependencies {
     compile "com.sf.core:reflection_lib:1.0.0@aar"
     compile "com.sf.core:custom_view:1.0.0@aar"
     compile "com.sf.core:pull_refresh_lib:1.0.0@aar"
+    //bmob sdk
+    //以下SDK开发者请根据需要自行选择
+    //bmob-sdk：Bmob的android sdk包，包含了Bmob的数据存储、文件等服务，以下是最新的bmob-sdk:
+    //3.5.5：请务必查看下面注释[1]
+    compile 'cn.bmob.android:bmob-sdk:3.6.3'
+    //如果你想应用能够兼容Android6.0，请添加此依赖(org.apache.http.legacy.jar)
+    compile 'cn.bmob.android:http-legacy:1.0'
+
 }

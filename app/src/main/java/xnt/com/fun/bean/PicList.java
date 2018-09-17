@@ -1,10 +1,12 @@
 package xnt.com.fun.bean;
 
+import cn.bmob.v3.BmobObject;
+
 /**
  * Created by mac on 16/10/16.
  */
 
-public class NYPicListBean {
+public class PicList extends BmobObject{
     private String imageUrl;
     private String commentNumber;
     private String imageUrlMd5;

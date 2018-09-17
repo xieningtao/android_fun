@@ -7,8 +7,13 @@ import android.view.View;
 import android.widget.Button;
 
 import com.basesmartframe.baseui.BaseActivity;
+import com.nostra13.universalimageloader.utils.L;
 import com.sf.utils.baseutil.SFToast;
 import com.sflib.CustomView.baseview.EditTextClearDroidView;
+
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.SaveListener;
+import xnt.com.fun.bean.NYBmobUser;
 
 /**
  * Created by NetEase on 2016/11/29 0029.
@@ -55,7 +60,22 @@ public class NYRegisterActivity extends BaseActivity {
         });
     }
 
-    private void doRegister(String userName, String pwd) {
-
+    private void doRegister(String email, String pwd) {
+        NYBmobUser bu = new NYBmobUser();
+        bu.setPassword(pwd);
+        bu.setEmail(email);
+        bu.setUsername(email);
+        //注意：不能用save方法进行注册
+        bu.signUp(new SaveListener<NYBmobUser>() {
+            @Override
+            public void done(NYBmobUser s, BmobException e) {
+                if(e==null){
+                    SFToast.showToast("注册成功:" +s.toString());
+                    finish();
+                }else{
+                    L.e(e);
+                }
+            }
+        });
     }
 }

@@ -3,9 +3,9 @@ package xnt.com.fun.tiantu;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -15,21 +15,28 @@ import com.basesmartframe.baseui.BaseActivity;
 import com.basesmartframe.pickphoto.ImageBean;
 import com.basesmartframe.pickphoto.PickPhotosPreviewFragment;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.utils.L;
 import com.sflib.CustomView.viewgroup.BaseLivePopAdapter;
 import com.sflib.CustomView.viewgroup.LivePopView;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.datatype.BmobPointer;
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.FindListener;
 import xnt.com.fun.R;
 import xnt.com.fun.bean.NYCommentBean;
+import xnt.com.fun.bean.PicGroup;
+import xnt.com.fun.bean.PicList;
 
 /**
  * Created by NetEase on 2016/10/13 0013.
  */
-public class ActivityPhotoPreview extends BaseActivity implements PickPhotosPreviewFragment.OnPicSelectedListener{
+public class ActivityPhotoPreview extends BaseActivity implements PickPhotosPreviewFragment.OnPicSelectedListener {
     public static final String IMAGE_BEAN_LIST = "image_bean_list";
-    public static final String IMAGE_MD5="image_md5";
+    public static final String IMAGE_GROUP_ID = "ImgGroupId";
     private String imageUrl[] = {
             "http://g.hiphotos.baidu.com/image/w%3D310/sign=40484034b71c8701d6b6b4e7177e9e6e/21a4462309f79052f619b9ee08f3d7ca7acbd5d8.jpg",
             "http://a.hiphotos.baidu.com/image/w%3D310/sign=b0fccc9b8518367aad8979dc1e728b68/3c6d55fbb2fb43166d8f7bc823a4462308f7d3eb.jpg",
@@ -41,70 +48,99 @@ public class ActivityPhotoPreview extends BaseActivity implements PickPhotosPrev
             "ccjskfjsdklfj"
     };
     private LivePopView mLivePopView;
-    private List<String> mImageMd5Vaules;
-    private int mNumber=-1;
-    private int mCurPageIndex=0;
-    private String curImageMd5Value;
+    private String mImgGroupId;
+    private int mNumber = -1;
+    private int mCurPageIndex = 0;
 
-    private List<NYCommentBean> commentBeenList=new ArrayList<>();
+    private List<NYCommentBean> commentBeenList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        init();
+        requestWindowFeature(Window.FEATURE_NO_TITLE);// 隐藏标题
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+        WindowManager.LayoutParams.FLAG_FULLSCREEN);// 设置全屏
         setContentView(R.layout.activity_photo_preview);
         Intent intent = getIntent();
         if (intent != null) {
             int position = intent.getIntExtra(PickPhotosPreviewFragment.INDEX, 0);
-            ArrayList<ImageBean> imageBeanArrayList = (ArrayList<ImageBean>) intent.getSerializableExtra(IMAGE_BEAN_LIST);
-            mImageMd5Vaules=intent.getStringArrayListExtra(IMAGE_MD5);
-            curImageMd5Value=mImageMd5Vaules.get(mCurPageIndex);
-            PickPhotosPreviewFragment fragment = new PickPhotosPreviewFragment();
-            Bundle bundle = new Bundle();
-            bundle.putBoolean(PickPhotosPreviewFragment.CAN_CHOOSE_IMAGE, false);
-            bundle.putInt(PickPhotosPreviewFragment.INDEX, position);
-            fragment.setArguments(bundle);
-            fragment.setOnPicSelectedListener(this);
-            PickPhotosPreviewFragment.setImageListData(imageBeanArrayList);
-            getFragmentManager().beginTransaction().replace(R.id.photo_preview_fl, fragment).commitAllowingStateLoss();
+            mImgGroupId = intent.getStringExtra(IMAGE_GROUP_ID);
         }
-        mLivePopView= (LivePopView) findViewById(R.id.live_popview);
+        mLivePopView = (LivePopView) findViewById(R.id.live_popview);
         mLivePopView.setAdapter(new ImageCommentAdapter());
 
 
         initView();
-        getComment(curImageMd5Value);
+        getAllPicByGroupId(mImgGroupId);
+//        getComment(curImageMd5Value);
 
     }
 
-    private void sendComment(String imageUrlMd5, String comment){
-
-    }
-
-    private void getComment(String imageUrlMd5){
-
-    }
-
-    private void initView(){
-        View sendView=findViewById(R.id.comment_send_tv);
-        final EditText commentEt= (EditText) findViewById(R.id.comment_et);
-        sendView.setOnClickListener(new View.OnClickListener() {
+    private void getAllPicByGroupId(String groupId) {
+        BmobQuery<PicList> query = new BmobQuery<PicList>();
+        PicGroup picGroup = new PicGroup();
+        picGroup.setObjectId(groupId);
+        query.addWhereEqualTo("PicGroupId", new BmobPointer(picGroup));
+        //执行查询方法
+        query.findObjects(new FindListener<PicList>() {
             @Override
-            public void onClick(View v) {
-              if(!TextUtils.isEmpty(commentEt.getText())) {
-                  String commentContent=commentEt.getText().toString();
-                  sendComment(curImageMd5Value,commentContent);
-              }
+            public void done(List<PicList> picLists, BmobException e) {
+                if (e == null) {
+                    PickPhotosPreviewFragment fragment = new PickPhotosPreviewFragment();
+                    Bundle bundle = new Bundle();
+                    bundle.putBoolean(PickPhotosPreviewFragment.CAN_CHOOSE_IMAGE, false);
+                    fragment.setArguments(bundle);
+                    fragment.setOnPicSelectedListener(ActivityPhotoPreview.this);
+                    PickPhotosPreviewFragment.setImageListData(transformPic(picLists));
+                    getFragmentManager().beginTransaction().replace(R.id.photo_preview_fl, fragment).commitAllowingStateLoss();
+                } else {
+                    L.i("bmob", "失败：" + e.getMessage() + "," + e.getErrorCode());
+                }
             }
         });
     }
 
+    private ArrayList<ImageBean> transformPic(List<PicList> picLists) {
+        if (picLists == null) {
+            return new ArrayList<>();
+        }
+        ArrayList<ImageBean> imageBeans = new ArrayList<>();
+        for (int i = 0; i < picLists.size(); i++) {
+            ImageBean bean = new ImageBean();
+            bean.setPath(picLists.get(i).getImageUrl());
+            imageBeans.add(bean);
+        }
+        return imageBeans;
+    }
+
+    private void sendComment(String imageUrlMd5, String comment) {
+
+    }
+
+    private void getComment(String imageUrlMd5) {
+
+    }
+
+    private void initView() {
+        View sendView = findViewById(R.id.comment_send_tv);
+        final EditText commentEt = (EditText) findViewById(R.id.comment_et);
+//        sendView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//              if(!TextUtils.isEmpty(commentEt.getText())) {
+//                  String commentContent=commentEt.getText().toString();
+//                  sendComment(curImageMd5Value,commentContent);
+//              }
+//            }
+//        });
+    }
+
     @Override
     public void onPicSelected(int index) {
-        if(index!=mCurPageIndex){
-            mCurPageIndex=index;
-            curImageMd5Value=mImageMd5Vaules.get(index);
-            getComment(curImageMd5Value);
+        if (index != mCurPageIndex) {
+            mCurPageIndex = index;
+//            curImageMd5Value= mImgGroupId.get(index);
+//            getComment(curImageMd5Value);
 
         }
     }
@@ -116,7 +152,7 @@ public class ActivityPhotoPreview extends BaseActivity implements PickPhotosPrev
             if (rootView == null) {
                 rootView = LayoutInflater.from(ActivityPhotoPreview.this).inflate(R.layout.item_pop_view, null);
             }
-            NYCommentBean commentBean=commentBeenList.get(position);
+            NYCommentBean commentBean = commentBeenList.get(position);
             ImageView mPhotoIv = (ImageView) rootView.findViewById(R.id.photo_iv);
             ImageLoader.getInstance().displayImage(commentBean.getPhotoUrl(), mPhotoIv);
             TextView contentTv = (TextView) rootView.findViewById(R.id.comment_tv);
@@ -183,6 +219,7 @@ public class ActivityPhotoPreview extends BaseActivity implements PickPhotosPrev
                             | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                             | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                             | View.SYSTEM_UI_FLAG_FULLSCREEN
-                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);}
+                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+        }
     }
 }

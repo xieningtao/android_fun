@@ -9,7 +9,7 @@ import java.util.List;
 public class NYPicBean {
 
     public String timestamp;
-    public NYPicCoverBean cover;
-    public List<NYPicListBean> picListBean;
+    public PicGroup cover;
+    public List<PicList> picListBean;
 
 }

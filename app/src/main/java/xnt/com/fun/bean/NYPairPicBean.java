@@ -6,22 +6,22 @@ package xnt.com.fun.bean;
 
 public class NYPairPicBean {
 
-    private NYPicBean mLeftBean;
-    private NYPicBean mRightBean;
+    private PicGroup mLeftBean;
+    private PicGroup mRightBean;
 
-    public NYPicBean getmLeftBean() {
+    public PicGroup getLeftBean() {
         return mLeftBean;
     }
 
-    public void setLeftBean(NYPicBean leftBean) {
+    public void setLeftBean(PicGroup leftBean) {
         this.mLeftBean = leftBean;
     }
 
-    public NYPicBean getRightBean() {
+    public PicGroup getRightBean() {
         return mRightBean;
     }
 
-    public void setmRightBean(NYPicBean rightBean) {
+    public void setRightBean(PicGroup rightBean) {
         this.mRightBean = rightBean;
     }
 }
