@@ -59,9 +59,10 @@
         <activity android:name=".VideoPlayActivity"/>
         <activity android:name=".NYLoginActivity"/>
         <activity android:name=".NYRegisterActivity"/>
-        <activity android:name=".tiantu.ActivityPhotoPreview"
-
-            />
+        <activity android:name=".NYNewsDetailActivity"/>
+        <activity android:name=".tiantu.ActivityPhotoPreview"/>
+        <activity android:name=".tiantu.NYPhotoShowActivity"/>
+        <activity android:name="com.basesmartframe.pickphoto.ActivityFragmentContainer"/>
 
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"

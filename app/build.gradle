@@ -18,9 +18,20 @@ android {
             jniLibs.srcDirs = ['libs']
         }
     }
+
+    signingConfigs {
+        release_debug {
+            keyPassword "gorky1112"
+            keyAlias "smartframe"
+            storeFile file('./key/sfkey.jks')
+            storePassword "gorky1112"
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
+            signingConfig signingConfigs.release_debug
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
 

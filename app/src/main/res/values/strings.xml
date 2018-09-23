@@ -17,9 +17,11 @@
     <string name="register_success_tip">注册成功</string>
     <string name="register_fail_tip">注册失败</string>
 
-    <string name="news">新闻</string>
+    <string name="news">首页</string>
     <string name="video">视频</string>
     <string name="topic">话题</string>
-    <string name="beauty">美女</string>
+    <string name="beauty">美文</string>
     <string name="profile">我的</string>
+
+    <string name="fail_load_content">加载内容失败</string>
 </resources>

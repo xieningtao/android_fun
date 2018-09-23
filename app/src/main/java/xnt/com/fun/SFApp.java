@@ -29,6 +29,9 @@ public class SFApp extends BaseApp {
         ThreadHelp.initThread(this);
         initBmob();
     }
+    private void initShare(){
+
+    }
 
     private void initBmob(){
         //第一：默认初始化

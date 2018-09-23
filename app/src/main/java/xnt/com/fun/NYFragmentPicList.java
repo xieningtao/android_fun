@@ -24,6 +24,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import cn.bmob.v3.BmobObject;
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.datatype.BmobDate;
 import cn.bmob.v3.exception.BmobException;
@@ -37,7 +38,7 @@ import xnt.com.fun.tiantu.ActivityPhotoPreview;
 /**
  * Created by NetEase on 2016/10/9 0009.
  */
-public class NYFragmentPic extends NYBasePullListFragment<NYPairPicBean> {
+public class NYFragmentPicList extends NYBasePullListFragment<NYPairPicBean> {
 
     private float mWH = 5.0f/7.0f;
     private int mPicWidth;
@@ -72,13 +73,12 @@ public class NYFragmentPic extends NYBasePullListFragment<NYPairPicBean> {
                 }
             }
         }
-        //保存当前刷新的时间
-        SpUtil.save(getActivity(), "pic_latest_time",mLatestTime);
+
         return mLatestTime;
     }
     @Override
     protected boolean onRefresh() {
-        getPicByBmob(true);
+        getPicListByBmob(true);
         return false;
     }
 
@@ -89,7 +89,7 @@ public class NYFragmentPic extends NYBasePullListFragment<NYPairPicBean> {
         mPicHeight = getPicHeight(mPicWidth,mWH);
     }
 
-    private void getPicByBmob(final boolean refresh){
+    private void getPicListByBmob(final boolean refresh){
         BmobQuery<PicGroup> query = new BmobQuery<PicGroup>();
         //返回50条数据，如果不加上这条语句，默认返回10条数据
         query.setLimit(PIC_PAGE_SIZE);
@@ -110,6 +110,9 @@ public class NYFragmentPic extends NYBasePullListFragment<NYPairPicBean> {
                 if (e == null) {
                     //新加载出来的数据
                     List<PicGroup> diffPicGroups = removeExist(picGroups);
+                    if (diffPicGroups.size()%2 != 0){
+                        diffPicGroups.remove(0);
+                    }
                     Collections.sort(diffPicGroups, new Comparator<PicGroup>() {
                         @Override
                         public int compare(PicGroup lhs, PicGroup rhs) {
@@ -120,6 +123,9 @@ public class NYFragmentPic extends NYBasePullListFragment<NYPairPicBean> {
                     //后续的刷新操作
                     if (refresh){
                         mPicGroups.addAll(0,diffPicGroups);
+                        if (diffPicGroups != null && diffPicGroups.size() > 0){//保存当前刷新的时间
+                            SpUtil.save(getActivity(), "pic_latest_time",mLatestTime);
+                        }
                         if (mPicGroups.size() > PIC_PAGE_SIZE){
                             List<PicGroup> tempPicGroups = new ArrayList<>(mPicGroups);
                             mPicGroups.clear();
@@ -142,14 +148,14 @@ public class NYFragmentPic extends NYBasePullListFragment<NYPairPicBean> {
     }
 
     //一般只有第一个是重复的
-    private  List<PicGroup> removeExist(List<PicGroup> picGroups) {
-        List<PicGroup> diffPicGroup = new ArrayList<>();
+    public  <T extends BmobObject> List<T> removeExist(List<T> picGroups) {
+        List<T> diffPicGroup = new ArrayList<>();
         if (picGroups == null || picGroups.size() == 0) {
             return diffPicGroup;
         }
         int size = getDataSize();
 
-        PicGroup picGroup = null;
+        T picGroup = null;
         for (int j = 0; j < picGroups.size(); j++) {
             boolean exist = false;
             picGroup = picGroups.get(j);
@@ -163,9 +169,6 @@ public class NYFragmentPic extends NYBasePullListFragment<NYPairPicBean> {
             if (!exist){
                 diffPicGroup.add(picGroup);
             }
-        }
-        if (diffPicGroup.size()%2 != 0){
-            diffPicGroup.remove(0);
         }
         return diffPicGroup;
     }
@@ -193,13 +196,13 @@ public class NYFragmentPic extends NYBasePullListFragment<NYPairPicBean> {
 
     @Override
     protected boolean onLoadMore() {
-        getPicByBmob(false);
+        getPicListByBmob(false);
         return false;
     }
 
     @Override
     protected int[] getLayoutIds() {
-        return new int[]{R.layout.ny_topic_item};
+        return new int[]{R.layout.ny_pair_pic_item};
     }
 
     private int getPicWidth(){
