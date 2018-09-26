@@ -64,9 +64,27 @@
         <activity android:name=".tiantu.NYPhotoShowActivity"/>
         <activity android:name="com.basesmartframe.pickphoto.ActivityFragmentContainer"/>
 
+
+        <!--分享-->
+        <meta-data
+            android:name="wei_xin_app_id"
+            android:value="1107867746"/>
+
+        <meta-data
+            android:name="wei_xin_secret_key"
+            android:value="8YRWHEDuGHqCLLEo"/>
+
+        <meta-data
+            android:name="sina_app_id"
+            android:value="2337852165"/>
+
+        <meta-data
+            android:name="sina_secret_key"
+            android:value="434e47009f1ea321415a1fc203289e73"/>
+
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
-            android:value="hmq8yUzqaGtjZbEcwFUmPV2wO8jgVixR"/>
+            android:value="YUU3OEs7NiGfym3xlpUY2ymgWlLHtKPg"/>
     </application>
 
 </manifest>

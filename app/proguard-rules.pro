@@ -12,6 +12,8 @@
 #   public *;
 #}
 
+
+
 # Uncomment this to preserve the line number information for
 # debugging stack traces.
 #-keepattributes SourceFile,LineNumberTable
@@ -76,3 +78,5 @@
 -keep class com.android.internal.http.multipart.**{*;}
 -keep class org.apache.commons.**{*;}
 -keep class org.apache.http.**{*;}
+
+-keep com.baidu.platform.**{*;}

@@ -1,6 +1,7 @@
 package xnt.com.fun;
 
 import com.basesmartframe.baseapp.BaseApp;
+import com.sf.baidulib.SFBaiduLocationManager;
 import com.sflib.reflection.core.ThreadHelp;
 
 import cn.bmob.v3.Bmob;
@@ -24,8 +25,8 @@ public class SFApp extends BaseApp {
     }
 
     private void init() {
-//        SFBaiduLocationManager.getInstance().init(getApplicationContext());
-//        SFBaiduLocationManager.getInstance().requestLocate();
+        SFBaiduLocationManager.getInstance().init(getApplicationContext());
+        SFBaiduLocationManager.getInstance().requestLocate();
         ThreadHelp.initThread(this);
         initBmob();
     }

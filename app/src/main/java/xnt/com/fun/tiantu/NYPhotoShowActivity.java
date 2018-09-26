@@ -3,6 +3,8 @@ package xnt.com.fun.tiantu;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -122,7 +124,7 @@ public class NYPhotoShowActivity extends BaseActivity {
             return view == (View) object;
         }
 
-        public Object instantiateItem(View container, int position) {
+        public Object instantiateItem(View container, final int position) {
             View view = this.mInflater.inflate(R.layout.ny_pic_show_item, (ViewGroup) null);
             final View bottomBar = view.findViewById(R.id.bottom_show_bar_rl);
             TextView bottomBarTv = (TextView) view.findViewById(R.id.bottom_bar_tv);
@@ -144,7 +146,7 @@ public class NYPhotoShowActivity extends BaseActivity {
                     }
                 }
             });
-            ImageView shareIv = (ImageView) view.findViewById(R.id.view_share_bt);
+            ImageView shareIv = (ImageView) view.findViewById(R.id.view_share_iv);
             shareIv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -152,7 +154,8 @@ public class NYPhotoShowActivity extends BaseActivity {
                         View shareDialogView = LayoutInflater.from(getApplication()).inflate(R.layout.ny_share_dialog, null);
                         NYShareView shareView = (NYShareView) shareDialogView.findViewById(R.id.share_view);
                         shareView.setShareAdapter(new DefaultShareAdapter());
-//                        shareView.setShareContent();
+                        String desc = mCardPicBeans.get(position).imgDesc;
+                        shareView.setShareContent(getShareContent(desc));
                         shareDialogView.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -173,9 +176,19 @@ public class NYPhotoShowActivity extends BaseActivity {
         }
     }
 
-    private ShareContent getShareContent(){
-//        ShareContent shareContent = new ShareContent();
-        return null;
+    private ShareContent getShareContent(String content){
+        String title = "M拍";
+        String url = "https://xieningtao.github.io/";
+        String imgUrl="https://raw.githubusercontent.com/xieningtao/documents/master/icon/app_icon.png";
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.app_icon);
+        ShareContent shareContent = new ShareContent.ShareContentBuilder()
+                .setTitle(title)
+                .setContent(content)
+                .setUrl(url)
+                .setImage_url(imgUrl)
+                .setBitmap(bitmap)
+                .build();
+        return shareContent;
     }
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
