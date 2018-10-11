@@ -24,4 +24,9 @@
     <string name="profile">我的</string>
 
     <string name="fail_load_content">加载内容失败</string>
+
+    <string name="wei_xin_app_id">1107867746</string>
+    <string name="wei_xin_secret_key">8YRWHEDuGHqCLLEo</string>
+    <string name="sina_app_id">2337852165</string>
+    <string name="sina_secret_key">434e47009f1ea321415a1fc203289e73</string>
 </resources>

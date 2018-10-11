@@ -136,7 +136,11 @@ public class NYFragmentBigPic extends NYBasePullListFragment<CardPicGroup> {
                         pairPicBeans = diffCardPicGroups;
                     }
                     //去重复
-                    finishRefreshOrLoading(pairPicBeans, true);
+                    if (refresh) {
+                        finishRefreshOrLoading(pairPicBeans,0, true);
+                    }else {
+                        finishRefreshOrLoading(pairPicBeans, true);
+                    }
                 } else {
                     mCardPicGroups.clear();
                     finishRefreshOrLoading(null, false);

@@ -42,6 +42,13 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <!-- SD卡读取权限，用户写入离线定位数据-->
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"></uses-permission>
+    <!--微博分享权限-->
+    <uses-permission android:name="android.permission.CALL_PHONE"></uses-permission>
+    <uses-permission android:name="android.permission.READ_LOGS"></uses-permission>
+    <uses-permission android:name="android.permission.SET_DEBUG_APP"></uses-permission>
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"></uses-permission>
+    <uses-permission android:name="android.permission.GET_ACCOUNTS"></uses-permission>
+
     <application
         android:name=".SFApp"
         android:allowBackup="true"
@@ -68,19 +75,36 @@
         <!--分享-->
         <meta-data
             android:name="wei_xin_app_id"
-            android:value="1107867746"/>
+            android:value="@string/wei_xin_app_id"/>
 
         <meta-data
             android:name="wei_xin_secret_key"
-            android:value="8YRWHEDuGHqCLLEo"/>
+            android:value="@string/wei_xin_secret_key"/>
 
         <meta-data
             android:name="sina_app_id"
-            android:value="2337852165"/>
+            android:value="@string/sina_app_id"/>
 
         <meta-data
             android:name="sina_secret_key"
-            android:value="434e47009f1ea321415a1fc203289e73"/>
+            android:value="@string/sina_secret_key"/>
+
+        <!-- 友盟-->
+        <meta-data
+            android:name="UMENG_APPKEY"
+            android:value="5bab91a6f1f556c09a0002fa"/>
+        <!--微信-->
+        <activity
+            android:name=".wxapi.WXEntryActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
+
+        <activity
+            android:name="com.umeng.socialize.editorpage.ShareActivity"
+            android:excludeFromRecents="true"/>
+        <!---->
 
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"

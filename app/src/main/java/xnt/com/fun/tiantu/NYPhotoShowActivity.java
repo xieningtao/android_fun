@@ -23,7 +23,12 @@ import com.nostra13.universalimageloader.utils.L;
 import com.sf.utils.baseutil.NetWorkManagerUtil;
 import com.sf.utils.baseutil.UnitHelp;
 import com.sflib.umenglib.share.DefaultShareAdapter;
+import com.sflib.umenglib.share.DefaultUMengShareAction;
 import com.sflib.umenglib.share.ShareContent;
+import com.sflib.umenglib.share.UmengBuildHelper;
+import com.umeng.socialize.ShareAction;
+import com.umeng.socialize.media.UMImage;
+import com.umeng.socialize.media.UMWeb;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -151,11 +156,12 @@ public class NYPhotoShowActivity extends BaseActivity {
                 @Override
                 public void onClick(View v) {
                     if (mShareDialog == null) {
-                        View shareDialogView = LayoutInflater.from(getApplication()).inflate(R.layout.ny_share_dialog, null);
+                        View shareDialogView = LayoutInflater.from(NYPhotoShowActivity.this).inflate(R.layout.ny_share_dialog, null);
                         NYShareView shareView = (NYShareView) shareDialogView.findViewById(R.id.share_view);
-                        shareView.setShareAdapter(new DefaultShareAdapter());
+
                         String desc = mCardPicBeans.get(position).imgDesc;
-                        shareView.setShareContent(getShareContent(desc));
+                        shareView.setShareContent(getShareAction(desc));
+                        shareView.setShareAdapter(new DefaultShareAdapter());
                         shareDialogView.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -176,7 +182,7 @@ public class NYPhotoShowActivity extends BaseActivity {
         }
     }
 
-    private ShareContent getShareContent(String content){
+    private ShareAction getShareAction(String content){
         String title = "M拍";
         String url = "https://xieningtao.github.io/";
         String imgUrl="https://raw.githubusercontent.com/xieningtao/documents/master/icon/app_icon.png";
@@ -188,7 +194,9 @@ public class NYPhotoShowActivity extends BaseActivity {
                 .setImage_url(imgUrl)
                 .setBitmap(bitmap)
                 .build();
-        return shareContent;
+        UMImage thumb = new UMImage(NYPhotoShowActivity.this,imgUrl);
+        UMWeb linker = UmengBuildHelper.getUMWeb(url,title,content,thumb);
+        return DefaultUMengShareAction.getLinkAction(NYPhotoShowActivity.this,linker);
     }
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {

@@ -3,12 +3,12 @@ package xnt.com.fun.share;
 import android.content.Context;
 import android.util.AttributeSet;
 
-import com.sflib.umenglib.share.ShareContent;
 import com.sflib.umenglib.share.sharecore.XBaseShareView;
 import com.sflib.umenglib.share.shareitem.PengYouQuanBaseShareItem;
 import com.sflib.umenglib.share.shareitem.SinaBaseShareItem;
 import com.sflib.umenglib.share.shareitem.WeiXinBaseShareItem;
 import com.sflib.umenglib.share.shareitem.XBaseShareItem;
+import com.umeng.socialize.ShareAction;
 
 import java.util.ArrayList;
 
@@ -18,7 +18,7 @@ import java.util.ArrayList;
 
 public class NYShareView extends XBaseShareView {
 
-    private ShareContent mShareContent;
+    private ShareAction mShareAction;
 
     public NYShareView(Context context) {
         super(context);
@@ -28,17 +28,17 @@ public class NYShareView extends XBaseShareView {
         super(context, attrs);
     }
 
-    public void setShareContent(ShareContent shareContent) {
-        this.mShareContent = shareContent;
+    public void setShareContent(ShareAction shareAction) {
+        this.mShareAction = shareAction;
     }
 
     private ArrayList<XBaseShareItem> creatShareItems() {
         ArrayList<XBaseShareItem> shareItems = new ArrayList();
-        WeiXinBaseShareItem weiXinShareItem = new WeiXinBaseShareItem(this.getContext(), this.mShareContent);
+        WeiXinBaseShareItem weiXinShareItem = new WeiXinBaseShareItem(this.getContext(), this.mShareAction);
         shareItems.add(weiXinShareItem);
-        PengYouQuanBaseShareItem pengYouQuanShareItem = new PengYouQuanBaseShareItem(this.getContext(), this.mShareContent);
+        PengYouQuanBaseShareItem pengYouQuanShareItem = new PengYouQuanBaseShareItem(this.getContext(), this.mShareAction);
         shareItems.add(pengYouQuanShareItem);
-        SinaBaseShareItem sinaShareItem = new SinaBaseShareItem(this.getContext(), this.mShareContent);
+        SinaBaseShareItem sinaShareItem = new SinaBaseShareItem(getContext(), this.mShareAction);
         shareItems.add(sinaShareItem);
         return shareItems;
     }

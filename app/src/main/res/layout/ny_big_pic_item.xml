@@ -33,6 +33,7 @@
         android:layout_marginTop="4dp"
         android:textColor="@color/text_black"
         android:textSize="14sp"
+        android:maxLines="2"
         />
 
 </LinearLayout>
