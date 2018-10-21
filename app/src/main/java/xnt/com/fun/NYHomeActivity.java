@@ -55,7 +55,7 @@ public class NYHomeActivity extends BaseSFTabActivity {
 
         @Override
         public int getCount() {
-            return 3;
+            return 4;
         }
 
         //refactor it later
@@ -70,15 +70,15 @@ public class NYHomeActivity extends BaseSFTabActivity {
                     tabTv0.setText(R.string.news);
                     TabHost.TabSpec tabSpec0 = tabHost.newTabSpec("index" + index).setIndicator(tabView0);
                     return tabSpec0;
-//                case 1:
-//                    View tabView1 = layoutInflater.inflate(R.layout.tab_item, null);
-//                    ImageView tabIv1 = (ImageView) tabView1.findViewById(R.id.tab_iv);
-//                    tabIv1.setImageResource(R.drawable.ny_video_selector);
-//                    TextView tabTv1 = (TextView) tabView1.findViewById(R.id.tab_tv);
-//                    tabTv1.setText(R.string.video);
-//                    TabHost.TabSpec tabSpec1 = tabHost.newTabSpec("index" + index).setIndicator(tabView1);
-//                    return tabSpec1;
                 case 1:
+                    View tabView1 = layoutInflater.inflate(R.layout.tab_item, null);
+                    ImageView tabIv1 = (ImageView) tabView1.findViewById(R.id.tab_iv);
+                    tabIv1.setImageResource(R.drawable.ny_video_selector);
+                    TextView tabTv1 = (TextView) tabView1.findViewById(R.id.tab_tv);
+                    tabTv1.setText(R.string.new_beauty);
+                    TabHost.TabSpec tabSpec1 = tabHost.newTabSpec("index" + index).setIndicator(tabView1);
+                    return tabSpec1;
+                case 2:
                     View tabView2 = layoutInflater.inflate(R.layout.tab_item, null);
                     ImageView tabIv2 = (ImageView) tabView2.findViewById(R.id.tab_iv);
                     tabIv2.setImageResource(R.drawable.ny_topic_selector);
@@ -86,7 +86,7 @@ public class NYHomeActivity extends BaseSFTabActivity {
                     tabTv2.setText(R.string.beauty);
                     TabHost.TabSpec tabSpec2 = tabHost.newTabSpec("index" + index).setIndicator(tabView2);
                     return tabSpec2;
-                case 2:
+                case 3:
                     View tabView3 = layoutInflater.inflate(R.layout.tab_item, null);
                     ImageView tabIv3 = (ImageView) tabView3.findViewById(R.id.tab_iv);
                     tabIv3.setImageResource(R.drawable.ny_profile_selector);
@@ -103,12 +103,13 @@ public class NYHomeActivity extends BaseSFTabActivity {
             switch (index) {
                 case 0:
                     return NYFragmentBigPic.class;
-
                 case 1:
-                    return NYFragmentNews.class;
+                    return NYNewBeautyPic.class;
                 case 2:
-                    return NYFragmentProfile.class;
+                    return NYFragmentNews.class;
                 case 3:
+                    return NYFragmentProfile.class;
+                case 4:
                     return NYFragmentVideo.class;
             }
             return null;
