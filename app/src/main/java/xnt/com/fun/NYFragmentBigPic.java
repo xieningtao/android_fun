@@ -92,14 +92,17 @@ public class NYFragmentBigPic extends NYBasePullListFragment<CardPicGroup> {
         BmobQuery<CardPicGroup> query = new BmobQuery<CardPicGroup>();
         //返回50条数据，如果不加上这条语句，默认返回10条数据
         query.setLimit(PIC_PAGE_SIZE);
-//        query.order("updatedAt");
+        query.order("-updatedAt");
         String updateContent = refresh ? getRefreshTime() : getLoadMoreTime();
         Date updateData = DateFormatHelp.StrDateToCalendar(updateContent, DateFormatHelp._YYYYMMDDHHMMSS);
         if (refresh) { //refresh
+            query.setSkip(0);
             query.addWhereGreaterThanOrEqualTo("updatedAt", new BmobDate(updateData));
         } else {//load more
+//            query.setSkip()
             query.addWhereLessThanOrEqualTo("updatedAt", new BmobDate(updateData));
         }
+
 
 
         //执行查询方法

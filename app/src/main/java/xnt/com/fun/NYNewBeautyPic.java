@@ -89,7 +89,7 @@ public class NYNewBeautyPic extends NYBasePullListFragment<Beauty> {
         BmobQuery<Beauty> query = new BmobQuery<Beauty>();
         //返回50条数据，如果不加上这条语句，默认返回10条数据
         query.setLimit(PIC_PAGE_SIZE);
-//        query.order("updatedAt");
+        query.order("-updatedAt");
         String updateContent = refresh ? getRefreshTime() : getLoadMoreTime();
         Date updateData = DateFormatHelp.StrDateToCalendar(updateContent, DateFormatHelp._YYYYMMDDHHMMSS);
         if (refresh) { //refresh

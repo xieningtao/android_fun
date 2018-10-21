@@ -10,5 +10,5 @@ public class NewsDetail extends BmobObject{
 
     public String newsId;
     public BmobFile newsDetail;
-    public String newExtraUrl;
+    public String newEtraUrl;
 }

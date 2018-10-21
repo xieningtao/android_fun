@@ -153,7 +153,7 @@ public class NYNewsDetailActivity extends BaseActivity {
                     detailUrl = detail.newsDetail.getUrl();
                 }
                 if (TextUtils.isEmpty(detailUrl)){
-                    detailUrl = detail.newExtraUrl;
+                    detailUrl = detail.newEtraUrl;
                 }
                 return detailUrl;
             }
