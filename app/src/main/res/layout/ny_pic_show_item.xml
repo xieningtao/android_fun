@@ -14,13 +14,13 @@
 
     <ImageView
         android:id="@+id/view_share_iv"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_width="40dp"
+        android:layout_height="50dp"
         android:layout_marginTop="8dp"
         android:layout_marginRight="8dp"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        android:src="@drawable/videoshow_share_light"
+        android:src="@drawable/share"
         />
     <RelativeLayout
         android:id="@+id/bottom_show_bar_rl"
