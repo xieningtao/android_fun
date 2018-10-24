@@ -22,21 +22,21 @@ import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.datatype.BmobDate;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
-import xnt.com.fun.bean.News;
+import xnt.com.fun.bean.StyleNews;
 
 /**
  * Created by NetEase on 2016/10/9 0009.
  */
-public class NYFragmentNews extends NYBasePullListFragment<News> {
+public class NYFragmentNews extends NYBasePullListFragment<StyleNews> {
 
     private final int PAGE_SIZE = 10;
     private String mLatestTime;
-    private List<News> mNews = new ArrayList<>();
+    private List<StyleNews> mNews = new ArrayList<>();
     private String getLoadMoreTime(){//加载更多时间
         if (getDataSize()>0) {
-            News news = getPullItem(getDataSize() - 1);
-            if (news != null ){
-                return news.getUpdatedAt();
+            StyleNews styleNews = getPullItem(getDataSize() - 1);
+            if (styleNews != null ){
+                return styleNews.getUpdatedAt();
             }
 
         }
@@ -51,9 +51,9 @@ public class NYFragmentNews extends NYBasePullListFragment<News> {
             }
         } else {
             if (getDataSize()>0) {
-                News news = getPullItem(0);
-                if (news != null){
-                    mLatestTime = news.getUpdatedAt();
+                StyleNews styleNews = getPullItem(0);
+                if (styleNews != null){
+                    mLatestTime = styleNews.getUpdatedAt();
                 }
             }
         }
@@ -67,7 +67,7 @@ public class NYFragmentNews extends NYBasePullListFragment<News> {
     }
 
     private void getNews(final boolean refresh) {
-        BmobQuery<News> query = new BmobQuery<News>();
+        BmobQuery<StyleNews> query = new BmobQuery<StyleNews>();
         //返回50条数据，如果不加上这条语句，默认返回10条数据
         query.setLimit(PAGE_SIZE);
         query.order("-updatedAt");
@@ -79,19 +79,19 @@ public class NYFragmentNews extends NYBasePullListFragment<News> {
             query.addWhereLessThanOrEqualTo("updatedAt", new BmobDate(updateData));
         }
         //执行查询方法
-        query.findObjects(new FindListener<News>() {
+        query.findObjects(new FindListener<StyleNews>() {
             @Override
-            public void done(List<News> picGroups, BmobException e) {
+            public void done(List<StyleNews> picGroups, BmobException e) {
                 if (e == null) {
                     //新加载出来的数据
-                    List<News> diffNews = removeExist(picGroups);
-                    Collections.sort(diffNews, new Comparator<News>() {
+                    List<StyleNews> diffNews = removeExist(picGroups);
+                    Collections.sort(diffNews, new Comparator<StyleNews>() {
                         @Override
-                        public int compare(News lhs, News rhs) {
+                        public int compare(StyleNews lhs, StyleNews rhs) {
                             return -lhs.getUpdatedAt().compareTo(rhs.getUpdatedAt());
                         }
                     });
-                    List<News> newBeans = null;
+                    List<StyleNews> newBeans = null;
                     //后续的刷新操作
                     if (refresh){
                         mNews.addAll(0,diffNews);
@@ -99,7 +99,7 @@ public class NYFragmentNews extends NYBasePullListFragment<News> {
                             SpUtil.save(getActivity(), "pic_latest_time",mLatestTime);
                         }
                         if (mNews.size() > PAGE_SIZE){
-                            List<News> tempPicGroups = new ArrayList<>(mNews);
+                            List<StyleNews> tempPicGroups = new ArrayList<>(mNews);
                             mNews.clear();
                             mNews.addAll(tempPicGroups.subList(0,PAGE_SIZE));
                         }
@@ -119,20 +119,20 @@ public class NYFragmentNews extends NYBasePullListFragment<News> {
         });
     }
     //一般只有第一个是重复的
-    private   List<News> removeExist(List<News> picGroups) {
-        List<News> diffNews = new ArrayList<>();
+    private   List<StyleNews> removeExist(List<StyleNews> picGroups) {
+        List<StyleNews> diffNews = new ArrayList<>();
         if (picGroups == null || picGroups.size() == 0) {
             return diffNews;
         }
         int size = getDataSize();
 
-        News picGroup = null;
+        StyleNews picGroup = null;
         for (int j = 0; j < picGroups.size(); j++) {
             boolean exist = false;
             picGroup = picGroups.get(j);
             for (int i = 0; i < size; i++) {
-                News news = getPullItem(i);
-                if (picGroup.equals(news)) {
+                StyleNews styleNews = getPullItem(i);
+                if (picGroup.equals(styleNews)) {
                     exist = true;
                     break;
                 }
@@ -155,10 +155,10 @@ public class NYFragmentNews extends NYBasePullListFragment<News> {
     }
 
     @Override
-    protected void bindView(BaseAdapterHelper help, int position, News bean) {
-        help.setImageBuilder(R.id.news_iv, bean.newsCoverUrl);
-//        help.setText(R.id.news_label_tv, bean.getLabel());
-        help.setText(R.id.news_title_tv, bean.newsTitle);
+    protected void bindView(BaseAdapterHelper help, int position, StyleNews bean) {
+        help.setImageBuilder(R.id.news_iv, bean.imgUrl);
+        help.setText(R.id.news_label_tv, bean.imgLabel);
+        help.setText(R.id.news_title_tv, bean.title);
     }
 
     @Override
@@ -170,9 +170,10 @@ public class NYFragmentNews extends NYBasePullListFragment<News> {
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         int curPos = position - getHeadViewCount();
-        News bean = getPullItem(curPos);
-        Intent intent = new Intent(getActivity(), NYNewsDetailActivity.class);
-        intent.putExtra(NYNewsDetailActivity.NEWS_ID, bean.newsId);
+        StyleNews bean = getPullItem(curPos);
+        Intent intent = new Intent(getActivity(), NYNewsDetailWebViewActivity.class);
+        intent.putExtra(NYNewsDetailActivity.NEWS_ID, bean.getObjectId());
+        intent.putExtra(NYNewsDetailActivity.TITLE, bean.title);
         startActivity(intent);
     }
 }

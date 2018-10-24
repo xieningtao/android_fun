@@ -16,12 +16,16 @@ buildscript {
 
 allprojects {
     repositories {
+//        maven {
+//            url "https://raw.githubusercontent.com/xieningtao/mavenRepo/master"
+//        }
+        maven {
+            url "https://raw.githubusercontent.com/xieningtao/mavenRepo/master"
+        }
         jcenter()
         //bmod sdk repository
         maven { url "https://raw.github.com/bmob/bmob-android-sdk/master" }
-        maven {
-            url "https://raw.githubusercontent.com/xieningtao/mavenRepo/master/"
-        }
+
     }
 }
 

@@ -64,7 +64,7 @@ dependencies {
     compile "com.sf.core:emoji_lib:1.0.0@aar"
     compile "com.sf.core:http_client:1.0.0@aar"
     compile "com.sf.core:opengl_lib:1.0.0@aar"
-    compile("com.sf.core:sf_umeng_lib:1.0.2@aar")
+    compile "com.sf.core:sf_umeng_lib:1.0.2@aar"
     compile "com.sf.core:sf_pay_lib:1.0.0@aar"
     compile "com.sf.core:sf_circle_lib:1.0.0@aar"
     compile "com.sf.core:sfchat_lib:1.0.0@aar"

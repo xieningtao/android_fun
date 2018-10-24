@@ -66,6 +66,7 @@
         <activity android:name=".VideoPlayActivity"/>
         <activity android:name=".NYLoginActivity"/>
         <activity android:name=".NYRegisterActivity"/>
+        <activity android:name=".NYNewsDetailWebViewActivity"/>
         <activity android:name=".NYNewsDetailActivity"/>
         <activity android:name=".tiantu.ActivityPhotoPreview"/>
         <activity android:name=".tiantu.NYPhotoShowActivity"/>

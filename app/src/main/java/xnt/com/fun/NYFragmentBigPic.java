@@ -13,7 +13,6 @@ import com.basesmartframe.bitmap.rounddrawable.RoundedImageView;
 import com.sf.loglib.L;
 import com.sf.utils.baseutil.DateFormatHelp;
 import com.sf.utils.baseutil.SpUtil;
-import com.sf.utils.baseutil.SystemUIWHHelp;
 import com.sf.utils.baseutil.UnitHelp;
 
 import java.util.ArrayList;
@@ -37,7 +36,7 @@ import xnt.com.fun.tiantu.NYPhotoShowActivity;
  */
 
 public class NYFragmentBigPic extends NYBasePullListFragment<CardPicGroup> {
-    private float mWH = 5.0f / 7.0f;
+    public static final float mWH = 5.0f / 7.0f;
     private String mLatestTime;
     private List<CardPicGroup> mCardPicGroups = new ArrayList<>();
     private static final int PIC_PAGE_SIZE = 10;
@@ -60,8 +59,8 @@ public class NYFragmentBigPic extends NYBasePullListFragment<CardPicGroup> {
         Drawable drawable = getResources().getDrawable(R.drawable.ny_pic_divider);
         getPullToRefreshListView().getRefreshableView().setDivider(drawable);
         getPullToRefreshListView().getRefreshableView().setDividerHeight(UnitHelp.dip2px(getActivity(), 8));
-        mPicWidth = getPicWidth();
-        mPicHeight = getPicHeight(mPicWidth, mWH);
+        mPicWidth = Utils.getPicWidth(getActivity());
+        mPicHeight = Utils.getPicHeight(mPicWidth, mWH);
     }
 
     private String getRefreshTime() {//刷新时间
@@ -184,16 +183,6 @@ public class NYFragmentBigPic extends NYBasePullListFragment<CardPicGroup> {
     protected boolean onLoadMore() {
         getPicByBmob(false);
         return false;
-    }
-
-    private int getPicWidth() {
-        int screenWidth = SystemUIWHHelp.getScreenRealWidth(getActivity());
-        int reminderWidth = screenWidth - UnitHelp.dip2px(getActivity(), 8 + 8);
-        return reminderWidth;
-    }
-
-    private int getPicHeight(int width, float ratio) {
-        return (int) (width / ratio);
     }
 
     @Override
