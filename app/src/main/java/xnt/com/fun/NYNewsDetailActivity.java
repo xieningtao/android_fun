@@ -3,6 +3,7 @@ package xnt.com.fun;
 import android.app.ActionBar;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -17,6 +18,7 @@ import com.basesmartframe.baseui.BaseActivity;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.sf.loglib.L;
 import com.sf.utils.baseutil.NetWorkManagerUtil;
+import com.sf.utils.baseutil.SystemUIWHHelp;
 import com.sflib.CustomView.newhttpview.HttpViewManager;
 
 import java.util.ArrayList;
@@ -29,17 +31,17 @@ import cn.bmob.v3.listener.FindListener;
 import xnt.com.fun.bean.StyleDetailItem;
 import xnt.com.fun.bean.StyleNews;
 
-import static xnt.com.fun.NYFragmentBigPic.mWH;
-
 public class NYNewsDetailActivity extends BaseActivity {
+    private static final float mWH = 690.0f / 1226.0f;
     private RecyclerView mDetailRv;
-    private TextView mTitleTv;
     private FrameLayout mErrorFl;
     private HttpViewManager mHttpViewManager;
     private List<StyleDetailItem> mDetailItems = new ArrayList<>();
     private NewsDetailAdapter mDetailAdapter = new NewsDetailAdapter();
     public static final String TITLE = "title";
     public static final String NEWS_ID = "news_id";
+    private final int HEAD_TITLE = 1;
+    private String mTitle = "";
 
 
     private int mPicWidth;
@@ -65,15 +67,14 @@ public class NYNewsDetailActivity extends BaseActivity {
 
     private void initView(){
         mDetailRv = (RecyclerView) findViewById(R.id.news_detail_rv);
-        mTitleTv = (TextView) findViewById(R.id.news_detail_title_tv);
         mErrorFl = (FrameLayout) findViewById(R.id.content_container);
+        mDetailRv.setLayoutManager(new LinearLayoutManager(this));
         mDetailRv.setAdapter(mDetailAdapter);
         mHttpViewManager = HttpViewManager.createManagerByDefault(this, mErrorFl);
-        mPicWidth = Utils.getPicWidth(this);
+        mPicWidth = SystemUIWHHelp.getScreenRealWidth(this);
         mPicHeight = Utils.getPicHeight(mPicWidth, mWH);
         if (getIntent() != null) {
-            String title = getIntent().getStringExtra(TITLE);
-            mTitleTv.setText(title);
+            mTitle = getIntent().getStringExtra(TITLE);
             String newsId = getIntent().getStringExtra(NEWS_ID);
             if (NetWorkManagerUtil.isNetworkAvailable()) {
                 mHttpViewManager.showHttpLoadingView(false);
@@ -85,10 +86,10 @@ public class NYNewsDetailActivity extends BaseActivity {
     }
 
     private void getDetails(String newsId){
-        BmobQuery<StyleDetailItem> query = new BmobQuery<StyleDetailItem>();
+        BmobQuery<StyleDetailItem> query = new BmobQuery<>();
         StyleNews styleNews = new StyleNews();
         styleNews.setObjectId(newsId);
-        query.addWhereEqualTo("newsId", new BmobPointer(styleNews));
+        query.addWhereEqualTo("NewsId", new BmobPointer(styleNews));
         //执行查询方法
         query.findObjects(new FindListener<StyleDetailItem>() {
             @Override
@@ -109,39 +110,65 @@ public class NYNewsDetailActivity extends BaseActivity {
         public ImageView mPicIv;
         public TextView mNewsTv;
 
-        public NewsDetailViewHolder(View itemView) {
+        public TextView mTitleTv;
+
+        public NewsDetailViewHolder(View itemView,int viewTyp) {
             super(itemView);
-            mPicIv = (ImageView) itemView.findViewById(R.id.news_detail_iv);
-            mNewsTv = (TextView) itemView.findViewById(R.id.news_detail_desc_tv);
+            if(viewTyp != HEAD_TITLE) {
+                mPicIv = (ImageView) itemView.findViewById(R.id.news_detail_iv);
+                mNewsTv = (TextView) itemView.findViewById(R.id.news_detail_desc_tv);
+            }else {
+                mTitleTv = (TextView) itemView.findViewById(R.id.news_detail_title_tv);
+            }
         }
     }
     class NewsDetailAdapter extends RecyclerView.Adapter<NewsDetailViewHolder>{
 
         @Override
         public NewsDetailViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View newsDetailView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_news_detail,null);
-            return new NewsDetailViewHolder(newsDetailView);
+            View holderView;
+            if(viewType == HEAD_TITLE){
+                holderView = LayoutInflater.from(parent.getContext()).inflate(R.layout.new_detail_title_item, null);
+            }else {
+                holderView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_news_detail, null);
+
+            }
+            return new NewsDetailViewHolder(holderView,viewType);
         }
 
         @Override
         public void onBindViewHolder(NewsDetailViewHolder holder, int position) {
-            StyleDetailItem item = mDetailItems.get(position);
-            if(!TextUtils.isEmpty(item.imgDesc)) {
-                holder.mNewsTv.setVisibility(View.VISIBLE);
-                holder.mNewsTv.setText(item.imgDesc);
+            if(getItemViewType(position) == HEAD_TITLE){
+                holder.mTitleTv.setText(mTitle);
             }else {
-                holder.mNewsTv.setVisibility(View.GONE);
+                position--;
+                StyleDetailItem item = mDetailItems.get(position);
+                if (!TextUtils.isEmpty(item.imgDesc)) {
+                    holder.mNewsTv.setVisibility(View.VISIBLE);
+                    holder.mNewsTv.setText(item.imgDesc);
+                } else {
+                    holder.mNewsTv.setVisibility(View.GONE);
+                }
+                ViewGroup.LayoutParams picParams = holder.mPicIv.getLayoutParams();
+                picParams.width = mPicWidth;
+                picParams.height = mPicHeight;
+                holder.mPicIv.setLayoutParams(picParams);
+                ImageLoader.getInstance().displayImage(item.imageUrl, holder.mPicIv);
             }
-            ViewGroup.LayoutParams picParams = holder.mPicIv.getLayoutParams();
-            picParams.width = mPicWidth;
-            picParams.height = mPicHeight;
-            holder.mPicIv.setLayoutParams(picParams);
-            ImageLoader.getInstance().displayImage(item.imageUrl,holder.mPicIv);
         }
 
         @Override
+        public int getItemViewType(int position) {
+           if(position == 0){
+               return HEAD_TITLE;
+           }
+           return 0;
+        }
+
+
+        @Override
         public int getItemCount() {
-            return mDetailItems.size();
+            return mDetailItems.size() + 1;
         }
     }
     @Override

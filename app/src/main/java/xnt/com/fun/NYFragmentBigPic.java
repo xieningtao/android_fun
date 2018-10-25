@@ -36,7 +36,7 @@ import xnt.com.fun.tiantu.NYPhotoShowActivity;
  */
 
 public class NYFragmentBigPic extends NYBasePullListFragment<CardPicGroup> {
-    public static final float mWH = 5.0f / 7.0f;
+    private static final float mWH = 5.0f / 7.0f;
     private String mLatestTime;
     private List<CardPicGroup> mCardPicGroups = new ArrayList<>();
     private static final int PIC_PAGE_SIZE = 10;

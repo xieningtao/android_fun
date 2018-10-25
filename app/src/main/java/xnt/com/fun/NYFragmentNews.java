@@ -32,6 +32,7 @@ public class NYFragmentNews extends NYBasePullListFragment<StyleNews> {
     private final int PAGE_SIZE = 10;
     private String mLatestTime;
     private List<StyleNews> mNews = new ArrayList<>();
+
     private String getLoadMoreTime(){//加载更多时间
         if (getDataSize()>0) {
             StyleNews styleNews = getPullItem(getDataSize() - 1);
@@ -96,7 +97,7 @@ public class NYFragmentNews extends NYBasePullListFragment<StyleNews> {
                     if (refresh){
                         mNews.addAll(0,diffNews);
                         if (diffNews != null && diffNews.size() > 0){//保存当前刷新的时间
-                            SpUtil.save(getActivity(), "pic_latest_time",mLatestTime);
+                            SpUtil.save(getActivity(), "news_latest_time",mLatestTime);
                         }
                         if (mNews.size() > PAGE_SIZE){
                             List<StyleNews> tempPicGroups = new ArrayList<>(mNews);
@@ -108,8 +109,11 @@ public class NYFragmentNews extends NYBasePullListFragment<StyleNews> {
                         mNews.addAll(diffNews);
                         newBeans = diffNews;
                     }
-                    //去重复
-                    finishRefreshOrLoading(newBeans, true);
+                    if (refresh) {
+                        finishRefreshOrLoading(newBeans,0, true);
+                    }else {
+                        finishRefreshOrLoading(newBeans, true);
+                    }
                 } else {
                     mNews.clear();
                     finishRefreshOrLoading(null,false);
@@ -171,7 +175,7 @@ public class NYFragmentNews extends NYBasePullListFragment<StyleNews> {
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         int curPos = position - getHeadViewCount();
         StyleNews bean = getPullItem(curPos);
-        Intent intent = new Intent(getActivity(), NYNewsDetailWebViewActivity.class);
+        Intent intent = new Intent(getActivity(), NYNewsDetailActivity.class);
         intent.putExtra(NYNewsDetailActivity.NEWS_ID, bean.getObjectId());
         intent.putExtra(NYNewsDetailActivity.TITLE, bean.title);
         startActivity(intent);
