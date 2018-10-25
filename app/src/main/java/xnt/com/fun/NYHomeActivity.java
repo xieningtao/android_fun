@@ -104,7 +104,8 @@ public class NYHomeActivity extends BaseSFTabActivity {
                 case 0:
                     return NYFragmentBigPic.class;
                 case 1:
-                    return NYNewBeautyPic.class;
+//                    return NYNewBeautyPic.class;
+                    return NYBeautyPicFragment.class;
                 case 2:
                     return NYFragmentNews.class;
                 case 3:

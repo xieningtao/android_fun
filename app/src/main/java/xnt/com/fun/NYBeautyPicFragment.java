@@ -1,18 +1,18 @@
 package xnt.com.fun;
 
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
+import android.widget.TextView;
 
-import com.basesmartframe.baseadapter.BaseAdapterHelper;
 import com.basesmartframe.bitmap.rounddrawable.RoundedImageView;
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.sf.loglib.L;
 import com.sf.utils.baseutil.DateFormatHelp;
 import com.sf.utils.baseutil.SpUtil;
-import com.sf.utils.baseutil.SystemUIWHHelp;
 import com.sf.utils.baseutil.UnitHelp;
 
 import java.util.ArrayList;
@@ -26,36 +26,43 @@ import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.datatype.BmobDate;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
+import xnt.com.fun.base.BaseRecycleViewFragment;
 import xnt.com.fun.bean.Beauty;
 import xnt.com.fun.config.DisplayOptionConfig;
 
-/**
- * Created by mac on 2018/6/2.
- */
-
-public class NYNewBeautyPic extends NYBasePullListFragment<Beauty> {
+public class NYBeautyPicFragment extends BaseRecycleViewFragment {
     private float mWH = 5.0f / 7.0f;
+    private BeautyAdapter mAdapter;
     private String mLatestTime;
-    private List<Beauty> mBeautys = new ArrayList<>();
     private static final int PIC_PAGE_SIZE = 10;
+    private List<Beauty> mBeauties = new ArrayList<>();
     private int mPicWidth;
     private int mPicHeight;
-
-
-
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Drawable drawable = getResources().getDrawable(R.drawable.ny_pic_divider);
-        getPullToRefreshListView().getRefreshableView().setDivider(drawable);
-        getPullToRefreshListView().getRefreshableView().setDividerHeight(UnitHelp.dip2px(getActivity(), 8));
-        mPicWidth = getPicWidth();
-        mPicHeight = getPicHeight(mPicWidth, mWH);
+        mPicWidth = Utils.getPicWidth(getActivity())/2 - UnitHelp.dip2px(getActivity(),16);
+        mPicHeight = Utils.getPicHeight(mPicWidth,mWH);
+        mPullLoadMoreRv.setStaggeredGridLayout(2);
+        mAdapter = new BeautyAdapter();
+        mPullLoadMoreRv.setAdapter(mAdapter);
+    }
+
+    @Override
+    protected boolean onRefresh() {
+        getPicByBmob(true);
+        return false;
+    }
+
+    @Override
+    protected boolean onLoadMore() {
+        getPicByBmob(false);
+        return false;
     }
 
     private String getLoadMoreTime() {//加载更多时间
-        if (getDataSize() > 0) {
-            Beauty pairPicBean = getPullItem(getDataSize() - 1);
+        if (mBeauties.size() > 0) {
+            Beauty pairPicBean = mBeauties.get(mBeauties.size() - 1);
             if (pairPicBean != null) {
                 return pairPicBean.getUpdatedAt();
             }
@@ -70,8 +77,8 @@ public class NYNewBeautyPic extends NYBasePullListFragment<Beauty> {
                 mLatestTime = "2015-05-05 16:20:22";
             }
         } else {
-            if (getDataSize() > 0) {
-                Beauty pairPicBean = getPullItem(0);
+            if (mBeauties.size() > 0) {
+                Beauty pairPicBean = mBeauties.get(0);
                 if (pairPicBean != null) {
                     mLatestTime = pairPicBean.getUpdatedAt();
                 }
@@ -104,41 +111,36 @@ public class NYNewBeautyPic extends NYBasePullListFragment<Beauty> {
                 if (e == null) {
                     //新加载出来的数据
                     List<Beauty> diffBeautys = removeExist(Beautys);
-                    if (diffBeautys.size() % 2 != 0) {
-                        diffBeautys.remove(0);
-                    }
                     Collections.sort(diffBeautys, new Comparator<Beauty>() {
                         @Override
                         public int compare(Beauty lhs, Beauty rhs) {
                             return -lhs.getUpdatedAt().compareTo(rhs.getUpdatedAt());
                         }
                     });
-                    List<Beauty> pairPicBeans = null;
                     //后续的刷新操作
                     if (refresh) {
-                        mBeautys.addAll(0, diffBeautys);
+                        mBeauties.addAll(0, diffBeautys);
                         if (diffBeautys != null && diffBeautys.size() > 0) {//保存当前刷新的时间
                             SpUtil.save(getActivity(), "pic_latest_time", mLatestTime);
                         }
-                        if (mBeautys.size() > PIC_PAGE_SIZE) {
-                            List<Beauty> tempBeautys = new ArrayList<>(mBeautys);
-                            mBeautys.clear();
-                            mBeautys.addAll(tempBeautys.subList(0, PIC_PAGE_SIZE));
+                        //只保留前面一页
+                        if (mBeauties.size() > PIC_PAGE_SIZE) {
+                            List<Beauty> tempBeautys = new ArrayList<>(mBeauties);
+                            mBeauties.clear();
+                            mBeauties.addAll(tempBeautys.subList(0, PIC_PAGE_SIZE));
                         }
-                        pairPicBeans = mBeautys;
-                    } else {//加载更多操作
-                        mBeautys.addAll(diffBeautys);
-                        pairPicBeans = diffBeautys;
-                    }
-                    //去重复
-                    if (refresh) {
-                        finishRefreshOrLoading(pairPicBeans,0, true);
+
                     }else {
-                        finishRefreshOrLoading(pairPicBeans, true);
+                        mBeauties.addAll(diffBeautys);
                     }
+                    mAdapter.notifyDataSetChanged();
+                    boolean hasMore = true;
+                    if(!refresh) {
+                        hasMore = diffBeautys.size() != 0;
+                    }
+                   simpleFinishRefreshOrLoading(hasMore);
                 } else {
-                    mBeautys.clear();
-                    finishRefreshOrLoading(null, false);
+                    simpleFinishRefreshOrLoading(false);
                     L.info("bmob", "失败：" + e.getMessage() + "," + e.getErrorCode());
                 }
             }
@@ -146,19 +148,19 @@ public class NYNewBeautyPic extends NYBasePullListFragment<Beauty> {
     }
 
     //一般只有第一个是重复的
-    private List<Beauty> removeExist(List<Beauty> Beautys) {
+    private List<Beauty> removeExist(List<Beauty> beauties) {
         List<Beauty> diffNews = new ArrayList<>();
-        if (Beautys == null || Beautys.size() == 0) {
+        if (beauties == null || beauties.size() == 0) {
             return diffNews;
         }
-        int size = getDataSize();
+        int size = mBeauties.size();
 
         Beauty Beauty = null;
-        for (int j = 0; j < Beautys.size(); j++) {
+        for (int j = 0; j < beauties.size(); j++) {
             boolean exist = false;
-            Beauty = Beautys.get(j);
+            Beauty = beauties.get(j);
             for (int i = 0; i < size; i++) {
-                Beauty news = getPullItem(i);
+                Beauty news = mBeauties.get(i);
                 if (Beauty.equals(news)) {
                     exist = true;
                     break;
@@ -171,53 +173,45 @@ public class NYNewBeautyPic extends NYBasePullListFragment<Beauty> {
         return diffNews;
     }
 
-
-    @Override
-    protected boolean onRefresh() {
-        getPicByBmob(true);
-        return false;
-    }
-
-    @Override
-    protected boolean onLoadMore() {
-        getPicByBmob(false);
-        return false;
-    }
-
-    private int getPicWidth() {
-        int screenWidth = SystemUIWHHelp.getScreenRealWidth(getActivity());
-        int reminderWidth = screenWidth - UnitHelp.dip2px(getActivity(), 8 + 8);
-        return reminderWidth;
-    }
-
-    private int getPicHeight(int width, float ratio) {
-        return (int) (width / ratio);
-    }
-
-    @Override
-    protected int[] getLayoutIds() {
-        return new int[]{R.layout.ny_big_pic_item};
-    }
-
-    @Override
-    protected void bindView(BaseAdapterHelper help, int i, final Beauty beauty) {
-        RoundedImageView picLayout = help.getView(R.id.big_pic_iv);
-        ViewGroup.LayoutParams picParams = picLayout.getLayoutParams();
-        picParams.width = mPicWidth;
-        picParams.height = mPicHeight;
-        picLayout.setLayoutParams(picParams);
-        help.setImageBuilder(R.id.big_pic_iv, beauty.imgUrl, DisplayOptionConfig.getDisplayOption(R.drawable.app_icon));
-        if (TextUtils.isEmpty(beauty.imgDesc)){
-            help.getView(R.id.pic_desc_tv).setVisibility(View.GONE);
-        }else {
-            help.getView(R.id.pic_desc_tv).setVisibility(View.VISIBLE);
-            help.setText(R.id.pic_desc_tv, beauty.imgDesc + "");
+    class BeautyViewHolder extends RecyclerView.ViewHolder{
+        public RoundedImageView mPicIv;
+        public TextView mPicLabel;
+        public TextView mPicDesc;
+        public BeautyViewHolder(View itemView) {
+            super(itemView);
+            mPicLabel = (TextView) itemView.findViewById(R.id.pic_label_tv);
+            mPicDesc = (TextView) itemView.findViewById(R.id.pic_desc_tv);
+            mPicIv = (RoundedImageView) itemView.findViewById(R.id.big_pic_iv);
         }
-        help.setText(R.id.pic_label_tv, beauty.imgLabel);
     }
+    class BeautyAdapter extends RecyclerView.Adapter<BeautyViewHolder>{
 
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-      
+        @Override
+        public BeautyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View beautyPicView = LayoutInflater.from(getActivity()).inflate(R.layout.ny_big_pic_item,null);
+            return new BeautyViewHolder(beautyPicView);
+        }
+
+        @Override
+        public void onBindViewHolder(BeautyViewHolder holder, int position) {
+            ViewGroup.LayoutParams picParams = holder.mPicIv.getLayoutParams();
+            picParams.width = mPicWidth;
+            picParams.height = mPicHeight;
+            holder.mPicIv.setLayoutParams(picParams);
+            Beauty beauty = mBeauties.get(position);
+            ImageLoader.getInstance().displayImage(beauty.imgUrl,holder.mPicIv, DisplayOptionConfig.getDisplayOption(R.drawable.app_icon));
+            if (TextUtils.isEmpty(beauty.imgDesc)){
+                holder.mPicDesc.setVisibility(View.GONE);
+            }else {
+                holder.mPicDesc.setVisibility(View.VISIBLE);
+                holder.mPicDesc.setText(beauty.imgDesc + "");
+            }
+            holder.mPicLabel.setText(beauty.imgLabel);
+        }
+
+        @Override
+        public int getItemCount() {
+            return mBeauties.size();
+        }
     }
 }
