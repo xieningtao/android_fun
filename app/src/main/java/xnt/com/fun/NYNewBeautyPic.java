@@ -196,7 +196,7 @@ public class NYNewBeautyPic extends NYBasePullListFragment<Beauty> {
 
     @Override
     protected int[] getLayoutIds() {
-        return new int[]{R.layout.ny_big_pic_item};
+        return new int[]{R.layout.ny_beauty_item};
     }
 
     @Override

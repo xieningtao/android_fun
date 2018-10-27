@@ -17,30 +17,13 @@
         android:scaleType="centerCrop"
         app:riv_corner_radius="6dp" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <ImageView
-            android:id="@+id/write_comment_iv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_launcher" />
-
-        <TextView
-            android:id="@+id/comment_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="comment number"
-            />
-        <TextView
-            android:id="@+id/pic_label_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:textColor="@color/lb_grey"
-            android:textSize="12sp" />
-    </LinearLayout>
+    <TextView
+        android:id="@+id/pic_label_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:textColor="@color/lb_grey"
+        android:textSize="12sp" />
 
     <TextView
         android:id="@+id/pic_desc_tv"

@@ -87,6 +87,7 @@ public class NYPhotoShowActivity extends BaseActivity {
         }
     }
 
+
     private void getAllPicByGroupId(String groupId) {
         BmobQuery<CardPicBean> query = new BmobQuery<>();
         CardPicGroup picGroup = new CardPicGroup();

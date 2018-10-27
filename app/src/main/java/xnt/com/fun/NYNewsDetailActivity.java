@@ -1,7 +1,5 @@
 package xnt.com.fun;
 
-import android.app.ActionBar;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toolbar;
 
 import com.basesmartframe.baseui.BaseActivity;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -50,19 +47,16 @@ public class NYNewsDetailActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news_detail);
-        initActionBar();
+        Utils.setActionBar(this);
+        updateActionBar();
         initView();
     }
 
-    private void initActionBar() {
-        getActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-        ActionBar.LayoutParams params = new ActionBar.LayoutParams(ActionBar.LayoutParams.FILL_PARENT, ActionBar.LayoutParams.FILL_PARENT);
-        View actionView = LayoutInflater.from(this).inflate(R.layout.ny_home_title,null);
-        getActionBar().setCustomView(actionView,params);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Toolbar parent = (Toolbar) actionView.getParent();
-            parent.setContentInsetsAbsolute(0, 0);
-        }
+
+    private void updateActionBar() {
+        View rootView = getActionBar().getCustomView();
+        TextView titleTv = (TextView) rootView.findViewById(R.id.ny_title_tv);
+        titleTv.setText("街拍");
     }
 
     private void initView(){
