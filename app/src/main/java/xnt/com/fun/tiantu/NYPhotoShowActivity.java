@@ -21,7 +21,9 @@ import com.basesmartframe.pickphoto.XTranslateTransform;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.utils.L;
 import com.sf.utils.baseutil.NetWorkManagerUtil;
+import com.sf.utils.baseutil.SFToast;
 import com.sf.utils.baseutil.UnitHelp;
+import com.sflib.CustomView.baseview.EditTextClearDroidView;
 import com.sflib.umenglib.share.DefaultShareAdapter;
 import com.sflib.umenglib.share.DefaultUMengShareAction;
 import com.sflib.umenglib.share.ShareContent;
@@ -37,6 +39,9 @@ import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.datatype.BmobPointer;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
+import cn.bmob.v3.listener.UpdateListener;
+import xnt.com.fun.BuildConfig;
+import xnt.com.fun.DialogHelper;
 import xnt.com.fun.R;
 import xnt.com.fun.bean.CardPicBean;
 import xnt.com.fun.bean.CardPicGroup;
@@ -111,6 +116,38 @@ public class NYPhotoShowActivity extends BaseActivity {
         super.onDestroy();
     }
 
+    private void showUpdateDialog(final CardPicBean cardPicBean, final TextView bottomBarTv) {
+        LayoutInflater layoutInflater = LayoutInflater.from(NYPhotoShowActivity.this);
+        View editContentView = layoutInflater.inflate(R.layout.super_user_edit_dialog,null);
+        final Dialog editDialog = DialogHelper.getNoTitleDialog(NYPhotoShowActivity.this,editContentView);
+        editDialog.show();
+        final EditTextClearDroidView droidView = (EditTextClearDroidView) editContentView.findViewById(R.id.edit_view);
+        droidView.getEditText().setText(cardPicBean.imgDesc);
+        editContentView.findViewById(R.id.modify_tv).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(TextUtils.isEmpty(droidView.getEditText().getText())){
+                    SFToast.showToast(getString(R.string.input_word));
+                    return;
+                }
+                editDialog.dismiss();
+                final String content = droidView.getEditText().getText().toString();
+                cardPicBean.imgDesc = content;
+                cardPicBean.update(new UpdateListener() {
+                    @Override
+                    public void done(BmobException e) {
+                        if(e==null){
+                            SFToast.showToast("更新成功");
+                            bottomBarTv.setText(content);
+                        }else{
+                            SFToast.showToast("更新失败");
+                        }
+                    }
+                });
+            }
+        });
+    }
+
     private class ViewPagerAdapter extends PagerAdapter {
         private LayoutInflater mInflater;
 
@@ -133,7 +170,7 @@ public class NYPhotoShowActivity extends BaseActivity {
         public Object instantiateItem(View container, final int position) {
             View view = this.mInflater.inflate(R.layout.ny_pic_show_item, (ViewGroup) null);
             final View bottomBar = view.findViewById(R.id.bottom_show_bar_rl);
-            TextView bottomBarTv = (TextView) view.findViewById(R.id.bottom_bar_tv);
+            final TextView bottomBarTv = (TextView) view.findViewById(R.id.bottom_bar_tv);
             String desc = mCardPicBeans.get(position).imgDesc;
             if (!TextUtils.isEmpty(desc)) {
                 bottomBar.setVisibility(View.VISIBLE);
@@ -152,6 +189,15 @@ public class NYPhotoShowActivity extends BaseActivity {
                     }
                 }
             });
+            if(BuildConfig.SUPER_USER){
+                imageView.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+                        showUpdateDialog(mCardPicBeans.get(position),bottomBarTv);
+                        return true;
+                    }
+                });
+            }
             ImageView shareIv = (ImageView) view.findViewById(R.id.view_share_iv);
             shareIv.setOnClickListener(new View.OnClickListener() {
                 @Override

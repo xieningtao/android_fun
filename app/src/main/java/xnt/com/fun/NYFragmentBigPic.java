@@ -5,17 +5,15 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.basesmartframe.baseadapter.BaseAdapterHelper;
 import com.basesmartframe.bitmap.rounddrawable.RoundedImageView;
-import com.basesmartframe.dialoglib.DialogFactory;
 import com.sf.loglib.L;
 import com.sf.utils.baseutil.DateFormatHelp;
 import com.sf.utils.baseutil.SFToast;
@@ -32,16 +30,13 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
-import cn.bmob.v3.BmobBatch;
 import cn.bmob.v3.BmobObject;
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
-import cn.bmob.v3.datatype.BatchResult;
 import cn.bmob.v3.datatype.BmobDate;
 import cn.bmob.v3.datatype.BmobPointer;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
-import cn.bmob.v3.listener.QueryListListener;
 import cn.bmob.v3.listener.SaveListener;
 import cn.bmob.v3.listener.UpdateListener;
 import xnt.com.fun.bean.CardPicBean;
@@ -64,7 +59,7 @@ public class NYFragmentBigPic extends NYBasePullListFragment<CardPicGroup> {
     private int mPicHeight;
     private View mCommentView;
     private KeyBoardFrameLayout mKeyBoardView;
-    private Button mSendBt;
+    private TextView mSendTv;
     private EditText mCommentEt;
     private String curPicGroupId;
 
@@ -84,75 +79,8 @@ public class NYFragmentBigPic extends NYBasePullListFragment<CardPicGroup> {
     }
 
 
-    private void deletePicBy(String groupId) {
-        BmobQuery<CardPicBean> query = new BmobQuery<>();
-        final CardPicGroup picGroup = new CardPicGroup();
-        picGroup.setObjectId(groupId);
-        query.addWhereEqualTo("PicGroupId", new BmobPointer(picGroup));
-        //执行查询方法
-        query.findObjects(new FindListener<CardPicBean>() {
-            @Override
-            public void done(final List<CardPicBean> cardPicBeans, BmobException e) {
-                if (e == null) {
-                    deleteSubPics(cardPicBeans, picGroup);
-                } else {
-                    L.error(TAG, "失败：" + e.getMessage() + "," + e.getErrorCode());
-                }
-            }
-        });
-    }
 
-    private void deleteSubPics(List<CardPicBean> cardPicBeans, final CardPicGroup picGroup) {
-        final List<BmobObject> deleteBeans = new ArrayList<>();
-        deleteBeans.addAll(cardPicBeans);
-        new BmobBatch().deleteBatch(deleteBeans).doBatch(new QueryListListener<BatchResult>() {
-            @Override
-            public void done(List<BatchResult> list, BmobException e) {
-                boolean removeSuccessful = true;
-                if(e==null){
-                    for(int i=0;i<list.size();i++){
-                        BatchResult result = list.get(i);
-                        BmobException ex =result.getError();
-                        if(ex==null){
-                            L.info(TAG,"第"+i+"个数据批量删除成功");
-                        }else{
-                            removeSuccessful = false;
-                            L.info(TAG,"第"+i+"个数据批量删除失败："+ex.getMessage()+","+ex.getErrorCode());
-                        }
-                    }
 
-                }else{
-                    removeSuccessful = false;
-                    Log.i("bmob","失败："+e.getMessage()+","+e.getErrorCode());
-                }
-                if(!removeSuccessful) {
-                    SFToast.showToast("子图删除失败");
-                }else {
-                    SFToast.showToast("子图删除成功");
-                    deleteGroup(picGroup);
-                }
-            }
-        });
-    }
-
-    private void deleteGroup(CardPicGroup picGroup) {
-        List<BmobObject> deleteGroups = new ArrayList<>();
-        deleteGroups.add(picGroup);
-        new BmobBatch().deleteBatch(deleteGroups).doBatch(new QueryListListener<BatchResult>() {
-            @Override
-            public void done(List<BatchResult> list, BmobException e) {
-                boolean removeSuccessful = true;
-                if(e != null){
-                    removeSuccessful = false;
-                }
-                if(!removeSuccessful) {
-                    SFToast.showToast("----->首图删除失败");
-                }else {
-                    SFToast.showToast("----->首图删除成功");
-                }
-            }
-        });
-    }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
@@ -160,28 +88,11 @@ public class NYFragmentBigPic extends NYBasePullListFragment<CardPicGroup> {
         Drawable drawable = getResources().getDrawable(R.drawable.ny_pic_divider);
         getPullToRefreshListView().getRefreshableView().setDivider(drawable);
         getPullToRefreshListView().getRefreshableView().setDividerHeight(UnitHelp.dip2px(getActivity(), 8));
-        getPullToRefreshListView().getRefreshableView().setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
-                LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
-                View superUserView = layoutInflater.inflate(R.layout.super_user_operate_dialog,null);
-                final Dialog operationDialog = DialogFactory.getNoTitleDialog(getActivity(),superUserView);
-                operationDialog.show();
-                final CardPicGroup cardPicGroup = getPullItem(position - getHeadViewCount());
-                superUserView.findViewById(R.id.remove_tv).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        deletePicBy(cardPicGroup.getObjectId());
-                        operationDialog.dismiss();
-                    }
-                });
-                editContent(position, superUserView, operationDialog);
-
-                return true;
-            }
-        });
+        if(BuildConfig.SUPER_USER) {
+            initSuperUserAction();
+        }
         mCommentView = view.findViewById(R.id.comment_view);
-        mSendBt = (Button) view.findViewById(R.id.comment_send_tv);
+        mSendTv = (TextView) view.findViewById(R.id.comment_send_tv);
         mCommentEt = (EditText) view.findViewById(R.id.comment_et);
         mKeyBoardView = (KeyBoardFrameLayout) view.findViewById(R.id.keyboard_fl);
         mKeyBoardView.setOnKeyBoardListener(new KeyBoardFrameLayout.onKeyBoardListener() {
@@ -200,7 +111,7 @@ public class NYFragmentBigPic extends NYBasePullListFragment<CardPicGroup> {
                 SystemUIHelp.hideSoftKeyboard(getActivity(),mCommentEt);
             }
         });
-        mSendBt.setOnClickListener(new View.OnClickListener() {
+        mSendTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(TextUtils.isEmpty(mCommentEt.getText())){
@@ -216,42 +127,93 @@ public class NYFragmentBigPic extends NYBasePullListFragment<CardPicGroup> {
         mPicHeight = Utils.getPicHeight(mPicWidth, mWH);
     }
 
-    private void editContent(final int position, View superUserView, final Dialog operationDialog) {
+    private void initSuperUserAction() {
+        getPullToRefreshListView().getRefreshableView().setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+                final CardPicGroup cardPicGroup = getPullItem(position - getHeadViewCount());
+                doSuperOperation(cardPicGroup);
+                return true;
+            }
+        });
+    }
+
+    private void doSuperOperation(final CardPicGroup cardPicGroup) {
+        LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
+        View superUserView = layoutInflater.inflate(R.layout.super_user_operate_dialog, null);
+        final Dialog operationDialog = DialogHelper.getNoTitleDialog(getActivity(), superUserView);
+        operationDialog.show();
+
+        superUserView.findViewById(R.id.remove_tv).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deletePicBy(cardPicGroup.getObjectId());
+                operationDialog.dismiss();
+            }
+        });
         superUserView.findViewById(R.id.edit_tv).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 operationDialog.dismiss();
-                LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
-                View superUserView = layoutInflater.inflate(R.layout.super_user_edit_dialog,null);
-                final Dialog editDialog = DialogFactory.getNoTitleDialog(getActivity(),superUserView);
-                editDialog.show();
-                final EditTextClearDroidView droidView = (EditTextClearDroidView) superUserView.findViewById(R.id.edit_view);
-                final CardPicGroup cardPicGroup = getPullItem(position - getHeadViewCount());
-                superUserView.findViewById(R.id.modify_tv).setOnClickListener(new View.OnClickListener() {
+                updateContent(cardPicGroup);
+            }
+        });
+    }
+
+    private void deletePicBy(String groupId) {
+        BmobQuery<CardPicBean> query = new BmobQuery<>();
+        final CardPicGroup picGroup = new CardPicGroup();
+        picGroup.setObjectId(groupId);
+        query.addWhereEqualTo("PicGroupId", new BmobPointer(picGroup));
+        //执行查询方法
+        query.findObjects(new FindListener<CardPicBean>() {
+            @Override
+            public void done(final List<CardPicBean> cardPicBeans, BmobException e) {
+                if (e == null) {
+                    //TODO，可以试一试全部加到一个列表里面进行删除
+                    List<BmobObject> subObjects = new ArrayList<>();
+                    subObjects.addAll(cardPicBeans);
+                    List<BmobObject> groupObjets = new ArrayList<>();
+                    groupObjets.add(picGroup);
+                    SuperActionHelper.deleteByGroupId(subObjects,groupObjets);
+                } else {
+                    L.error(TAG, "失败：" + e.getMessage() + "," + e.getErrorCode());
+                }
+            }
+        });
+    }
+
+    private void updateContent(final CardPicGroup cardPicGroup) {
+        LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
+        View editContentView = layoutInflater.inflate(R.layout.super_user_edit_dialog,null);
+        final Dialog editDialog = DialogHelper.getNoTitleDialog(getActivity(),editContentView);
+        editDialog.show();
+        final EditTextClearDroidView droidView = (EditTextClearDroidView) editContentView.findViewById(R.id.edit_view);
+        droidView.getEditText().setText(cardPicGroup.imgDesc);
+        editContentView.findViewById(R.id.modify_tv).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(TextUtils.isEmpty(droidView.getEditText().getText())){
+                    SFToast.showToast(getString(R.string.input_word));
+                    return;
+                }
+                editDialog.dismiss();
+                String content = droidView.getEditText().getText().toString();
+                cardPicGroup.imgDesc = content;
+                cardPicGroup.update(new UpdateListener() {
                     @Override
-                    public void onClick(View v) {
-                        if(TextUtils.isEmpty(droidView.getEditText().getText())){
-                            SFToast.showToast(getString(R.string.input_word));
-                            return;
+                    public void done(BmobException e) {
+                        if(e==null){
+                            SFToast.showToast("更新成功");
+                        }else{
+                            SFToast.showToast("更新失败");
                         }
-                        editDialog.dismiss();
-                        String content = droidView.getEditText().getText().toString();
-                        cardPicGroup.imgDesc = content;
-                        cardPicGroup.update(new UpdateListener() {
-                            @Override
-                            public void done(BmobException e) {
-                                if(e==null){
-                                   SFToast.showToast("更新成功");
-                                }else{
-                                    SFToast.showToast("更新失败");
-                                }
-                            }
-                        });
                     }
                 });
             }
         });
     }
+
 
     private void postComment(String picGroupId,String commentContent,String userId){
         PicComment picComment = new PicComment();
