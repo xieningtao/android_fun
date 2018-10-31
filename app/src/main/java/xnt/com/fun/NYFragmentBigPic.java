@@ -1,9 +1,11 @@
 package xnt.com.fun;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +15,7 @@ import android.widget.EditText;
 
 import com.basesmartframe.baseadapter.BaseAdapterHelper;
 import com.basesmartframe.bitmap.rounddrawable.RoundedImageView;
+import com.basesmartframe.dialoglib.DialogFactory;
 import com.sf.loglib.L;
 import com.sf.utils.baseutil.DateFormatHelp;
 import com.sf.utils.baseutil.SFToast;
@@ -20,6 +23,7 @@ import com.sf.utils.baseutil.SpUtil;
 import com.sf.utils.baseutil.SystemUIHelp;
 import com.sf.utils.baseutil.UnitHelp;
 import com.sflib.CustomView.KeyBoardFrameLayout;
+import com.sflib.CustomView.baseview.EditTextClearDroidView;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -28,13 +32,19 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import cn.bmob.v3.BmobBatch;
+import cn.bmob.v3.BmobObject;
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
+import cn.bmob.v3.datatype.BatchResult;
 import cn.bmob.v3.datatype.BmobDate;
 import cn.bmob.v3.datatype.BmobPointer;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
+import cn.bmob.v3.listener.QueryListListener;
 import cn.bmob.v3.listener.SaveListener;
+import cn.bmob.v3.listener.UpdateListener;
+import xnt.com.fun.bean.CardPicBean;
 import xnt.com.fun.bean.CardPicGroup;
 import xnt.com.fun.comment.PicComment;
 import xnt.com.fun.config.DisplayOptionConfig;
@@ -73,12 +83,103 @@ public class NYFragmentBigPic extends NYBasePullListFragment<CardPicGroup> {
         return DateFormatHelp.dateTimeFormat(Calendar.getInstance(), DateFormatHelp._YYYYMMDDHHMMSS);
     }
 
+
+    private void deletePicBy(String groupId) {
+        BmobQuery<CardPicBean> query = new BmobQuery<>();
+        final CardPicGroup picGroup = new CardPicGroup();
+        picGroup.setObjectId(groupId);
+        query.addWhereEqualTo("PicGroupId", new BmobPointer(picGroup));
+        //执行查询方法
+        query.findObjects(new FindListener<CardPicBean>() {
+            @Override
+            public void done(final List<CardPicBean> cardPicBeans, BmobException e) {
+                if (e == null) {
+                    deleteSubPics(cardPicBeans, picGroup);
+                } else {
+                    L.error(TAG, "失败：" + e.getMessage() + "," + e.getErrorCode());
+                }
+            }
+        });
+    }
+
+    private void deleteSubPics(List<CardPicBean> cardPicBeans, final CardPicGroup picGroup) {
+        final List<BmobObject> deleteBeans = new ArrayList<>();
+        deleteBeans.addAll(cardPicBeans);
+        new BmobBatch().deleteBatch(deleteBeans).doBatch(new QueryListListener<BatchResult>() {
+            @Override
+            public void done(List<BatchResult> list, BmobException e) {
+                boolean removeSuccessful = true;
+                if(e==null){
+                    for(int i=0;i<list.size();i++){
+                        BatchResult result = list.get(i);
+                        BmobException ex =result.getError();
+                        if(ex==null){
+                            L.info(TAG,"第"+i+"个数据批量删除成功");
+                        }else{
+                            removeSuccessful = false;
+                            L.info(TAG,"第"+i+"个数据批量删除失败："+ex.getMessage()+","+ex.getErrorCode());
+                        }
+                    }
+
+                }else{
+                    removeSuccessful = false;
+                    Log.i("bmob","失败："+e.getMessage()+","+e.getErrorCode());
+                }
+                if(!removeSuccessful) {
+                    SFToast.showToast("子图删除失败");
+                }else {
+                    SFToast.showToast("子图删除成功");
+                    deleteGroup(picGroup);
+                }
+            }
+        });
+    }
+
+    private void deleteGroup(CardPicGroup picGroup) {
+        List<BmobObject> deleteGroups = new ArrayList<>();
+        deleteGroups.add(picGroup);
+        new BmobBatch().deleteBatch(deleteGroups).doBatch(new QueryListListener<BatchResult>() {
+            @Override
+            public void done(List<BatchResult> list, BmobException e) {
+                boolean removeSuccessful = true;
+                if(e != null){
+                    removeSuccessful = false;
+                }
+                if(!removeSuccessful) {
+                    SFToast.showToast("----->首图删除失败");
+                }else {
+                    SFToast.showToast("----->首图删除成功");
+                }
+            }
+        });
+    }
+
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Drawable drawable = getResources().getDrawable(R.drawable.ny_pic_divider);
         getPullToRefreshListView().getRefreshableView().setDivider(drawable);
         getPullToRefreshListView().getRefreshableView().setDividerHeight(UnitHelp.dip2px(getActivity(), 8));
+        getPullToRefreshListView().getRefreshableView().setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+                LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
+                View superUserView = layoutInflater.inflate(R.layout.super_user_operate_dialog,null);
+                final Dialog operationDialog = DialogFactory.getNoTitleDialog(getActivity(),superUserView);
+                operationDialog.show();
+                final CardPicGroup cardPicGroup = getPullItem(position - getHeadViewCount());
+                superUserView.findViewById(R.id.remove_tv).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        deletePicBy(cardPicGroup.getObjectId());
+                        operationDialog.dismiss();
+                    }
+                });
+                editContent(position, superUserView, operationDialog);
+
+                return true;
+            }
+        });
         mCommentView = view.findViewById(R.id.comment_view);
         mSendBt = (Button) view.findViewById(R.id.comment_send_tv);
         mCommentEt = (EditText) view.findViewById(R.id.comment_et);
@@ -113,6 +214,43 @@ public class NYFragmentBigPic extends NYBasePullListFragment<CardPicGroup> {
         });
         mPicWidth = Utils.getPicWidth(getActivity());
         mPicHeight = Utils.getPicHeight(mPicWidth, mWH);
+    }
+
+    private void editContent(final int position, View superUserView, final Dialog operationDialog) {
+        superUserView.findViewById(R.id.edit_tv).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                operationDialog.dismiss();
+                LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
+                View superUserView = layoutInflater.inflate(R.layout.super_user_edit_dialog,null);
+                final Dialog editDialog = DialogFactory.getNoTitleDialog(getActivity(),superUserView);
+                editDialog.show();
+                final EditTextClearDroidView droidView = (EditTextClearDroidView) superUserView.findViewById(R.id.edit_view);
+                final CardPicGroup cardPicGroup = getPullItem(position - getHeadViewCount());
+                superUserView.findViewById(R.id.modify_tv).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if(TextUtils.isEmpty(droidView.getEditText().getText())){
+                            SFToast.showToast(getString(R.string.input_word));
+                            return;
+                        }
+                        editDialog.dismiss();
+                        String content = droidView.getEditText().getText().toString();
+                        cardPicGroup.imgDesc = content;
+                        cardPicGroup.update(new UpdateListener() {
+                            @Override
+                            public void done(BmobException e) {
+                                if(e==null){
+                                   SFToast.showToast("更新成功");
+                                }else{
+                                    SFToast.showToast("更新失败");
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+        });
     }
 
     private void postComment(String picGroupId,String commentContent,String userId){
@@ -301,4 +439,5 @@ public class NYFragmentBigPic extends NYBasePullListFragment<CardPicGroup> {
         intent.putExtra(ActivityPhotoPreview.IMAGE_GROUP_ID, cardPicGroup.getObjectId());
         startActivity(intent);
     }
+
 }

@@ -11,7 +11,8 @@ public class NYFragmentContainerActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_container_activity);
         Utils.setActionBar(this);
-        FragmentHelper fragmentHelper = new FragmentHelper();
+        FragmentHelper fragmentHelper = new FragmentHelper(this);
+        fragmentHelper.ensureFragment();
     }
 
 

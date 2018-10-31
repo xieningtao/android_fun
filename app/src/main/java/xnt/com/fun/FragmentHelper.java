@@ -45,7 +45,7 @@ public class FragmentHelper {
         intent.putExtra(SINGLE_FRAGMENT_ACTIVITY_START_ME_PARAM, b);
     }
 
-    private FragmentHelper(Activity activity) {
+    public FragmentHelper(Activity activity) {
         mActivity = activity;
     }
 

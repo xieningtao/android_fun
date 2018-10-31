@@ -30,4 +30,8 @@
     <string name="wei_xin_secret_key">8YRWHEDuGHqCLLEo</string>
     <string name="sina_app_id">2337852165</string>
     <string name="sina_secret_key">434e47009f1ea321415a1fc203289e73</string>
+    <string name="remove">删除</string>
+    <string name="edit">编辑</string>
+    <string name="submit">提交</string>
+    <string name="input_word">请输入文字</string>
 </resources>

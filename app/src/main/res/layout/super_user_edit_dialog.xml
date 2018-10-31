@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="10dp"
+    >
+
+    <com.sflib.CustomView.baseview.EditTextClearDroidView
+        android:id="@+id/edit_view"
+        android:background="@drawable/baby_medical_input_et"
+        android:layout_width="match_parent"
+        android:layout_height="300dp" />
+
+    <TextView
+        android:id="@+id/modify_tv"
+        android:layout_width="200dp"
+        android:layout_height="40dp"
+        android:layout_below="@id/edit_view"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/baby_medical_login_bt"
+        android:text="@string/submit"
+        android:textSize="14sp"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:layout_centerHorizontal="true"
+        />
+
+</RelativeLayout>

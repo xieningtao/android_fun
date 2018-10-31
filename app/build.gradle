@@ -31,11 +31,13 @@ android {
     buildTypes {
         release {
             minifyEnabled false
+            buildConfigField "boolean", "SUPER_USER", "false"
             signingConfig signingConfigs.release_debug
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
 
         debug {
+            buildConfigField "boolean", "SUPER_USER", "true"
             signingConfig signingConfigs.release_debug
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
