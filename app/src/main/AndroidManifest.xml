@@ -55,7 +55,10 @@
         android:icon="@drawable/app_icon"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
-        <activity android:name=".NYHomeActivity">
+        <activity android:name=".NYHomeActivity"
+            android:windowSoftInputMode="stateHidden|adjustPan"
+            android:theme="@style/Theme.AppCompat.NoActionBar"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -68,6 +71,7 @@
         <activity android:name=".NYRegisterActivity"/>
         <activity android:name=".NYNewsDetailWebViewActivity"/>
         <activity android:name=".NYNewsDetailActivity"/>
+        <activity android:name=".NYFragmentContainerActivity"/>
         <activity android:name=".tiantu.ActivityPhotoPreview"/>
         <activity android:name=".tiantu.NYPhotoShowActivity"/>
         <activity android:name="com.basesmartframe.pickphoto.ActivityFragmentContainer"/>

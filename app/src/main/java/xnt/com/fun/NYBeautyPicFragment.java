@@ -188,7 +188,7 @@ public class NYBeautyPicFragment extends BaseRecycleViewFragment {
 
         @Override
         public BeautyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View beautyPicView = LayoutInflater.from(getActivity()).inflate(R.layout.ny_big_pic_item,null);
+            View beautyPicView = LayoutInflater.from(getActivity()).inflate(R.layout.ny_beauty_item,null);
             return new BeautyViewHolder(beautyPicView);
         }
 

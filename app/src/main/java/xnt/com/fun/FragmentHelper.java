@@ -39,6 +39,7 @@ public class FragmentHelper {
         b.putString(FRAGMENT_NAME, fragmentName);
         b.putString(FRAGMENT_TAG, fragmentTag);
         b.putBundle(FRAGMENT_ARG, fragmentArgu);
+        b.putInt(EXTRA_PARAM_CONTAINER, R.id.fragment_container_fl);
         if (extra != null) {
             b.putBundle(EXTRA, extra);
         }

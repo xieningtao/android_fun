@@ -24,8 +24,8 @@ public class NYHomeActivity extends BaseSFTabActivity {
         getTabWidget().setDividerDrawable(null);
         getTabWidget().setBackgroundResource(R.drawable.ny_home_bottom_layer);
         setTabAdapter(new FragmentTabAdapter());
-        initActionBar();
-        updateActionBar();
+//        initActionBar();
+//        updateActionBar();
     }
 
     private void initActionBar() {
@@ -65,7 +65,7 @@ public class NYHomeActivity extends BaseSFTabActivity {
                 case 0:
                     View tabView0 = layoutInflater.inflate(R.layout.tab_item, null);
                     ImageView tabIv0 = (ImageView) tabView0.findViewById(R.id.tab_iv);
-                    tabIv0.setImageResource(R.drawable.ny_news_selector);
+                    tabIv0.setImageResource(R.drawable.ny_home_selector);
                     TextView tabTv0 = (TextView) tabView0.findViewById(R.id.tab_tv);
                     tabTv0.setText(R.string.news);
                     TabHost.TabSpec tabSpec0 = tabHost.newTabSpec("index" + index).setIndicator(tabView0);
@@ -73,7 +73,7 @@ public class NYHomeActivity extends BaseSFTabActivity {
                 case 1:
                     View tabView1 = layoutInflater.inflate(R.layout.tab_item, null);
                     ImageView tabIv1 = (ImageView) tabView1.findViewById(R.id.tab_iv);
-                    tabIv1.setImageResource(R.drawable.ny_video_selector);
+                    tabIv1.setImageResource(R.drawable.ny_beauty_selector);
                     TextView tabTv1 = (TextView) tabView1.findViewById(R.id.tab_tv);
                     tabTv1.setText(R.string.new_beauty);
                     TabHost.TabSpec tabSpec1 = tabHost.newTabSpec("index" + index).setIndicator(tabView1);
@@ -81,7 +81,7 @@ public class NYHomeActivity extends BaseSFTabActivity {
                 case 2:
                     View tabView2 = layoutInflater.inflate(R.layout.tab_item, null);
                     ImageView tabIv2 = (ImageView) tabView2.findViewById(R.id.tab_iv);
-                    tabIv2.setImageResource(R.drawable.ny_topic_selector);
+                    tabIv2.setImageResource(R.drawable.ny_discover_selector);
                     TextView tabTv2 = (TextView) tabView2.findViewById(R.id.tab_tv);
                     tabTv2.setText(R.string.beauty);
                     TabHost.TabSpec tabSpec2 = tabHost.newTabSpec("index" + index).setIndicator(tabView2);

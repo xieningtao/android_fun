@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.TextView;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -41,6 +42,7 @@ import cn.bmob.v3.listener.SaveListener;
 import cn.bmob.v3.listener.UpdateListener;
 import xnt.com.fun.bean.CardPicBean;
 import xnt.com.fun.bean.CardPicGroup;
+import xnt.com.fun.comment.BigPicCommentListFragment;
 import xnt.com.fun.comment.PicComment;
 import xnt.com.fun.config.DisplayOptionConfig;
 import xnt.com.fun.tiantu.ActivityPhotoPreview;
@@ -53,6 +55,7 @@ import xnt.com.fun.tiantu.NYPhotoShowActivity;
 public class NYFragmentBigPic extends NYBasePullListFragment<CardPicGroup> {
     private static final float mWH = 5.0f / 7.0f;
     private static final int PIC_PAGE_SIZE = 10;
+    public static final String PIC_GROUP_ID = "pic_group_id";
     private String mLatestTime;
     private List<CardPicGroup> mCardPicGroups = new ArrayList<>();
     private int mPicWidth;
@@ -60,7 +63,7 @@ public class NYFragmentBigPic extends NYBasePullListFragment<CardPicGroup> {
     private View mCommentView;
     private KeyBoardFrameLayout mKeyBoardView;
     private TextView mSendTv;
-    private EditText mCommentEt;
+    private EditTextClearDroidView mCommentEt;
     private String curPicGroupId;
 
     @Override
@@ -93,37 +96,38 @@ public class NYFragmentBigPic extends NYBasePullListFragment<CardPicGroup> {
         }
         mCommentView = view.findViewById(R.id.comment_view);
         mSendTv = (TextView) view.findViewById(R.id.comment_send_tv);
-        mCommentEt = (EditText) view.findViewById(R.id.comment_et);
+        mCommentEt = (EditTextClearDroidView) view.findViewById(R.id.comment_et);
         mKeyBoardView = (KeyBoardFrameLayout) view.findViewById(R.id.keyboard_fl);
         mKeyBoardView.setOnKeyBoardListener(new KeyBoardFrameLayout.onKeyBoardListener() {
             @Override
             public void onKeyboardVisible(boolean b) {
-                if(b){
-                    mCommentView.setVisibility(View.VISIBLE);
-                }else {
-                    mCommentView.setVisibility(View.GONE);
-                }
+//                if(b){
+//                    mCommentView.setVisibility(View.VISIBLE);
+//                }else {
+//                    mCommentView.setVisibility(View.GONE);
+//                }
             }
         });
         mCommentView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mCommentView.setVisibility(View.GONE);
                 SystemUIHelp.hideSoftKeyboard(getActivity(),mCommentEt);
             }
         });
         mSendTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(TextUtils.isEmpty(mCommentEt.getText())){
+                if(TextUtils.isEmpty(mCommentEt.getEditText().getText())){
                     SFToast.showToast("请输入内容");
                     return;
                 }
                 SystemUIHelp.hideSoftKeyboard(getActivity(),mCommentEt);
-                String commentContent = mCommentEt.getText().toString();
+                String commentContent = mCommentEt.getEditText().getText().toString();
                 postComment(curPicGroupId,commentContent,null);
             }
         });
-        mPicWidth = Utils.getPicWidth(getActivity());
+        mPicWidth = Utils.getPicWidth(getActivity())-32;
         mPicHeight = Utils.getPicHeight(mPicWidth, mWH);
     }
 
@@ -376,30 +380,45 @@ public class NYFragmentBigPic extends NYBasePullListFragment<CardPicGroup> {
         help.setImageBuilder(R.id.big_pic_iv, cardPicGroup.imgUrl, DisplayOptionConfig.getDisplayOption(R.drawable.app_icon));
         help.setText(R.id.pic_desc_tv, cardPicGroup.imgDesc + "");
         help.setText(R.id.pic_label_tv, cardPicGroup.imgLabel);
-        help.setOnClickListener(R.id.write_comment_iv, new View.OnClickListener() {
+        help.setOnClickListener(R.id.write_comment_rl, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SystemUIHelp.showSoftKeyboard(getActivity(),mCommentEt);
+                mCommentView.setVisibility(View.VISIBLE);
+                mCommentEt.getEditText().requestFocus();
+                mCommentView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        SystemUIHelp.showSoftKeyboard(getActivity(),mCommentEt.getEditText());
+                    }
+                });
                 curPicGroupId = cardPicGroup.getObjectId();
             }
         });
-        help.setOnClickListener(R.id.comment_tv, new View.OnClickListener() {
+        help.setOnClickListener(R.id.comment_rl, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                bundle.putString(PIC_GROUP_ID,curPicGroupId);
+                Intent intent = FragmentHelper.getStartIntent(getActivity(), BigPicCommentListFragment.class,
+                        bundle,null,NYFragmentContainerActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        help.setOnClickListener(R.id.big_pic_cd, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), NYPhotoShowActivity.class);
+                intent.putExtra(ActivityPhotoPreview.IMAGE_GROUP_ID, cardPicGroup.getObjectId());
+                startActivity(intent);
             }
         });
     }
 
-    private void showKeyBoard() {
-
-    }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        CardPicGroup cardPicGroup = getPullItem(position - getHeadViewCount());
-        Intent intent = new Intent(getActivity(), NYPhotoShowActivity.class);
-        intent.putExtra(ActivityPhotoPreview.IMAGE_GROUP_ID, cardPicGroup.getObjectId());
-        startActivity(intent);
+
     }
 
 }
