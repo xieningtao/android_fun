@@ -17,6 +17,7 @@ public class SuperActionHelper {
     public static final String TAG = "SuperActionHelper";
     public static void deleteByGroupId(List<BmobObject> subBeans, final List<BmobObject> groupBeans) {
         if(subBeans == null || subBeans.size() ==0 ){
+            deleteById(groupBeans);
             return;
         }
         new BmobBatch().deleteBatch(subBeans).doBatch(new QueryListListener<BatchResult>() {

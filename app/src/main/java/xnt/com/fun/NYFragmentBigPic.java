@@ -10,8 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.TextView;
-import android.widget.EditText;
-import android.widget.TextView;
 
 import com.basesmartframe.baseadapter.BaseAdapterHelper;
 import com.basesmartframe.bitmap.rounddrawable.RoundedImageView;
@@ -91,9 +89,6 @@ public class NYFragmentBigPic extends NYBasePullListFragment<CardPicGroup> {
         Drawable drawable = getResources().getDrawable(R.drawable.ny_pic_divider);
         getPullToRefreshListView().getRefreshableView().setDivider(drawable);
         getPullToRefreshListView().getRefreshableView().setDividerHeight(UnitHelp.dip2px(getActivity(), 8));
-        if(BuildConfig.SUPER_USER) {
-            initSuperUserAction();
-        }
         mCommentView = view.findViewById(R.id.comment_view);
         mSendTv = (TextView) view.findViewById(R.id.comment_send_tv);
         mCommentEt = (EditTextClearDroidView) view.findViewById(R.id.comment_et);
@@ -129,17 +124,6 @@ public class NYFragmentBigPic extends NYBasePullListFragment<CardPicGroup> {
         });
         mPicWidth = Utils.getPicWidth(getActivity())-32;
         mPicHeight = Utils.getPicHeight(mPicWidth, mWH);
-    }
-
-    private void initSuperUserAction() {
-        getPullToRefreshListView().getRefreshableView().setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
-                final CardPicGroup cardPicGroup = getPullItem(position - getHeadViewCount());
-                doSuperOperation(cardPicGroup);
-                return true;
-            }
-        });
     }
 
     private void doSuperOperation(final CardPicGroup cardPicGroup) {
@@ -413,6 +397,15 @@ public class NYFragmentBigPic extends NYBasePullListFragment<CardPicGroup> {
                 startActivity(intent);
             }
         });
+        if(BuildConfig.SUPER_USER) {
+            help.setOnLongClickListener(R.id.big_pic_cd, new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    doSuperOperation(cardPicGroup);
+                    return true;
+                }
+            });
+        }
     }
 
 

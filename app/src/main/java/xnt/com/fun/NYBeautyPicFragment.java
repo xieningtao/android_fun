@@ -1,5 +1,6 @@
 package xnt.com.fun;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -19,23 +20,23 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 
 import cn.bmob.v3.BmobQuery;
-import cn.bmob.v3.datatype.BmobDate;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
 import xnt.com.fun.base.BaseRecycleViewFragment;
 import xnt.com.fun.bean.Beauty;
 import xnt.com.fun.config.DisplayOptionConfig;
+import xnt.com.fun.tiantu.NYBeautyShowActivity;
 
-public class NYBeautyPicFragment extends BaseRecycleViewFragment {
+public class NYBeautyPicFragment extends BaseRecycleViewFragment implements BeautyModel.OnDataChangeListener {
     private float mWH = 5.0f / 7.0f;
     private BeautyAdapter mAdapter;
     private String mLatestTime;
+    private int mLatestIndexId = -1;
     private static final int PIC_PAGE_SIZE = 10;
-    private List<Beauty> mBeauties = new ArrayList<>();
+//    private List<Beauty> mBeauties = new ArrayList<>();
     private int mPicWidth;
     private int mPicHeight;
     @Override
@@ -46,6 +47,13 @@ public class NYBeautyPicFragment extends BaseRecycleViewFragment {
         mPullLoadMoreRv.setStaggeredGridLayout(2);
         mAdapter = new BeautyAdapter();
         mPullLoadMoreRv.setAdapter(mAdapter);
+        BeautyModel.getInstance().registerListener(this);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        BeautyModel.getInstance().unregisterListener(this);
     }
 
     @Override
@@ -61,8 +69,8 @@ public class NYBeautyPicFragment extends BaseRecycleViewFragment {
     }
 
     private String getLoadMoreTime() {//加载更多时间
-        if (mBeauties.size() > 0) {
-            Beauty pairPicBean = mBeauties.get(mBeauties.size() - 1);
+        if (BeautyModel.getInstance().getBeautySize() > 0) {
+            Beauty pairPicBean = BeautyModel.getInstance().getBeauty(BeautyModel.getInstance().getBeautySize() - 1);
             if (pairPicBean != null) {
                 return pairPicBean.getUpdatedAt();
             }
@@ -77,8 +85,8 @@ public class NYBeautyPicFragment extends BaseRecycleViewFragment {
                 mLatestTime = "2015-05-05 16:20:22";
             }
         } else {
-            if (mBeauties.size() > 0) {
-                Beauty pairPicBean = mBeauties.get(0);
+            if (BeautyModel.getInstance().getBeautySize() > 0) {
+                Beauty pairPicBean = BeautyModel.getInstance().getBeauty(0);
                 if (pairPicBean != null) {
                     mLatestTime = pairPicBean.getUpdatedAt();
                 }
@@ -87,6 +95,29 @@ public class NYBeautyPicFragment extends BaseRecycleViewFragment {
 
         return mLatestTime;
     }
+    private int getRefreshIndexId() {//刷新时间
+        if (mLatestIndexId == -1) {
+            mLatestIndexId = SpUtil.getInt(getActivity(), "pic_latest_index");
+        } else {
+            if (BeautyModel.getInstance().getBeautySize() > 0) {
+                Beauty pairPicBean = BeautyModel.getInstance().getBeauty(0);
+                if (pairPicBean != null) {
+                    mLatestIndexId = pairPicBean.indexId;
+                }
+            }
+        }
+        return mLatestIndexId;
+    }
+
+    private int getLoadMoreIndexId() {//加载更多时间
+        if (BeautyModel.getInstance().getBeautySize() > 0) {
+            Beauty pairPicBean = BeautyModel.getInstance().getBeauty(BeautyModel.getInstance().getBeautySize() - 1);
+            if (pairPicBean != null) {
+                return pairPicBean.indexId;
+            }
+        }
+        return 100;
+    }
 
 
 
@@ -94,13 +125,19 @@ public class NYBeautyPicFragment extends BaseRecycleViewFragment {
         BmobQuery<Beauty> query = new BmobQuery<Beauty>();
         //返回50条数据，如果不加上这条语句，默认返回10条数据
         query.setLimit(PIC_PAGE_SIZE);
-        query.order("-updatedAt");
-        String updateContent = refresh ? getRefreshTime() : getLoadMoreTime();
-        Date updateData = DateFormatHelp.StrDateToCalendar(updateContent, DateFormatHelp._YYYYMMDDHHMMSS);
+        query.order("-indexId");
+//        String updateContent = refresh ? getRefreshTime() : getLoadMoreTime();
+        int indexId = refresh ? getRefreshIndexId() : getLoadMoreIndexId();
+//        Date updateData = DateFormatHelp.StrDateToCalendar(updateContent, DateFormatHelp._YYYYMMDDHHMMSS);
+//        if (refresh) { //refresh
+//            query.addWhereGreaterThanOrEqualTo("indexId", new BmobDate(updateData));
+//        } else {//load more
+//            query.addWhereLessThanOrEqualTo("indexId", new BmobDate(updateData));
+//        }
         if (refresh) { //refresh
-            query.addWhereGreaterThanOrEqualTo("updatedAt", new BmobDate(updateData));
+            query.addWhereGreaterThanOrEqualTo("indexId", indexId);
         } else {//load more
-            query.addWhereLessThanOrEqualTo("updatedAt", new BmobDate(updateData));
+            query.addWhereLessThanOrEqualTo("indexId", indexId);
         }
 
 
@@ -119,19 +156,20 @@ public class NYBeautyPicFragment extends BaseRecycleViewFragment {
                     });
                     //后续的刷新操作
                     if (refresh) {
-                        mBeauties.addAll(0, diffBeautys);
+                        BeautyModel.getInstance().addBeauties(0, diffBeautys);
                         if (diffBeautys != null && diffBeautys.size() > 0) {//保存当前刷新的时间
-                            SpUtil.save(getActivity(), "pic_latest_time", mLatestTime);
+//                            SpUtil.save(getActivity(), "pic_latest_time", mLatestTime);
+                            SpUtil.save(getActivity(),"pic_latest_index",mLatestIndexId);
                         }
                         //只保留前面一页
-                        if (mBeauties.size() > PIC_PAGE_SIZE) {
-                            List<Beauty> tempBeautys = new ArrayList<>(mBeauties);
-                            mBeauties.clear();
-                            mBeauties.addAll(tempBeautys.subList(0, PIC_PAGE_SIZE));
+                        if (BeautyModel.getInstance().getBeautySize() > PIC_PAGE_SIZE) {
+                            List<Beauty> tempBeautys = new ArrayList<>(BeautyModel.getInstance().getBeauties());
+                            BeautyModel.getInstance().clear();
+                            BeautyModel.getInstance().addBeauties(tempBeautys.subList(0, PIC_PAGE_SIZE));
                         }
 
                     }else {
-                        mBeauties.addAll(diffBeautys);
+                        BeautyModel.getInstance().addBeauties(diffBeautys);
                     }
                     mAdapter.notifyDataSetChanged();
                     boolean hasMore = true;
@@ -153,14 +191,14 @@ public class NYBeautyPicFragment extends BaseRecycleViewFragment {
         if (beauties == null || beauties.size() == 0) {
             return diffNews;
         }
-        int size = mBeauties.size();
+        int size = BeautyModel.getInstance().getBeautySize();
 
         Beauty Beauty = null;
         for (int j = 0; j < beauties.size(); j++) {
             boolean exist = false;
             Beauty = beauties.get(j);
             for (int i = 0; i < size; i++) {
-                Beauty news = mBeauties.get(i);
+                Beauty news = BeautyModel.getInstance().getBeauty(i);
                 if (Beauty.equals(news)) {
                     exist = true;
                     break;
@@ -171,6 +209,11 @@ public class NYBeautyPicFragment extends BaseRecycleViewFragment {
             }
         }
         return diffNews;
+    }
+
+    @Override
+    public void onDataChange() {
+        mAdapter.notifyDataSetChanged();
     }
 
     class BeautyViewHolder extends RecyclerView.ViewHolder{
@@ -193,12 +236,12 @@ public class NYBeautyPicFragment extends BaseRecycleViewFragment {
         }
 
         @Override
-        public void onBindViewHolder(BeautyViewHolder holder, int position) {
+        public void onBindViewHolder(BeautyViewHolder holder, final int position) {
             ViewGroup.LayoutParams picParams = holder.mPicIv.getLayoutParams();
             picParams.width = mPicWidth;
             picParams.height = mPicHeight;
             holder.mPicIv.setLayoutParams(picParams);
-            Beauty beauty = mBeauties.get(position);
+            Beauty beauty = BeautyModel.getInstance().getBeauty(position);
             ImageLoader.getInstance().displayImage(beauty.imgUrl,holder.mPicIv, DisplayOptionConfig.getDisplayOption(R.drawable.app_icon));
             if (TextUtils.isEmpty(beauty.imgDesc)){
                 holder.mPicDesc.setVisibility(View.GONE);
@@ -207,11 +250,22 @@ public class NYBeautyPicFragment extends BaseRecycleViewFragment {
                 holder.mPicDesc.setText(beauty.imgDesc + "");
             }
             holder.mPicLabel.setText(beauty.imgLabel);
+            holder.mPicIv.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(getActivity(), NYBeautyShowActivity.class);
+                    //第一个数据的id
+                    int indexId = BeautyModel.getInstance().getBeauty(0).indexId;
+                    intent.putExtra(NYBeautyShowActivity.BEAUTY_TOTAL_SIZE,indexId);
+                    intent.putExtra(NYBeautyShowActivity.BEAUTY_CUR_POS,position);
+                    getActivity().startActivity(intent);
+                }
+            });
         }
 
         @Override
         public int getItemCount() {
-            return mBeauties.size();
+            return BeautyModel.getInstance().getBeautySize();
         }
     }
 }

@@ -10,6 +10,7 @@ public class Beauty extends BmobObject {
     public String imgUrl;
     public String imgLabel;
     public String imgDesc;
+    public int indexId ;
 
     @Override
     public boolean equals(Object o) {

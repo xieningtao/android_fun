@@ -74,6 +74,7 @@
         <activity android:name=".NYFragmentContainerActivity"/>
         <activity android:name=".tiantu.ActivityPhotoPreview"/>
         <activity android:name=".tiantu.NYPhotoShowActivity"/>
+        <activity android:name=".tiantu.NYBeautyShowActivity"/>
         <activity android:name="com.basesmartframe.pickphoto.ActivityFragmentContainer"/>
 
 
