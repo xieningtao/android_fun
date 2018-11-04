@@ -28,4 +28,8 @@
         <item name="android:gravity">center_vertical|left</item>
         <item name="android:paddingLeft">10dp</item>
     </style>
+
+    <style name="TextViewCustomStencbabFont">
+        <item name="fontPath">fonts/Oswald-Stencbab.ttf</item>
+    </style>
 </resources>

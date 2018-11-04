@@ -5,6 +5,9 @@
 
     </style>
 
+    <style name="NYFullScree" parent="Theme.AppCompat.Light.NoActionBar">
+    </style>
+
     <style name="operationDialog">
         <item name="android:windowAnimationStyle">@style/MessageDiloag</item>
         <item name="android:windowBackground">@color/transparent</item>

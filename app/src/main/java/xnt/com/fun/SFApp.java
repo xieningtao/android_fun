@@ -1,14 +1,18 @@
 package xnt.com.fun;
 
 import com.basesmartframe.baseapp.BaseApp;
+import com.nostra13.universalimageloader.utils.L;
 import com.sf.baidulib.SFBaiduLocationManager;
 import com.sflib.reflection.core.ThreadHelp;
 
+import cdc.sed.yff.nm.sp.SpotManager;
+import cdc.sed.yff.nm.sp.SpotRequestListener;
 import cn.bmob.v3.Bmob;
 import xnt.com.fun.config.NYBMobConfig;
 
 
 public class SFApp extends BaseApp {
+    private final String TAG = "SFApp";
     public static final String APP_ID = "57f9edc887d4a7e337b8c231";
 //    public static final String APP_ID_KEY = "MmNsUDJONjlNc2xwNzEtbVY3RE5KUQ";
     public static final String APP_ID_KEY = "WHB0a1QzUXZwNDZJMXFYYjNpbnJxZw";
@@ -24,11 +28,28 @@ public class SFApp extends BaseApp {
 
     }
 
+
     private void init() {
+//        CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
+//                .setDefaultFontPath("fonts/Oswald-Stencbab.ttf")
+//                .setFontAttrId(R.attr.fontPath)
+//                .build());
         SFBaiduLocationManager.getInstance().init(getApplicationContext());
         SFBaiduLocationManager.getInstance().requestLocate();
         ThreadHelp.initThread(this);
         initBmob();
+        SpotManager.getInstance(this).requestSpot(new SpotRequestListener() {
+            @Override
+            public void onRequestSuccess() {
+                L.i(TAG,"spot onRequestSuccess");
+            }
+
+            @Override
+            public void onRequestFailed(int i) {
+                L.e(TAG,"spot onRequestFailed result: "+i);
+            }
+        });
+
     }
     private void initShare(){
 

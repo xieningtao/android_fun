@@ -5,10 +5,10 @@
     android:layout_height="match_parent"
     android:background="@color/white"
     android:orientation="vertical"
-    android:paddingBottom="16dp"
+    android:paddingBottom="4dp"
     android:paddingLeft="8dp"
     android:paddingRight="8dp"
-    android:paddingTop="16dp">
+    android:paddingTop="4dp">
 
     <com.basesmartframe.bitmap.rounddrawable.RoundedImageView
         android:id="@+id/big_pic_iv"
@@ -23,6 +23,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:textColor="@color/lb_grey"
+        android:gravity="center"
+        android:visibility="gone"
         android:textSize="12sp" />
 
     <TextView

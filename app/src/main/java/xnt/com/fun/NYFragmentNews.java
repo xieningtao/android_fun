@@ -23,6 +23,7 @@ import cn.bmob.v3.datatype.BmobDate;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
 import xnt.com.fun.bean.StyleNews;
+import xnt.com.fun.config.DisplayOptionConfig;
 
 /**
  * Created by NetEase on 2016/10/9 0009.
@@ -160,7 +161,7 @@ public class NYFragmentNews extends NYBasePullListFragment<StyleNews> {
 
     @Override
     protected void bindView(BaseAdapterHelper help, int position, StyleNews bean) {
-        help.setImageBuilder(R.id.news_iv, bean.imgUrl);
+        help.setImageBuilder(R.id.news_iv, bean.imgUrl, DisplayOptionConfig.getDisplayOption(R.drawable.app_icon));
         help.setText(R.id.news_label_tv, bean.imgLabel);
         help.setText(R.id.news_title_tv, bean.title);
     }

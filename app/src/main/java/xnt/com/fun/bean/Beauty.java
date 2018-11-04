@@ -1,5 +1,7 @@
 package xnt.com.fun.bean;
 
+import android.text.TextUtils;
+
 import cn.bmob.v3.BmobObject;
 
 /**
@@ -11,6 +13,7 @@ public class Beauty extends BmobObject {
     public String imgLabel;
     public String imgDesc;
     public int indexId ;
+    public String beautyWords;
 
     @Override
     public boolean equals(Object o) {
@@ -25,5 +28,20 @@ public class Beauty extends BmobObject {
     @Override
     public int hashCode() {
         return imgUrl != null ? imgUrl.hashCode() : 0;
+    }
+
+    public String getFormatWords() {
+        if (TextUtils.isEmpty(beautyWords)){
+            return "";
+        }
+        int size = beautyWords.length();
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0;i<size;i++){
+            builder.append(beautyWords.charAt(i));
+            if (i != size -1) {
+                builder.append("\n");
+            }
+        }
+        return builder.toString();
     }
 }

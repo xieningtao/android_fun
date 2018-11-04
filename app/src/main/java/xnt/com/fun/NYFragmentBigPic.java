@@ -9,10 +9,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.basesmartframe.baseadapter.BaseAdapterHelper;
 import com.basesmartframe.bitmap.rounddrawable.RoundedImageView;
+import com.basesmartframe.data.ViewBind;
 import com.sf.loglib.L;
 import com.sf.utils.baseutil.DateFormatHelp;
 import com.sf.utils.baseutil.SFToast;
@@ -122,7 +124,7 @@ public class NYFragmentBigPic extends NYBasePullListFragment<CardPicGroup> {
                 postComment(curPicGroupId,commentContent,null);
             }
         });
-        mPicWidth = Utils.getPicWidth(getActivity())-32;
+        mPicWidth = Utils.getPicWidth(getActivity());
         mPicHeight = Utils.getPicHeight(mPicWidth, mWH);
     }
 
@@ -361,7 +363,7 @@ public class NYFragmentBigPic extends NYBasePullListFragment<CardPicGroup> {
         picParams.width = mPicWidth;
         picParams.height = mPicHeight;
         picLayout.setLayoutParams(picParams);
-        help.setImageBuilder(R.id.big_pic_iv, cardPicGroup.imgUrl, DisplayOptionConfig.getDisplayOption(R.drawable.app_icon));
+        ViewBind.displayImage( cardPicGroup.imgUrl, (ImageView) help.getView(R.id.big_pic_iv), DisplayOptionConfig.getDisplayOption(R.drawable.app_icon));
         help.setText(R.id.pic_desc_tv, cardPicGroup.imgDesc + "");
         help.setText(R.id.pic_label_tv, cardPicGroup.imgLabel);
         help.setOnClickListener(R.id.write_comment_rl, new View.OnClickListener() {
