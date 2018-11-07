@@ -6,8 +6,8 @@
     android:background="@color/white"
     android:orientation="vertical"
     android:paddingBottom="4dp"
-    android:paddingLeft="8dp"
-    android:paddingRight="8dp"
+    android:paddingLeft="4dp"
+    android:paddingRight="4dp"
     android:paddingTop="4dp">
 
     <com.basesmartframe.bitmap.rounddrawable.RoundedImageView

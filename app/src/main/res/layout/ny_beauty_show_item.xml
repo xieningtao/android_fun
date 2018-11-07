@@ -28,10 +28,7 @@
         android:id="@+id/bottom_show_bar_rl"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="16dp"
-        android:paddingBottom="16dp"
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp"
+        android:paddingTop="8dp"
         android:layout_alignParentBottom="true"
         android:background="@color/transparent_half"
         >
@@ -42,8 +39,56 @@
             android:textColor="@color/white"
             android:textSize="16dp"
             android:maxLines="3"
-
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
             />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp"
+            android:background="@color/white"
+            android:layout_below="@id/bottom_bar_tv"
+            >
+        <TextView
+            android:id="@+id/beauty_comment_tv"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="40dp"
+            android:textSize="14sp"
+            android:text="评论"
+            android:gravity="center"
+            />
+            <View
+                android:layout_width="1dp"
+                android:layout_height="40dp"
+                android:background="@color/lb_grey"
+                />
+            <TextView
+                android:id="@+id/beauty_praise_tv"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="40dp"
+                android:textSize="14sp"
+                android:text="点赞"
+                android:gravity="center"
+                />
+            <View
+                android:layout_width="1dp"
+                android:layout_height="40dp"
+                android:background="@color/lb_grey"
+                />
+            <TextView
+                android:id="@+id/beauty_show_comment_tv"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="40dp"
+                android:textSize="14sp"
+                android:text="展示评论"
+                android:gravity="center"
+                />
+        </LinearLayout>
     </RelativeLayout>
 
     <ProgressBar
@@ -62,5 +107,4 @@
         android:layout_centerInParent="true"
         android:visibility="gone"
         />
-
 </RelativeLayout>

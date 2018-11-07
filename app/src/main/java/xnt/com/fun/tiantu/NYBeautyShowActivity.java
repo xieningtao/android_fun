@@ -23,7 +23,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.basesmartframe.baseui.BaseActivity;
-import com.basesmartframe.dialoglib.DialogFactory;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.example.sfchat.media.MediaPlayManager;
@@ -34,6 +33,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.sf.loglib.L;
 import com.sf.utils.baseutil.NetWorkManagerUtil;
 import com.sf.utils.baseutil.SFToast;
+import com.sf.utils.baseutil.SystemUIHelp;
 import com.sf.utils.baseutil.UnitHelp;
 import com.sflib.CustomView.baseview.EditTextClearDroidView;
 import com.sflib.umenglib.share.DefaultShareAdapter;
@@ -49,9 +49,12 @@ import java.util.HashMap;
 import java.util.List;
 
 import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.datatype.BmobFile;
+import cn.bmob.v3.datatype.BmobPointer;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
+import cn.bmob.v3.listener.SaveListener;
 import cn.bmob.v3.listener.UpdateListener;
 import xnt.com.fun.BeautyModel;
 import xnt.com.fun.BuildConfig;
@@ -60,6 +63,7 @@ import xnt.com.fun.FontManager;
 import xnt.com.fun.R;
 import xnt.com.fun.ViewPagerTransformManger;
 import xnt.com.fun.bean.Beauty;
+import xnt.com.fun.bean.BeautyComment;
 import xnt.com.fun.bean.Music;
 import xnt.com.fun.share.NYShareView;
 
@@ -71,6 +75,7 @@ public class NYBeautyShowActivity extends BaseActivity implements BeautyModel.On
     public static final String BEAUTY_CUR_POS = "beauty_cur_pos";
     public static final String NO_POSITION = "NO_POSITION";
     public static final String UNCHANGE = "UNCHANGE";
+    private String curBeautyId;
     protected ViewPager mViewPager;
     protected NYBeautyShowActivity.ViewPagerAdapter mAdapter;
     private Dialog mShareDialog;
@@ -82,17 +87,23 @@ public class NYBeautyShowActivity extends BaseActivity implements BeautyModel.On
     private List<Music> mMusics = new ArrayList<>();
     private int mCurMusicIndex = 0;
     private MusicAnimationTask mTask;
+
+    private View mCommentView;
+    private TextView mSendTv;
+    private EditTextClearDroidView mCommentEt;
+
     private int mViewPagerState = ViewPager.SCROLL_STATE_IDLE;
     private Handler mHandler = new Handler();
     private Runnable mTypeRunnable = null;
     private Runnable mRunnable = new Runnable() {
         @Override
         public void run() {
-            if (mViewPagerState == ViewPager.SCROLL_STATE_IDLE && getCurrentItem() != mAdapter.getCount() -1) {
+            if (mViewPagerState == ViewPager.SCROLL_STATE_IDLE && getCurrentItem() != mAdapter.getCount() - 1) {
                 mViewPager.setCurrentItem(getCurrentItem() + 1);
             }
         }
     };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -121,14 +132,39 @@ public class NYBeautyShowActivity extends BaseActivity implements BeautyModel.On
         try {
             this.mViewPager.setPageTransformer(true, ViewPagerTransformManger.getTransformRandom().clazz.newInstance());
         } catch (InstantiationException e) {
-            L.error(TAG,e.getMessage());
+            L.error(TAG, e.getMessage());
         } catch (IllegalAccessException e) {
-            L.error(TAG,e.getMessage());
+            L.error(TAG, e.getMessage());
         }
         this.mViewPager.setPageMargin(UnitHelp.dip2px(this, 5.0F));
         this.mViewPager.setPageMarginDrawable(R.drawable.black_shape);
         this.mAdapter = new NYBeautyShowActivity.ViewPagerAdapter(this);
         this.mViewPager.setAdapter(this.mAdapter);
+
+        //评论
+        mCommentView = findViewById(R.id.comment_view);
+        mSendTv = (TextView) findViewById(R.id.comment_send_tv);
+        mCommentEt = (EditTextClearDroidView) findViewById(R.id.comment_et);
+        mCommentView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mCommentView.setVisibility(View.GONE);
+                SystemUIHelp.hideSoftKeyboard(NYBeautyShowActivity.this, mCommentEt);
+            }
+        });
+        mSendTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (TextUtils.isEmpty(mCommentEt.getEditText().getText())) {
+                    SFToast.showToast("请输入内容");
+                    return;
+                }
+                SystemUIHelp.hideSoftKeyboard(NYBeautyShowActivity.this, mCommentEt);
+                String commentContent = mCommentEt.getEditText().getText().toString();
+                postComment(curBeautyId, commentContent, null);
+            }
+        });
+
         mMusicIv = (ImageView) findViewById(R.id.music_iv);
         //animation
         mTask = new MusicAnimationTask();
@@ -180,26 +216,26 @@ public class NYBeautyShowActivity extends BaseActivity implements BeautyModel.On
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                L.info(TAG,"onPageScrolled");
+                L.info(TAG, "onPageScrolled");
             }
 
             @Override
             public void onPageSelected(int position) {
-                L.info(TAG,"onPageSelected");
+                L.info(TAG, "onPageSelected");
             }
 
             @Override
             public void onPageScrollStateChanged(int state) {
-                L.info(TAG,"onPageScrollStateChanged");
+                L.info(TAG, "onPageScrollStateChanged");
                 mViewPagerState = state;
                 if (state == ViewPager.SCROLL_STATE_IDLE) {
                     mTyperTextView.setVisibility(View.VISIBLE);
                     showWords(getCurrentItem());
-                }else {
+                } else {
                     mTyperTextView.setText("");
                     mTyperTextView.setVisibility(View.GONE);
                     mHandler.removeCallbacks(mRunnable);
-                    if (mTypeRunnable != null){
+                    if (mTypeRunnable != null) {
                         mHandler.removeCallbacks(mTypeRunnable);
                         mTypeRunnable = null;
                     }
@@ -211,17 +247,47 @@ public class NYBeautyShowActivity extends BaseActivity implements BeautyModel.On
         showWords(mCurPos);
     }
 
+    private void postComment(String beautyId, String commentContent, String userId) {
+        final BeautyComment picComment = new BeautyComment();
+        Beauty beauty = new Beauty();
+        beauty.setObjectId(beautyId);
+        picComment.topicId = new BmobPointer(beauty);
+        picComment.content = commentContent;
+        if (TextUtils.isEmpty(userId)) {
+            picComment.userId = null;
+        } else {
+            BmobUser user = new BmobUser();
+            user.setObjectId(userId);
+            picComment.userId = new BmobPointer(user);
+        }
+
+        picComment.save(new SaveListener<String>() {
+            @Override
+            public void done(String s, BmobException e) {
+                    handleCommentResult(e);
+            }
+        });
+    }
+
+    private void handleCommentResult(BmobException e) {
+        if (e == null) {
+            SFToast.showToast("发表成功");
+            mCommentView.setVisibility(View.GONE);
+        } else {
+            SFToast.showToast("发表失败");
+        }
+    }
     private void showWords(int index) {
         Beauty beauty = null;
         if (BeautyModel.getInstance().getBeautySize() > index) {
             beauty = BeautyModel.getInstance().getBeauty(index);
         }
-        if (beauty == null){
+        if (beauty == null) {
             return;
         }
         String beautyWords = beauty.getFormatWords();
-        if (TextUtils.isEmpty(beautyWords)){
-            beautyWords="我\n是\n一\n个\n大\n美\n女";
+        if (TextUtils.isEmpty(beautyWords)) {
+            beautyWords = "我\n是\n一\n个\n大\n美\n女";
         }
         ViewGroup.LayoutParams layoutParams = mTyperTextView.getLayoutParams();
         layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
@@ -232,7 +298,7 @@ public class NYBeautyShowActivity extends BaseActivity implements BeautyModel.On
                 .duration(500)
                 .playOn(mTyperTextView);
         final String finalBeautyWords = beautyWords;
-        if (mTypeRunnable != null){
+        if (mTypeRunnable != null) {
             mHandler.removeCallbacks(mTypeRunnable);
             mTypeRunnable = null;
         }
@@ -422,10 +488,12 @@ public class NYBeautyShowActivity extends BaseActivity implements BeautyModel.On
         }
 
         public Object instantiateItem(View container, final int position) {
-            Beauty beauty = getBeauty(position);
+            final Beauty beauty = getBeauty(position);
             View view = this.mInflater.inflate(R.layout.ny_beauty_show_item, (ViewGroup) null);
             View progressView = view.findViewById(R.id.progress_bar);
             View noDataView = view.findViewById(R.id.no_data_view);
+            View postCommentView = view.findViewById(R.id.beauty_comment_tv);
+            View showCommentView = view.findViewById(R.id.beauty_show_comment_tv);
             if (beauty == null) {
                 if (mTaskState.containsKey(position) && mTaskState.get(position) == TaskState.FAIL) {
                     view.setTag(UNCHANGE);
@@ -476,7 +544,12 @@ public class NYBeautyShowActivity extends BaseActivity implements BeautyModel.On
                         if (mShareDialog == null) {
                             View shareDialogView = LayoutInflater.from(NYBeautyShowActivity.this).inflate(R.layout.ny_share_dialog, null);
                             NYShareView shareView = (NYShareView) shareDialogView.findViewById(R.id.share_view);
-
+                            shareDialogView.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    mShareDialog.dismiss();
+                                }
+                            });
                             shareView.setShareContent(getShareAction(finalBeauty.imgDesc));
                             shareView.setShareAdapter(new DefaultShareAdapter());
                             shareDialogView.setOnClickListener(new View.OnClickListener() {
@@ -485,11 +558,33 @@ public class NYBeautyShowActivity extends BaseActivity implements BeautyModel.On
                                     mShareDialog.dismiss();
                                 }
                             });
-                            mShareDialog = DialogFactory.getNoFloatingDimDialog(NYBeautyShowActivity.this, shareDialogView);
+                            mShareDialog = DialogHelper.getNoTitleDialog(NYBeautyShowActivity.this, shareDialogView);
                         }
                         if (!mShareDialog.isShowing()) {
                             mShareDialog.show();
                         }
+                    }
+                });
+
+                postCommentView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mCommentView.setVisibility(View.VISIBLE);
+                        mCommentEt.getEditText().requestFocus();
+                        mCommentView.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                SystemUIHelp.showSoftKeyboard(NYBeautyShowActivity.this, mCommentEt.getEditText());
+                            }
+                        });
+                        curBeautyId = beauty.getObjectId();
+                    }
+                });
+
+                showCommentView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
                     }
                 });
                 ImageLoader.getInstance().displayImage(beauty.imgUrl, imageView);
@@ -546,4 +641,7 @@ public class NYBeautyShowActivity extends BaseActivity implements BeautyModel.On
             }
         }
     }
+
+    //评论对话框
+    class CommentListFragment extends
 }

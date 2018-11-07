@@ -19,6 +19,13 @@ public class Utils {
         int reminderWidth = screenWidth - UnitHelp.dip2px(activity, 8 + 8);
         return reminderWidth;
     }
+
+    public static int getBeautyPicWidth(Activity activity) {
+        int screenWidth = SystemUIWHHelp.getScreenRealWidth(activity);
+        int reminderWidth = screenWidth - UnitHelp.dip2px(activity, 4*4);
+        return reminderWidth;
+    }
+
     public static int getBigPicWidth(Activity activity) {
         int screenWidth = SystemUIWHHelp.getScreenRealWidth(activity);
         int reminderWidth = screenWidth - UnitHelp.dip2px(activity, 7 + 7);

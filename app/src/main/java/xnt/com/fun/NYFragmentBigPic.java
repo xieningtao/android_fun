@@ -134,7 +134,12 @@ public class NYFragmentBigPic extends NYBasePullListFragment<CardPicGroup> {
         View superUserView = layoutInflater.inflate(R.layout.super_user_operate_dialog, null);
         final Dialog operationDialog = DialogHelper.getNoTitleDialog(getActivity(), superUserView);
         operationDialog.show();
-
+        superUserView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                operationDialog.dismiss();
+            }
+        });
         superUserView.findViewById(R.id.remove_tv).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -284,14 +289,7 @@ public class NYFragmentBigPic extends NYBasePullListFragment<CardPicGroup> {
         });
     }
 
-    private void handleCommentResult(BmobException e) {
-        if (e == null) {
-            SFToast.showToast("发表成功");
-            mCommentView.setVisibility(View.GONE);
-        } else {
-            SFToast.showToast("发表失败");
-        }
-    }
+
 
     private String getRefreshTime() {//刷新时间
         if (TextUtils.isEmpty(mLatestTime)) {

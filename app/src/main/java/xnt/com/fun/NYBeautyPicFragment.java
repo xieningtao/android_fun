@@ -12,12 +12,9 @@ import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.sf.loglib.L;
-import com.sf.utils.baseutil.DateFormatHelp;
 import com.sf.utils.baseutil.SpUtil;
-import com.sf.utils.baseutil.UnitHelp;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -33,7 +30,6 @@ import xnt.com.fun.tiantu.NYBeautyShowActivity;
 public class NYBeautyPicFragment extends BaseRecycleViewFragment implements BeautyModel.OnDataChangeListener {
     private float mWH = 5.0f / 7.0f;
     private BeautyAdapter mAdapter;
-    private String mLatestTime;
     private int mLatestIndexId = -1;
     private static final int PIC_PAGE_SIZE = 10;
 //    private List<Beauty> mBeauties = new ArrayList<>();
@@ -42,7 +38,7 @@ public class NYBeautyPicFragment extends BaseRecycleViewFragment implements Beau
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mPicWidth = Utils.getPicWidth(getActivity())/2 - UnitHelp.dip2px(getActivity(),16);
+        mPicWidth = Utils.getBeautyPicWidth(getActivity())/2;
         mPicHeight = Utils.getPicHeight(mPicWidth,mWH);
         mPullLoadMoreRv.setStaggeredGridLayout(2);
         mAdapter = new BeautyAdapter();
@@ -68,33 +64,6 @@ public class NYBeautyPicFragment extends BaseRecycleViewFragment implements Beau
         return false;
     }
 
-    private String getLoadMoreTime() {//加载更多时间
-        if (BeautyModel.getInstance().getBeautySize() > 0) {
-            Beauty pairPicBean = BeautyModel.getInstance().getBeauty(BeautyModel.getInstance().getBeautySize() - 1);
-            if (pairPicBean != null) {
-                return pairPicBean.getUpdatedAt();
-            }
-        }
-        return DateFormatHelp.dateTimeFormat(Calendar.getInstance(), DateFormatHelp._YYYYMMDDHHMMSS);
-    }
-
-    private String getRefreshTime() {//刷新时间
-        if (TextUtils.isEmpty(mLatestTime)) {
-            mLatestTime = SpUtil.getString(getActivity(), "pic_latest_time");
-            if (TextUtils.isEmpty(mLatestTime)) {
-                mLatestTime = "2015-05-05 16:20:22";
-            }
-        } else {
-            if (BeautyModel.getInstance().getBeautySize() > 0) {
-                Beauty pairPicBean = BeautyModel.getInstance().getBeauty(0);
-                if (pairPicBean != null) {
-                    mLatestTime = pairPicBean.getUpdatedAt();
-                }
-            }
-        }
-
-        return mLatestTime;
-    }
     private int getRefreshIndexId() {//刷新时间
         if (mLatestIndexId == -1) {
             mLatestIndexId = SpUtil.getInt(getActivity(), "pic_latest_index");
