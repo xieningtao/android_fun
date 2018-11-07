@@ -6,6 +6,7 @@ import com.basesmartframe.baseui.BaseActivity;
 
 public class NYFragmentContainerActivity extends BaseActivity {
 
+    public final static String CONTAINER_TITLE = "container_title";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

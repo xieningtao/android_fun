@@ -17,7 +17,6 @@ import android.widget.TextView;
 
 import com.basesmartframe.baseui.BaseActivity;
 import com.basesmartframe.dialoglib.DialogFactory;
-import com.basesmartframe.pickphoto.XTranslateTransform;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.utils.L;
 import com.sf.utils.baseutil.NetWorkManagerUtil;
@@ -43,6 +42,7 @@ import cn.bmob.v3.listener.UpdateListener;
 import xnt.com.fun.BuildConfig;
 import xnt.com.fun.DialogHelper;
 import xnt.com.fun.R;
+import xnt.com.fun.ViewPagerTransformManger;
 import xnt.com.fun.bean.CardPicBean;
 import xnt.com.fun.bean.CardPicGroup;
 import xnt.com.fun.share.NYShareView;
@@ -76,7 +76,14 @@ public class NYPhotoShowActivity extends BaseActivity {
             imageGroupId = intent.getStringExtra(ActivityPhotoPreview.IMAGE_GROUP_ID);
         }
         this.mViewPager = (ViewPager) findViewById(R.id.viewpager);
-        this.mViewPager.setPageTransformer(true, new XTranslateTransform());
+        try {
+            this.mViewPager.setPageTransformer(true, ViewPagerTransformManger.getTransformRandom().clazz.newInstance());
+        } catch (InstantiationException e) {
+            com.sf.loglib.L.error(TAG,e.getMessage());
+        } catch (IllegalAccessException e) {
+            com.sf.loglib.L.error(TAG,e.getMessage());
+        }
+//        this.mViewPager.setPageTransformer(true, new XTranslateTransform());
         this.mViewPager.setPageMargin(UnitHelp.dip2px(this, 5.0F));
         this.mViewPager.setPageMarginDrawable(R.drawable.black_shape);
         this.mAdapter = new NYPhotoShowActivity.ViewPagerAdapter(this);

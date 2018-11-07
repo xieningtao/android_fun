@@ -13,7 +13,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.basesmartframe.baseadapter.BaseAdapterHelper;
-import com.basesmartframe.bitmap.rounddrawable.RoundedImageView;
 import com.basesmartframe.data.ViewBind;
 import com.sf.loglib.L;
 import com.sf.utils.baseutil.DateFormatHelp;
@@ -124,7 +123,7 @@ public class NYFragmentBigPic extends NYBasePullListFragment<CardPicGroup> {
                 postComment(curPicGroupId,commentContent,null);
             }
         });
-        mPicWidth = Utils.getPicWidth(getActivity());
+        mPicWidth = Utils.getBigPicWidth(getActivity());
         mPicHeight = Utils.getPicHeight(mPicWidth, mWH);
     }
 
@@ -223,6 +222,7 @@ public class NYFragmentBigPic extends NYBasePullListFragment<CardPicGroup> {
             public void done(String s, BmobException e) {
                 if(e == null){
                     SFToast.showToast("发表成功");
+                    mCommentView.setVisibility(View.GONE);
                 }else {
                     SFToast.showToast("发表失败");
                 }
@@ -358,14 +358,14 @@ public class NYFragmentBigPic extends NYBasePullListFragment<CardPicGroup> {
 
     @Override
     protected void bindView(BaseAdapterHelper help, int i, final CardPicGroup cardPicGroup) {
-        RoundedImageView picLayout = help.getView(R.id.big_pic_iv);
+        ImageView picLayout = help.getView(R.id.big_pic_iv);
         ViewGroup.LayoutParams picParams = picLayout.getLayoutParams();
         picParams.width = mPicWidth;
         picParams.height = mPicHeight;
         picLayout.setLayoutParams(picParams);
-        ViewBind.displayImage( cardPicGroup.imgUrl, (ImageView) help.getView(R.id.big_pic_iv), DisplayOptionConfig.getDisplayOption(R.drawable.app_icon));
+        ViewBind.displayImage( cardPicGroup.imgUrl, (ImageView) help.getView(R.id.big_pic_iv), DisplayOptionConfig.getDefaultDisplayOption());
         help.setText(R.id.pic_desc_tv, cardPicGroup.imgDesc + "");
-        help.setText(R.id.pic_label_tv, cardPicGroup.imgLabel);
+        help.setText(R.id.pic_time_tv, NYDateFormatHelper.formatTime(cardPicGroup.getCreatedAt()));
         help.setOnClickListener(R.id.write_comment_rl, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -384,14 +384,15 @@ public class NYFragmentBigPic extends NYBasePullListFragment<CardPicGroup> {
             @Override
             public void onClick(View v) {
                 Bundle bundle = new Bundle();
-                bundle.putString(PIC_GROUP_ID,curPicGroupId);
+                bundle.putString(PIC_GROUP_ID,cardPicGroup.getObjectId());
                 Intent intent = FragmentHelper.getStartIntent(getActivity(), BigPicCommentListFragment.class,
                         bundle,null,NYFragmentContainerActivity.class);
+                intent.putExtra(NYFragmentContainerActivity.CONTAINER_TITLE,"评论");
                 startActivity(intent);
             }
         });
 
-        help.setOnClickListener(R.id.big_pic_cd, new View.OnClickListener() {
+        help.setOnClickListener(R.id.big_pic_iv, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), NYPhotoShowActivity.class);
@@ -400,7 +401,7 @@ public class NYFragmentBigPic extends NYBasePullListFragment<CardPicGroup> {
             }
         });
         if(BuildConfig.SUPER_USER) {
-            help.setOnLongClickListener(R.id.big_pic_cd, new View.OnLongClickListener() {
+            help.setOnLongClickListener(R.id.big_pic_iv, new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
                     doSuperOperation(cardPicGroup);

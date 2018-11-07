@@ -129,7 +129,7 @@ public class NYBeautyShowActivity extends BaseActivity implements BeautyModel.On
         this.mViewPager.setPageMarginDrawable(R.drawable.black_shape);
         this.mAdapter = new NYBeautyShowActivity.ViewPagerAdapter(this);
         this.mViewPager.setAdapter(this.mAdapter);
-        mMusicIv = findViewById(R.id.music_iv);
+        mMusicIv = (ImageView) findViewById(R.id.music_iv);
         //animation
         mTask = new MusicAnimationTask();
         mTask.execute();

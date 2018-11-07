@@ -7,9 +7,9 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.basesmartframe.bitmap.rounddrawable.RoundedImageView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.sf.loglib.L;
 import com.sf.utils.baseutil.DateFormatHelp;
@@ -217,14 +217,14 @@ public class NYBeautyPicFragment extends BaseRecycleViewFragment implements Beau
     }
 
     class BeautyViewHolder extends RecyclerView.ViewHolder{
-        public RoundedImageView mPicIv;
+        public ImageView mPicIv;
         public TextView mPicLabel;
         public TextView mPicDesc;
         public BeautyViewHolder(View itemView) {
             super(itemView);
             mPicLabel = (TextView) itemView.findViewById(R.id.pic_label_tv);
             mPicDesc = (TextView) itemView.findViewById(R.id.pic_desc_tv);
-            mPicIv = (RoundedImageView) itemView.findViewById(R.id.big_pic_iv);
+            mPicIv = (ImageView) itemView.findViewById(R.id.big_pic_iv);
         }
     }
     class BeautyAdapter extends RecyclerView.Adapter<BeautyViewHolder>{
@@ -242,7 +242,7 @@ public class NYBeautyPicFragment extends BaseRecycleViewFragment implements Beau
             picParams.height = mPicHeight;
             holder.mPicIv.setLayoutParams(picParams);
             Beauty beauty = BeautyModel.getInstance().getBeauty(position);
-            ImageLoader.getInstance().displayImage(beauty.imgUrl,holder.mPicIv, DisplayOptionConfig.getDisplayOption(R.drawable.app_icon));
+            ImageLoader.getInstance().displayImage(beauty.imgUrl,holder.mPicIv, DisplayOptionConfig.getDefaultDisplayOption());
             if (TextUtils.isEmpty(beauty.imgDesc)){
                 holder.mPicDesc.setVisibility(View.GONE);
             }else {

@@ -206,7 +206,7 @@ public class NYNewBeautyPic extends NYBasePullListFragment<Beauty> {
         picParams.width = mPicWidth;
         picParams.height = mPicHeight;
         picLayout.setLayoutParams(picParams);
-        help.setImageBuilder(R.id.big_pic_iv, beauty.imgUrl, DisplayOptionConfig.getDisplayOption(R.drawable.app_icon));
+        help.setImageBuilder(R.id.big_pic_iv, beauty.imgUrl, DisplayOptionConfig.getDefaultDisplayOption());
         if (TextUtils.isEmpty(beauty.imgDesc)){
             help.getView(R.id.pic_desc_tv).setVisibility(View.GONE);
         }else {

@@ -6,6 +6,7 @@ import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toolbar;
 
 import com.sf.utils.baseutil.SystemUIWHHelp;
@@ -16,6 +17,11 @@ public class Utils {
     public static int getPicWidth(Activity activity) {
         int screenWidth = SystemUIWHHelp.getScreenRealWidth(activity);
         int reminderWidth = screenWidth - UnitHelp.dip2px(activity, 8 + 8);
+        return reminderWidth;
+    }
+    public static int getBigPicWidth(Activity activity) {
+        int screenWidth = SystemUIWHHelp.getScreenRealWidth(activity);
+        int reminderWidth = screenWidth - UnitHelp.dip2px(activity, 7 + 7);
         return reminderWidth;
     }
 
@@ -38,5 +44,17 @@ public class Utils {
         actionView.setBackgroundColor(activity.getResources().getColor(R.color.white));
         ImageView logoIv = (ImageView) actionView.findViewById(R.id.ny_logo);
         logoIv.setImageResource(R.drawable.app_icon);
+        TextView titleTv = (TextView) actionView.findViewById(R.id.ny_title_tv);
+        titleTv.setText(getTitle(activity));
     }
+
+    private static String getTitle(Activity activity){
+        if(activity == null || activity.getIntent() == null){
+            return "";
+        }
+        String title = activity.getIntent().getStringExtra(NYFragmentContainerActivity.CONTAINER_TITLE);
+        return title;
+    }
+
+
 }

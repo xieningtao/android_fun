@@ -161,7 +161,7 @@ public class NYFragmentNews extends NYBasePullListFragment<StyleNews> {
 
     @Override
     protected void bindView(BaseAdapterHelper help, int position, StyleNews bean) {
-        help.setImageBuilder(R.id.news_iv, bean.imgUrl, DisplayOptionConfig.getDisplayOption(R.drawable.app_icon));
+        help.setImageBuilder(R.id.news_iv, bean.imgUrl, DisplayOptionConfig.getDefaultDisplayOption());
         help.setText(R.id.news_label_tv, bean.imgLabel);
         help.setText(R.id.news_title_tv, bean.title);
     }
