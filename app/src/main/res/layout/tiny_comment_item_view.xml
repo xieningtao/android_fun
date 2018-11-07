@@ -4,32 +4,18 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/white"
-    android:paddingLeft="8dp"
-    android:paddingRight="16dp"
+    android:paddingTop="4dp"
+    android:paddingBottom="4dp"
     >
 
-    <com.basesmartframe.bitmap.rounddrawable.RoundedImageView
-        android:id="@+id/pic_user_iv"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        app:riv_border_color="@color/white"
-        app:riv_border_width="1dp"
-        app:riv_corner_radius="15dp"
-        app:riv_oval="true"
-        android:src="@drawable/xiao_xin"
-        />
 
     <TextView
         android:id="@+id/pic_comment_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/pic_user_iv"
-        android:layout_alignTop="@id/pic_user_iv"
-        android:layout_alignBottom="@id/pic_user_iv"
         android:gravity="center_vertical"
-        android:layout_marginLeft="8dp"
-        android:textColor="@color/lb_grey"
-        android:textSize="12sp"
+        android:textColor="@android:color/black"
+        android:textSize="14sp"
         android:text="name"
         />
 
@@ -38,11 +24,11 @@
         android:id="@+id/pic_comment_content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/pic_user_iv"
-        android:textColor="@color/text_black"
+        android:textColor="@color/lb_grey"
         android:text="this is comment"
-        android:layout_toRightOf="@id/pic_user_iv"
+        android:layout_toRightOf="@id/pic_comment_name"
         android:textSize="12sp"
+        android:maxLines="1"
         android:layout_marginLeft="8dp"
         />
 

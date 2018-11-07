@@ -37,10 +37,15 @@ import cn.bmob.v3.datatype.BmobDate;
 import cn.bmob.v3.datatype.BmobPointer;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
-import cn.bmob.v3.listener.SaveListener;
 import cn.bmob.v3.listener.UpdateListener;
+import rx.Observable;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 import xnt.com.fun.bean.CardPicBean;
 import xnt.com.fun.bean.CardPicGroup;
+import xnt.com.fun.bean.NYBmobUser;
 import xnt.com.fun.comment.BigPicCommentListFragment;
 import xnt.com.fun.comment.PicComment;
 import xnt.com.fun.config.DisplayOptionConfig;
@@ -52,9 +57,9 @@ import xnt.com.fun.tiantu.NYPhotoShowActivity;
  */
 
 public class NYFragmentBigPic extends NYBasePullListFragment<CardPicGroup> {
+    public static final String PIC_GROUP_ID = "pic_group_id";
     private static final float mWH = 5.0f / 7.0f;
     private static final int PIC_PAGE_SIZE = 10;
-    public static final String PIC_GROUP_ID = "pic_group_id";
     private String mLatestTime;
     private List<CardPicGroup> mCardPicGroups = new ArrayList<>();
     private int mPicWidth;
@@ -81,9 +86,6 @@ public class NYFragmentBigPic extends NYBasePullListFragment<CardPicGroup> {
     }
 
 
-
-
-
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -108,19 +110,19 @@ public class NYFragmentBigPic extends NYBasePullListFragment<CardPicGroup> {
             @Override
             public void onClick(View v) {
                 mCommentView.setVisibility(View.GONE);
-                SystemUIHelp.hideSoftKeyboard(getActivity(),mCommentEt);
+                SystemUIHelp.hideSoftKeyboard(getActivity(), mCommentEt);
             }
         });
         mSendTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(TextUtils.isEmpty(mCommentEt.getEditText().getText())){
+                if (TextUtils.isEmpty(mCommentEt.getEditText().getText())) {
                     SFToast.showToast("请输入内容");
                     return;
                 }
-                SystemUIHelp.hideSoftKeyboard(getActivity(),mCommentEt);
+                SystemUIHelp.hideSoftKeyboard(getActivity(), mCommentEt);
                 String commentContent = mCommentEt.getEditText().getText().toString();
-                postComment(curPicGroupId,commentContent,null);
+                updateLatestComment(curPicGroupId, commentContent, null);
             }
         });
         mPicWidth = Utils.getBigPicWidth(getActivity());
@@ -164,7 +166,7 @@ public class NYFragmentBigPic extends NYBasePullListFragment<CardPicGroup> {
                     subObjects.addAll(cardPicBeans);
                     List<BmobObject> groupObjets = new ArrayList<>();
                     groupObjets.add(picGroup);
-                    SuperActionHelper.deleteByGroupId(subObjects,groupObjets);
+                    SuperActionHelper.deleteByGroupId(subObjects, groupObjets);
                 } else {
                     L.error(TAG, "失败：" + e.getMessage() + "," + e.getErrorCode());
                 }
@@ -174,15 +176,15 @@ public class NYFragmentBigPic extends NYBasePullListFragment<CardPicGroup> {
 
     private void updateContent(final CardPicGroup cardPicGroup) {
         LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
-        View editContentView = layoutInflater.inflate(R.layout.super_user_edit_dialog,null);
-        final Dialog editDialog = DialogHelper.getNoTitleDialog(getActivity(),editContentView);
+        View editContentView = layoutInflater.inflate(R.layout.super_user_edit_dialog, null);
+        final Dialog editDialog = DialogHelper.getNoTitleDialog(getActivity(), editContentView);
         editDialog.show();
         final EditTextClearDroidView droidView = (EditTextClearDroidView) editContentView.findViewById(R.id.edit_view);
         droidView.getEditText().setText(cardPicGroup.imgDesc);
         editContentView.findViewById(R.id.modify_tv).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(TextUtils.isEmpty(droidView.getEditText().getText())){
+                if (TextUtils.isEmpty(droidView.getEditText().getText())) {
                     SFToast.showToast(getString(R.string.input_word));
                     return;
                 }
@@ -192,9 +194,9 @@ public class NYFragmentBigPic extends NYBasePullListFragment<CardPicGroup> {
                 cardPicGroup.update(new UpdateListener() {
                     @Override
                     public void done(BmobException e) {
-                        if(e==null){
+                        if (e == null) {
                             SFToast.showToast("更新成功");
-                        }else{
+                        } else {
                             SFToast.showToast("更新失败");
                         }
                     }
@@ -204,30 +206,91 @@ public class NYFragmentBigPic extends NYBasePullListFragment<CardPicGroup> {
     }
 
 
-    private void postComment(String picGroupId,String commentContent,String userId){
-        PicComment picComment = new PicComment();
+    private void updateLatestComment(final String picGroupId, final String commentContent, String userId) {
+        final CardPicGroup picGroup = new CardPicGroup();
+        picGroup.setObjectId(picGroupId);
+        picGroup.latestCommentContent = commentContent;
+        if (!TextUtils.isEmpty(userId)) {
+            NYBmobUser user = new NYBmobUser();
+            user.setObjectId(userId);
+            picGroup.latestUserId = new BmobPointer(user);
+        }
+        picGroup.increment("commentNum", 1);
+        mCommentView.setVisibility(View.GONE);
+
+        Observable.create(new Observable.OnSubscribe<String>() {
+
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                L.info(TAG, "subscribe call thread: " + Thread.currentThread().getName());
+                String result = picGroup.updateSync();
+                subscriber.onNext(result);
+                subscriber.onCompleted();
+            }
+        }).flatMap(new Func1<String, Observable<String>>() {
+            @Override
+            public Observable<String> call(String s) {
+                L.info(TAG, "flatMap call thread: " + Thread.currentThread().getName());
+                return postComment(picGroupId, commentContent, null);
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Object>() {
+                    @Override
+                    public void onCompleted() {
+                        L.info(TAG, "onCompleted thread: " + Thread.currentThread().getName());
+                        SFToast.showToast("发表成功");
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+                        L.info(TAG, "onError thread: " + Thread.currentThread().getName());
+                        SFToast.showToast("发表失败");
+                    }
+
+                    @Override
+                    public void onNext(Object o) {
+                        L.info(TAG, "onNext thread: " + Thread.currentThread().getName());
+                    }
+                });
+    }
+
+    private Observable<String> postComment(String picGroupId, String commentContent, String userId) {
+        final PicComment picComment = new PicComment();
         CardPicGroup picGroup = new CardPicGroup();
         picGroup.setObjectId(picGroupId);
         picComment.topicId = new BmobPointer(picGroup);
         picComment.content = commentContent;
-        if(TextUtils.isEmpty(userId)){
+        if (TextUtils.isEmpty(userId)) {
             picComment.userId = null;
-        }else {
+        } else {
             BmobUser user = new BmobUser();
             user.setObjectId(userId);
-            picComment.userId=new BmobPointer(user);
+            picComment.userId = new BmobPointer(user);
         }
-        picComment.save(new SaveListener<String>() {
+
+        return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
-            public void done(String s, BmobException e) {
-                if(e == null){
-                    SFToast.showToast("发表成功");
-                    mCommentView.setVisibility(View.GONE);
+            public void call(Subscriber<? super String> subscriber) {
+                L.info(TAG,"postComment call thread: "+Thread.currentThread().getName());
+                String result = picComment.saveSync();
+                subscriber.onNext(result);
+                if(TextUtils.isEmpty(result)){
+                    subscriber.onError(null);
                 }else {
-                    SFToast.showToast("发表失败");
+                    subscriber.onCompleted();
                 }
             }
         });
+    }
+
+    private void handleCommentResult(BmobException e) {
+        if (e == null) {
+            SFToast.showToast("发表成功");
+            mCommentView.setVisibility(View.GONE);
+        } else {
+            SFToast.showToast("发表失败");
+        }
     }
 
     private String getRefreshTime() {//刷新时间
@@ -258,15 +321,15 @@ public class NYFragmentBigPic extends NYBasePullListFragment<CardPicGroup> {
         BmobQuery<CardPicGroup> query = new BmobQuery<CardPicGroup>();
         //返回50条数据，如果不加上这条语句，默认返回10条数据
         query.setLimit(PIC_PAGE_SIZE);
-        query.order("-updatedAt");
+        query.order("-createdAt");
         String updateContent = refresh ? getRefreshTime() : getLoadMoreTime();
         Date updateData = DateFormatHelp.StrDateToCalendar(updateContent, DateFormatHelp._YYYYMMDDHHMMSS);
         if (refresh) { //refresh
             query.setSkip(0);
-            query.addWhereGreaterThanOrEqualTo("updatedAt", new BmobDate(updateData));
+            query.addWhereGreaterThanOrEqualTo("createdAt", new BmobDate(updateData));
         } else {//load more
 //            query.setSkip()
-            query.addWhereLessThanOrEqualTo("updatedAt", new BmobDate(updateData));
+            query.addWhereLessThanOrEqualTo("createdAt", new BmobDate(updateData));
         }
 
 
@@ -363,7 +426,7 @@ public class NYFragmentBigPic extends NYBasePullListFragment<CardPicGroup> {
         picParams.width = mPicWidth;
         picParams.height = mPicHeight;
         picLayout.setLayoutParams(picParams);
-        ViewBind.displayImage( cardPicGroup.imgUrl, (ImageView) help.getView(R.id.big_pic_iv), DisplayOptionConfig.getDefaultDisplayOption());
+        ViewBind.displayImage(cardPicGroup.imgUrl, (ImageView) help.getView(R.id.big_pic_iv), DisplayOptionConfig.getDefaultDisplayOption());
         help.setText(R.id.pic_desc_tv, cardPicGroup.imgDesc + "");
         help.setText(R.id.pic_time_tv, NYDateFormatHelper.formatTime(cardPicGroup.getCreatedAt()));
         help.setOnClickListener(R.id.write_comment_rl, new View.OnClickListener() {
@@ -374,7 +437,7 @@ public class NYFragmentBigPic extends NYBasePullListFragment<CardPicGroup> {
                 mCommentView.post(new Runnable() {
                     @Override
                     public void run() {
-                        SystemUIHelp.showSoftKeyboard(getActivity(),mCommentEt.getEditText());
+                        SystemUIHelp.showSoftKeyboard(getActivity(), mCommentEt.getEditText());
                     }
                 });
                 curPicGroupId = cardPicGroup.getObjectId();
@@ -384,10 +447,10 @@ public class NYFragmentBigPic extends NYBasePullListFragment<CardPicGroup> {
             @Override
             public void onClick(View v) {
                 Bundle bundle = new Bundle();
-                bundle.putString(PIC_GROUP_ID,cardPicGroup.getObjectId());
+                bundle.putString(PIC_GROUP_ID, cardPicGroup.getObjectId());
                 Intent intent = FragmentHelper.getStartIntent(getActivity(), BigPicCommentListFragment.class,
-                        bundle,null,NYFragmentContainerActivity.class);
-                intent.putExtra(NYFragmentContainerActivity.CONTAINER_TITLE,"评论");
+                        bundle, null, NYFragmentContainerActivity.class);
+                intent.putExtra(NYFragmentContainerActivity.CONTAINER_TITLE, "评论");
                 startActivity(intent);
             }
         });
@@ -400,7 +463,17 @@ public class NYFragmentBigPic extends NYBasePullListFragment<CardPicGroup> {
                 startActivity(intent);
             }
         });
-        if(BuildConfig.SUPER_USER) {
+
+        //comment
+        if(TextUtils.isEmpty(cardPicGroup.latestCommentContent)){
+            help.setVisible(R.id.pic_comment_view,View.GONE);
+        }else {
+            help.setVisible(R.id.pic_comment_view,View.VISIBLE);
+            help.setText(R.id.pic_comment_name,"随机");
+            help.setText(R.id.pic_comment_content,cardPicGroup.latestCommentContent);
+        }
+        help.setText(R.id.comment_tv,String.valueOf(cardPicGroup.commentNum));
+        if (BuildConfig.SUPER_USER) {
             help.setOnLongClickListener(R.id.big_pic_iv, new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {

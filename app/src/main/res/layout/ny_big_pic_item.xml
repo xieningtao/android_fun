@@ -102,5 +102,13 @@
         android:textSize="14sp"
         tools:text="2018-10-10" />
 
-
+<include
+    android:id="@+id/pic_comment_view"
+    layout="@layout/tiny_comment_item_view"
+    android:layout_below="@id/pic_time_tv"
+    android:layout_alignLeft="@id/comment_rl"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="4dp"
+    />
 </RelativeLayout>
