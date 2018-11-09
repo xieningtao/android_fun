@@ -1,10 +1,11 @@
 package xnt.com.fun;
 
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.basesmartframe.baseui.BaseActivity;
+import com.tbruyelle.rxpermissions2.RxPermissions;
 
 import cdc.sed.yff.AdManager;
 import cdc.sed.yff.nm.sp.SplashViewSettings;
@@ -15,7 +16,7 @@ import xnt.com.fun.config.NYBMobConfig;
  * Created by mac on 2018/6/2.
  */
 
-public class SplashActivity extends BaseActivity {
+public class SplashActivity extends FragmentActivity {
 
 
     @Override
@@ -37,6 +38,11 @@ public class SplashActivity extends BaseActivity {
 //                SplashActivity.this.finish();
 //            }
 //        },2000);
+    }
+
+    private void getNecessaryPermission(){
+        final RxPermissions rxPermissions = new RxPermissions(this);
+//        rxPermissions.requestEach()
     }
 
     @Override

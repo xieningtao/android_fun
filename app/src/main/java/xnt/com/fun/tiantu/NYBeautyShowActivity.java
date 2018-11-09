@@ -13,9 +13,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
-import android.view.GestureDetector;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -497,8 +495,9 @@ public class NYBeautyShowActivity extends BaseActivity implements BeautyModel.On
             View view = this.mInflater.inflate(R.layout.ny_beauty_show_item, (ViewGroup) null);
             View progressView = view.findViewById(R.id.progress_bar);
             View noDataView = view.findViewById(R.id.no_data_view);
-            View postCommentView = view.findViewById(R.id.beauty_comment_tv);
+            View writeCommentView = view.findViewById(R.id.beauty_write_comment_tv);
             final ViewGroup firstCommentView = view.findViewById(R.id.first_comment_view);
+            firstCommentView.setVisibility(View.GONE);
             final View showCommentView = view.findViewById(R.id.beauty_show_comment_tv);
             GestureView gestureView = (GestureView) view.findViewById(R.id.gesture_view);
             if (beauty == null) {
@@ -527,7 +526,11 @@ public class NYBeautyShowActivity extends BaseActivity implements BeautyModel.On
                 imageView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
+                        if (bottomBar.getVisibility() != View.GONE) {
+                            bottomBar.setVisibility(View.GONE);
+                        } else {
+                            bottomBar.setVisibility(View.VISIBLE);
+                        }
                     }
                 });
                 if (BuildConfig.SUPER_USER) {
@@ -569,50 +572,50 @@ public class NYBeautyShowActivity extends BaseActivity implements BeautyModel.On
                     }
                 });
 
-                gestureView.setOnGestureListener(new GestureDetector.SimpleOnGestureListener(){
-                    @Override
-                    public boolean onDown(MotionEvent e) {
-                        return true;
-                    }
-
-                    @Override
-                    public void onLongPress(MotionEvent e) {
-                        showEditCommentView(beauty);
-                    }
-
-                    @Override
-                    public boolean onDoubleTap(MotionEvent e) {
-                        return super.onDoubleTap(e);
-                    }
-
-                    @Override
-                    public boolean onSingleTapUp(MotionEvent e) {
-                        if (bottomBar.getVisibility() != View.GONE) {
-                            bottomBar.setVisibility(View.GONE);
-                        } else {
-                            bottomBar.setVisibility(View.VISIBLE);
-                        }
-                        return true;
-                    }
-                });
-                firstCommentView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                            showCommentListDialog(beauty.getObjectId());
-                    }
-                });
-
-//                postCommentView.setOnClickListener(new View.OnClickListener() {
+//                gestureView.setOnGestureListener(new GestureDetector.SimpleOnGestureListener(){
 //                    @Override
-//                    public void onClick(View v) {
+//                    public boolean onDown(MotionEvent e) {
+//                        return true;
+//                    }
+//
+//                    @Override
+//                    public void onLongPress(MotionEvent e) {
 //                        showEditCommentView(beauty);
 //                    }
+//
+//                    @Override
+//                    public boolean onDoubleTap(MotionEvent e) {
+//                        return super.onDoubleTap(e);
+//                    }
+//
+//                    @Override
+//                    public boolean onSingleTapUp(MotionEvent e) {
+//                        if (bottomBar.getVisibility() != View.GONE) {
+//                            bottomBar.setVisibility(View.GONE);
+//                        } else {
+//                            bottomBar.setVisibility(View.VISIBLE);
+//                        }
+//                        return true;
+//                    }
 //                });
+//                firstCommentView.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                            showCommentListDialog(beauty.getObjectId());
+//                    }
+//                });
+
+                writeCommentView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showEditCommentView(beauty);
+                    }
+                });
 
                 showCommentView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-
+                        showCommentListDialog(beauty.getObjectId());
                     }
                 });
 //                getBeautyCommentList(beauty.getObjectId(),firstCommentView);

@@ -21,6 +21,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.utils.L;
 import com.sf.utils.baseutil.NetWorkManagerUtil;
 import com.sf.utils.baseutil.SFToast;
+import com.sf.utils.baseutil.SystemUIHelp;
 import com.sf.utils.baseutil.UnitHelp;
 import com.sflib.CustomView.baseview.EditTextClearDroidView;
 import com.sflib.umenglib.share.DefaultShareAdapter;
@@ -35,17 +36,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.datatype.BmobPointer;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.UpdateListener;
+import rx.Observable;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 import xnt.com.fun.BuildConfig;
 import xnt.com.fun.DialogHelper;
+import xnt.com.fun.FragmentHelper;
+import xnt.com.fun.NYFragmentContainerActivity;
 import xnt.com.fun.R;
 import xnt.com.fun.ViewPagerTransformManger;
 import xnt.com.fun.bean.CardPicBean;
 import xnt.com.fun.bean.CardPicGroup;
+import xnt.com.fun.bean.NYBmobUser;
+import xnt.com.fun.comment.BigPicCommentListFragment;
+import xnt.com.fun.comment.PicComment;
 import xnt.com.fun.share.NYShareView;
+
+import static xnt.com.fun.NYFragmentBigPic.PIC_GROUP_ID;
 
 /**
  * Created by mac on 2018/6/2.
@@ -60,7 +74,10 @@ public class NYPhotoShowActivity extends BaseActivity {
     private List<CardPicBean> mCardPicBeans = new ArrayList<>();
     public static final String CARD_PIC_BEANS = "card_pic_beans";
 
-
+    private View mCommentView;
+    private TextView mSendTv;
+    private EditTextClearDroidView mCommentEt;
+    private String curPicGroupId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,6 +91,7 @@ public class NYPhotoShowActivity extends BaseActivity {
         String imageGroupId = null;
         if (intent != null) {
             imageGroupId = intent.getStringExtra(ActivityPhotoPreview.IMAGE_GROUP_ID);
+            curPicGroupId = imageGroupId;
         }
         this.mViewPager = (ViewPager) findViewById(R.id.viewpager);
         try {
@@ -97,6 +115,108 @@ public class NYPhotoShowActivity extends BaseActivity {
         } else {
             //TODO
         }
+
+        //评论
+        mCommentView = findViewById(R.id.comment_view);
+        mSendTv = (TextView) findViewById(R.id.comment_send_tv);
+        mCommentEt = (EditTextClearDroidView) findViewById(R.id.comment_et);
+        mCommentView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mCommentView.setVisibility(View.GONE);
+                SystemUIHelp.hideSoftKeyboard(NYPhotoShowActivity.this, mCommentEt);
+            }
+        });
+        mSendTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (TextUtils.isEmpty(mCommentEt.getEditText().getText())) {
+                    SFToast.showToast("请输入内容");
+                    return;
+                }
+                SystemUIHelp.hideSoftKeyboard(NYPhotoShowActivity.this, mCommentEt);
+                String commentContent = mCommentEt.getEditText().getText().toString();
+                updateLatestComment(curPicGroupId, commentContent, null);
+            }
+        });
+    }
+
+    private void updateLatestComment(final String picGroupId, final String commentContent, String userId) {
+        final CardPicGroup picGroup = new CardPicGroup();
+        picGroup.setObjectId(picGroupId);
+        picGroup.latestCommentContent = commentContent;
+        if (!TextUtils.isEmpty(userId)) {
+            NYBmobUser user = new NYBmobUser();
+            user.setObjectId(userId);
+            picGroup.latestUserId = new BmobPointer(user);
+        }
+        picGroup.increment("commentNum", 1);
+        mCommentView.setVisibility(View.GONE);
+
+        Observable.create(new Observable.OnSubscribe<String>() {
+
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                com.sf.loglib.L.info(TAG, "subscribe call thread: " + Thread.currentThread().getName());
+                String result = picGroup.updateSync();
+                subscriber.onNext(result);
+                subscriber.onCompleted();
+            }
+        }).flatMap(new Func1<String, Observable<String>>() {
+            @Override
+            public Observable<String> call(String s) {
+                com.sf.loglib.L.info(TAG, "flatMap call thread: " + Thread.currentThread().getName());
+                return postComment(picGroupId, commentContent, null);
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Object>() {
+                    @Override
+                    public void onCompleted() {
+                        com.sf.loglib.L.info(TAG, "onCompleted thread: " + Thread.currentThread().getName());
+                        SFToast.showToast("发表成功");
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+                        com.sf.loglib.L.info(TAG, "onError thread: " + Thread.currentThread().getName());
+                        SFToast.showToast("发表失败");
+                    }
+
+                    @Override
+                    public void onNext(Object o) {
+                        com.sf.loglib.L.info(TAG, "onNext thread: " + Thread.currentThread().getName());
+                    }
+                });
+    }
+
+    private Observable<String> postComment(String picGroupId, String commentContent, String userId) {
+        final PicComment picComment = new PicComment();
+        CardPicGroup picGroup = new CardPicGroup();
+        picGroup.setObjectId(picGroupId);
+        picComment.topicId = new BmobPointer(picGroup);
+        picComment.content = commentContent;
+        if (TextUtils.isEmpty(userId)) {
+            picComment.userId = null;
+        } else {
+            BmobUser user = new BmobUser();
+            user.setObjectId(userId);
+            picComment.userId = new BmobPointer(user);
+        }
+
+        return Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                com.sf.loglib.L.info(TAG,"postComment call thread: "+Thread.currentThread().getName());
+                String result = picComment.saveSync();
+                subscriber.onNext(result);
+                if(TextUtils.isEmpty(result)){
+                    subscriber.onError(null);
+                }else {
+                    subscriber.onCompleted();
+                }
+            }
+        });
     }
 
 
@@ -178,6 +298,10 @@ public class NYPhotoShowActivity extends BaseActivity {
             View view = this.mInflater.inflate(R.layout.ny_pic_show_item, (ViewGroup) null);
             final View bottomBar = view.findViewById(R.id.bottom_show_bar_rl);
             final TextView bottomBarTv = (TextView) view.findViewById(R.id.pic_desc);
+
+            View writeCommentView = view.findViewById(R.id.pic_write_comment_tv);
+            final View showCommentView = view.findViewById(R.id.pic_show_comment_tv);
+
             String desc = mCardPicBeans.get(position).imgDesc;
             if (!TextUtils.isEmpty(desc)) {
                 bottomBar.setVisibility(View.VISIBLE);
@@ -229,10 +353,42 @@ public class NYPhotoShowActivity extends BaseActivity {
                     }
                 }
             });
-            CardPicBean bean = mCardPicBeans.get(position);
+            final CardPicBean bean = mCardPicBeans.get(position);
+
+            writeCommentView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showEditCommentView();
+                }
+            });
+
+            showCommentView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+//                    showCommentListDialog(beauty.getObjectId());
+                    Bundle bundle = new Bundle();
+                    bundle.putString(PIC_GROUP_ID, bean.getObjectId());
+                    Intent intent = FragmentHelper.getStartIntent(NYPhotoShowActivity.this, BigPicCommentListFragment.class,
+                            bundle, null, NYFragmentContainerActivity.class);
+                    intent.putExtra(NYFragmentContainerActivity.CONTAINER_TITLE, "评论");
+                    startActivity(intent);
+                }
+            });
+
             ImageLoader.getInstance().displayImage(bean.imageUrl, imageView);
             ((ViewPager) container).addView(view);
             return view;
+        }
+
+        private void showEditCommentView() {
+            mCommentView.setVisibility(View.VISIBLE);
+            mCommentEt.getEditText().requestFocus();
+            mCommentView.post(new Runnable() {
+                @Override
+                public void run() {
+                    SystemUIHelp.showSoftKeyboard(NYPhotoShowActivity.this, mCommentEt.getEditText());
+                }
+            });
         }
     }
 

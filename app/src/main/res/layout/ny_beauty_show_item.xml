@@ -15,6 +15,7 @@
     
     <xnt.com.fun.view.GestureView
         android:id="@+id/gesture_view"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
@@ -53,6 +54,7 @@
             android:layout_height="1px"
             android:background="@color/white"
             android:layout_below="@id/pic_desc"
+            android:visibility="gone"
             />
         <include
             android:id="@+id/first_comment_view"
@@ -60,6 +62,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/beauty_desc_divider"
+            android:visibility="gone"
             />
 
         <LinearLayout
@@ -69,31 +72,16 @@
             android:layout_marginTop="8dp"
             android:background="@color/white"
             android:layout_below="@id/pic_desc"
-            android:visibility="gone"
             >
         <TextView
-            android:id="@+id/beauty_comment_tv"
+            android:id="@+id/beauty_write_comment_tv"
             android:layout_width="0dp"
-            android:layout_weight="1"
+            android:layout_weight="2"
             android:layout_height="40dp"
             android:textSize="14sp"
-            android:text="评论"
+            android:text="写评论"
             android:gravity="center"
             />
-            <View
-                android:layout_width="1dp"
-                android:layout_height="40dp"
-                android:background="@color/lb_grey"
-                />
-            <TextView
-                android:id="@+id/beauty_praise_tv"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="40dp"
-                android:textSize="14sp"
-                android:text="点赞"
-                android:gravity="center"
-                />
             <View
                 android:layout_width="1dp"
                 android:layout_height="40dp"
@@ -108,6 +96,21 @@
                 android:text="展示评论"
                 android:gravity="center"
                 />
+            <View
+                android:layout_width="1dp"
+                android:layout_height="40dp"
+                android:background="@color/lb_grey"
+                />
+            <TextView
+                android:id="@+id/beauty_praise_tv"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="40dp"
+                android:textSize="14sp"
+                android:text="点赞"
+                android:gravity="center"
+                />
+
         </LinearLayout>
     </RelativeLayout>
 

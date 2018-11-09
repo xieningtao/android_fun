@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/white_solid_round_rect"
+    android:padding="10dp"
+    >
+
+    <TextView
+        android:id="@+id/dialog_title_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="this is title"
+        android:gravity="center"
+        android:textSize="16sp"
+        android:textColor="@color/lb_grey"
+        />
+
+
+    <TextView
+        android:id="@+id/dialog_content_tv"
+        android:layout_below="@id/dialog_title_tv"
+        android:layout_marginTop="8dp"
+        android:textSize="14sp"
+        android:text="this is content"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:id="@+id/dialog_action_ll"
+        android:layout_below="@id/dialog_content_tv"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="40dp">
+
+        <TextView
+            android:id="@+id/dialog_cancel_tv"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:text="取消"
+            android:gravity="center"
+            android:textSize="16sp"
+            />
+
+        <TextView
+            android:id="@+id/dialog_sure_tv"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:text="确认"
+            android:gravity="center"
+            android:textSize="16sp"
+            />
+    </LinearLayout>
+</RelativeLayout>

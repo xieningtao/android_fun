@@ -12,14 +12,20 @@ import xnt.com.fun.config.NYBMobConfig;
 
 
 public class SFApp extends BaseApp {
-    private final String TAG = "SFApp";
     public static final String APP_ID = "57f9edc887d4a7e337b8c231";
-//    public static final String APP_ID_KEY = "MmNsUDJONjlNc2xwNzEtbVY3RE5KUQ";
+    //    public static final String APP_ID_KEY = "MmNsUDJONjlNc2xwNzEtbVY3RE5KUQ";
     public static final String APP_ID_KEY = "WHB0a1QzUXZwNDZJMXFYYjNpbnJxZw";
+    private static SFApp sApp;
+    private final String TAG = "SFApp";
+
+    public static SFApp getApplication() {
+        return sApp;
+    }
 
     @Override
     public void onCreate() {
         super.onCreate();
+        sApp = this;
         init();
         startModule();
     }
@@ -41,21 +47,22 @@ public class SFApp extends BaseApp {
         SpotManager.getInstance(this).requestSpot(new SpotRequestListener() {
             @Override
             public void onRequestSuccess() {
-                L.i(TAG,"spot onRequestSuccess");
+                L.i(TAG, "spot onRequestSuccess");
             }
 
             @Override
             public void onRequestFailed(int i) {
-                L.e(TAG,"spot onRequestFailed result: "+i);
+                L.e(TAG, "spot onRequestFailed result: " + i);
             }
         });
 
     }
-    private void initShare(){
+
+    private void initShare() {
 
     }
 
-    private void initBmob(){
+    private void initBmob() {
         //第一：默认初始化
         Bmob.initialize(this, NYBMobConfig.BMOB_APP_ID);
         // 注:自v3.5.2开始，数据sdk内部缝合了统计sdk，开发者无需额外集成，传渠道参数即可，不传默认没开启数据统计功能

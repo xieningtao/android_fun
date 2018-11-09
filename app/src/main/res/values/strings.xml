@@ -36,4 +36,18 @@
     <string name="input_word">请输入文字</string>
     <string name="test_word">我\n们\n是123\nqqqq</string>
     <string name="beauty_comment_title">评论列表</string>
+    <string name="go_setting">去设置</string>
+
+    <string name="audio_permission_tip">请在手机设置中开启麦克风权限，以正常使用语音功能。\n可尝试在“设置-应用-M拍-权限”中开启，具体开启路径可能因机型而异。</string>
+    <string name="camera_permission_tip">请在手机设置中开启相机权限，以正常使用拍照功能。\n可尝试在“设置-应用-M拍-权限”中开启，具体开启路径可能因机型而异。</string>
+    <string name="location_permission_tip">请在手机设置中开启定位权限，以正常使用定位功能。\n可尝试在“设置-应用-M拍-权限”中开启，具体开启路径可能因机型而异。</string>
+    <string name="storage_permission_tip">请在手机设置中开启存储权限。\n可尝试在“设置-应用-M拍-权限”中开启，具体开启路径可能因机型而异。</string>
+    <string name="permission_ask_again">为了保证您正常、安全地使用M拍，请允许开启M拍的%s权限</string>
+    <string name="permission_ask_never">为了保证您正常、安全地使用M拍，请在设置中开启M拍的%s权限</string>
+    <string name="phone_permission">电话</string>
+    <string name="storage_permission">存储</string>
+    <string name="location_permission">位置信息</string>
+    <string name="camera_permission">相机</string>
+    <string name="microphone_permission">麦克风</string>
+    <string name="divider">、</string>
 </resources>

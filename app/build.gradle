@@ -120,4 +120,7 @@ dependencies {
 
     //svga
     implementation project(":svgalib")
+
+    //permission
+    implementation 'com.github.tbruyelle:rxpermissions:0.10.2'
 }

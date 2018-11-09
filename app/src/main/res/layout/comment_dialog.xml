@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="150dp"
-        android:background="@drawable/top_round_solid_rect"
+        android:background="@drawable/top_white_solid_round_rect"
         android:clickable="true"
         >
         <TextView
