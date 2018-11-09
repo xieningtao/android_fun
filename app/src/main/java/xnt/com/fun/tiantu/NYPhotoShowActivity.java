@@ -177,7 +177,7 @@ public class NYPhotoShowActivity extends BaseActivity {
         public Object instantiateItem(View container, final int position) {
             View view = this.mInflater.inflate(R.layout.ny_pic_show_item, (ViewGroup) null);
             final View bottomBar = view.findViewById(R.id.bottom_show_bar_rl);
-            final TextView bottomBarTv = (TextView) view.findViewById(R.id.bottom_bar_tv);
+            final TextView bottomBarTv = (TextView) view.findViewById(R.id.pic_desc);
             String desc = mCardPicBeans.get(position).imgDesc;
             if (!TextUtils.isEmpty(desc)) {
                 bottomBar.setVisibility(View.VISIBLE);

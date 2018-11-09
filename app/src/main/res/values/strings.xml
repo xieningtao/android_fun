@@ -35,4 +35,5 @@
     <string name="submit">提交</string>
     <string name="input_word">请输入文字</string>
     <string name="test_word">我\n们\n是123\nqqqq</string>
+    <string name="beauty_comment_title">评论列表</string>
 </resources>

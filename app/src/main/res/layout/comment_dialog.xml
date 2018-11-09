@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <xnt.com.fun.view.FixRelativeLayout
+        android:id="@+id/beauty_dialog_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="150dp"
+        android:background="@drawable/top_round_solid_rect"
+        android:clickable="true"
+        >
+        <TextView
+            android:id="@+id/beauty_topic_title_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/beauty_comment_title"
+            android:layout_centerHorizontal="true"
+            android:textSize="14sp"
+            android:textColor="#333333"
+            android:paddingTop="11dp"
+            android:paddingBottom="11dp"
+            />
+
+        <ImageView
+            android:id="@+id/beauty_close_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/love_idea_wall_close"
+            android:layout_alignParentRight="true"
+            />
+
+        <View
+            android:id="@+id/divider_title"
+            android:layout_below="@id/beauty_topic_title_tv"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:background="#ebebeb"/>
+
+        <com.wuxiaolong.pullloadmorerecyclerview.PullLoadMoreRecyclerView
+            android:id="@+id/load_more_rv"
+            android:layout_below="@id/divider_title"
+            android:layout_marginTop="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+
+        <FrameLayout
+            android:id="@+id/http_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true" />
+
+    </xnt.com.fun.view.FixRelativeLayout>
+
+    <include
+        android:id="@+id/beauty_comment_sender"
+        layout="@layout/comment_item"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:visibility="gone"
+        tools:visibility="visible"
+        />
+</RelativeLayout>

@@ -12,6 +12,11 @@
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
         />
+    
+    <xnt.com.fun.view.GestureView
+        android:id="@+id/gesture_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
 
     <ImageView
@@ -33,7 +38,7 @@
         android:background="@color/transparent_half"
         >
         <TextView
-            android:id="@+id/bottom_bar_tv"
+            android:id="@+id/pic_desc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/white"
@@ -42,6 +47,20 @@
             android:paddingLeft="4dp"
             android:paddingRight="4dp"
             />
+        <View
+            android:id="@+id/beauty_desc_divider"
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/white"
+            android:layout_below="@id/pic_desc"
+            />
+        <include
+            android:id="@+id/first_comment_view"
+            layout="@layout/beauty_comment_item_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/beauty_desc_divider"
+            />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -49,7 +68,8 @@
             android:orientation="horizontal"
             android:layout_marginTop="8dp"
             android:background="@color/white"
-            android:layout_below="@id/bottom_bar_tv"
+            android:layout_below="@id/pic_desc"
+            android:visibility="gone"
             >
         <TextView
             android:id="@+id/beauty_comment_tv"
@@ -107,4 +127,8 @@
         android:layout_centerInParent="true"
         android:visibility="gone"
         />
+    <FrameLayout
+        android:id="@+id/beauty_dialog_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 </RelativeLayout>
