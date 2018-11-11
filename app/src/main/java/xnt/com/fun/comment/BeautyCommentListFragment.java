@@ -24,7 +24,8 @@ import cn.bmob.v3.datatype.BmobDate;
 import cn.bmob.v3.datatype.BmobPointer;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
-import xnt.com.fun.BeautyModel;
+import xnt.com.fun.FragmentUtils;
+import xnt.com.fun.NYDateFormatHelper;
 import xnt.com.fun.R;
 import xnt.com.fun.base.BaseRecycleViewFragment;
 import xnt.com.fun.bean.Beauty;
@@ -32,7 +33,7 @@ import xnt.com.fun.bean.BeautyComment;
 
 //评论对话框
 public class BeautyCommentListFragment extends BaseRecycleViewFragment {
-    public static final String BEAUTY_GROUP_ID="beauty_group_id";
+    public static final String BEAUTY_GROUP_ID = "beauty_group_id";
     private List<BeautyComment> mBeautyComments = new ArrayList<>();
     private BeautyAdapter mAdapter;
 
@@ -50,18 +51,31 @@ public class BeautyCommentListFragment extends BaseRecycleViewFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.comment_dialog,null);
+        return inflater.inflate(R.layout.comment_dialog, null);
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FragmentUtils.removeViewWithSlideBottom(getActivity(), "beautyComment");
+            }
+        });
+        view.findViewById(R.id.beauty_close_iv).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FragmentUtils.removeViewWithSlideBottom(getActivity(), "beautyComment");
+            }
+        });
+//        mPullLoadMoreRv.getRecyclerView().setHasFixedSize(true);
+        mPullLoadMoreRv.setLinearLayout();
         mAdapter = new BeautyAdapter();
-
+        mPullLoadMoreRv.setAdapter(mAdapter);
     }
 
     private static final int PIC_PAGE_SIZE = 10;
-    private List<BeautyComment> mPicComments = new ArrayList<>();
     private String mLatestTime;
 
 
@@ -97,7 +111,6 @@ public class BeautyCommentListFragment extends BaseRecycleViewFragment {
     }
 
 
-
     private void getBeautyCommentList(final boolean refresh) {
         BmobQuery<BeautyComment> query = new BmobQuery<BeautyComment>();
         Beauty picGroup = new Beauty();
@@ -122,45 +135,27 @@ public class BeautyCommentListFragment extends BaseRecycleViewFragment {
             public void done(List<BeautyComment> picComments, BmobException e) {
                 if (e == null) {
                     //新加载出来的数据
-                    List<BeautyComment> diffBeautys = removeExist(picComments);
+                    List<BeautyComment> diffBeauties = removeExist(picComments);
 
-                    Collections.sort(diffBeautys, new Comparator<BeautyComment>() {
+                    Collections.sort(diffBeauties, new Comparator<BeautyComment>() {
                         @Override
                         public int compare(BeautyComment lhs, BeautyComment rhs) {
                             return -lhs.getUpdatedAt().compareTo(rhs.getUpdatedAt());
                         }
                     });
-                    List<BeautyComment> pairPicBeans = null;
+                    boolean hasMore = true;
                     //后续的刷新操作
                     if (refresh) {
-                        mPicComments.addAll(0, diffBeautys);
-                        if (mPicComments.size() > PIC_PAGE_SIZE) {
-                            List<BeautyComment> tempCardPicGroups = new ArrayList<>(mPicComments);
-                            mPicComments.clear();
-                            mPicComments.addAll(tempCardPicGroups.subList(0, PIC_PAGE_SIZE));
-                        }
-                        pairPicBeans = mPicComments;
-                    } else {//加载更多操作
-                        mPicComments.addAll(diffBeautys);
-                        pairPicBeans = diffBeautys;
-                    }
-                    //去重复
-                    if (refresh) {
                         mBeautyComments.clear();
-                        mBeautyComments.addAll(0,pairPicBeans);
-                        simpleFinishRefreshOrLoading(true);
-                    } else {
-                        simpleFinishRefreshOrLoading(true);
+                        mBeautyComments.addAll(0, diffBeauties);
+                    } else {//加载更多操作
+                        mBeautyComments.addAll(diffBeauties);
+                        hasMore = diffBeauties.size() != 0;
                     }
-
                     mAdapter.notifyDataSetChanged();
-                    boolean hasMore = true;
-                    if(!refresh) {
-                        hasMore = diffBeautys.size() != 0;
-                    }
                     simpleFinishRefreshOrLoading(hasMore);
                 } else {
-                    simpleFinishRefreshOrLoading( false);
+                    simpleFinishRefreshOrLoading(false);
                     L.info("bmob", "失败：" + e.getMessage() + "," + e.getErrorCode());
                 }
             }
@@ -194,33 +189,40 @@ public class BeautyCommentListFragment extends BaseRecycleViewFragment {
     }
 
 
-    class BeautyCommentViewHolder extends RecyclerView.ViewHolder{
+    class BeautyCommentViewHolder extends RecyclerView.ViewHolder {
         public ImageView mUserIv;
+        public TextView mUserNameTv;
         public TextView mContentTv;
         public TextView mTimeTv;
+
         public BeautyCommentViewHolder(View itemView) {
             super(itemView);
             mUserIv = (ImageView) itemView.findViewById(R.id.pic_user_iv);
-//            mContentTv = (TextView) itemView.findViewById(R.id.pic_comment_name);
+            mUserNameTv = (TextView) itemView.findViewById(R.id.pic_comment_name);
             mContentTv = (TextView) itemView.findViewById(R.id.pic_comment_content);
+            mTimeTv = (TextView) itemView.findViewById(R.id.pic_comment_time);
         }
     }
-    class BeautyAdapter extends RecyclerView.Adapter<BeautyCommentViewHolder>{
+
+    class BeautyAdapter extends RecyclerView.Adapter<BeautyCommentViewHolder> {
 
         @Override
         public BeautyCommentViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View beautyPicView = LayoutInflater.from(getActivity()).inflate(R.layout.pic_comment_item_view,null);
+            View beautyPicView = LayoutInflater.from(getActivity()).inflate(R.layout.pic_comment_item_view, null);
             return new BeautyCommentViewHolder(beautyPicView);
         }
 
         @Override
         public void onBindViewHolder(BeautyCommentViewHolder holder, final int position) {
-            
+            BeautyComment beautyComment = mBeautyComments.get(position);
+            holder.mContentTv.setText(beautyComment.content);
+            holder.mUserNameTv.setText("随机");
+            holder.mTimeTv.setText(NYDateFormatHelper.formatTime(beautyComment.getCreatedAt()));
         }
 
         @Override
         public int getItemCount() {
-            return BeautyModel.getInstance().getBeautySize();
+            return mBeautyComments.size();
         }
     }
 }

@@ -3,9 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:pullRefresh="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-
-    >
+    android:layout_height="match_parent">
 
     <com.handmark.pulltorefresh.library.PullToRefreshListView
         android:id="@+id/pull_refresh_lv"
@@ -15,15 +13,7 @@
         pullRefresh:ptrHeaderTextColor="@color/text_light_black"
         />
 
-    <include
-        android:id="@+id/comment_view"
-        layout="@layout/comment_item"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentBottom="true"
-        android:visibility="gone"
-        tools:visibility="visible"
-        />
+
     <com.sflib.CustomView.KeyBoardFrameLayout
         android:id="@+id/keyboard_fl"
         android:layout_width="match_parent"
@@ -35,5 +25,13 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         />
-
+    <include
+        android:id="@+id/comment_view"
+        layout="@layout/comment_item"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:visibility="gone"
+        tools:visibility="visible"
+        />
 </RelativeLayout>

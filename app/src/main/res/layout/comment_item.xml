@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/transparent_half">
@@ -7,41 +7,42 @@
     <RelativeLayout
         android:id="@+id/comment_rl"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_alignParentBottom="true"
-        android:background="@color/white">
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="#f4f4f4"
+        android:paddingBottom="4dp"
+        android:paddingTop="4dp">
 
         <TextView
             android:id="@+id/comment_send_tv"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:background="@android:color/darker_gray"
+            android:layout_centerVertical="true"
             android:gravity="center"
             android:paddingLeft="8dp"
             android:paddingRight="8dp"
             android:text="发送"
-            android:textColor="@color/white"
+            android:textColor="#8f8f8f"
             android:textSize="16sp" />
 
-        <FrameLayout
+
+        <com.sflib.CustomView.baseview.EditTextClearDroidView
+            android:id="@+id/comment_et"
             android:layout_width="match_parent"
             android:layout_height="40dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
             android:layout_toLeftOf="@id/comment_send_tv"
-            android:background="@drawable/baby_medical_input_et">
+            android:gravity="center_vertical|left"
+            android:hint="写下你的想法"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:maxLines="1"
+            android:textColor="@color/text_black"
+            android:textColorHint="@color/lb_grey"
 
-            <com.sflib.CustomView.baseview.EditTextClearDroidView
-                android:id="@+id/comment_et"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:hint="写下你的想法"
-                android:paddingLeft="4dp"
-                android:paddingRight="4dp"
-                android:textColor="@color/text_black"
-                android:textColorHint="@color/lb_grey"
-                android:textCursorDrawable="@null"
-                android:textSize="14sp" />
-        </FrameLayout>
+            android:textSize="14sp" />
     </RelativeLayout>
-</RelativeLayout>
+</FrameLayout>

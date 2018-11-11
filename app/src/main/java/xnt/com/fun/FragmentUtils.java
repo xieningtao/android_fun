@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 
 import com.sf.loglib.L;
@@ -43,7 +42,7 @@ public class FragmentUtils {
         return true;
     }
 
-    public static boolean hideViewWithSlideBottom(FragmentActivity activity, String tag) {
+    public static boolean hideViewWithSlideBottom(Activity activity, String tag) {
         if (activity == null
                 || activity.isFinishing() || TextUtils.isEmpty(tag)) {
             return false;
@@ -58,7 +57,7 @@ public class FragmentUtils {
         }
         return false;
     }
-    public static boolean removeViewWithSlideBottom(FragmentActivity activity, String tag) {
+    public static boolean removeViewWithSlideBottom(Activity activity, String tag) {
         if (activity == null
                 || activity.isFinishing() || TextUtils.isEmpty(tag)) {
             return false;

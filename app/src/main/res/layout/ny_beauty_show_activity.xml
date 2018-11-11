@@ -11,8 +11,8 @@
 
     <android.support.v4.view.ViewPager
         android:id="@+id/viewpager"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         />
 
     <ImageView
@@ -48,11 +48,11 @@
         android:id="@+id/word_ttv"
         android:layout_width="50dp"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         android:paddingTop="8dp"
         android:paddingBottom="8dp"
         android:gravity="top|center_horizontal"
         android:layout_alignParentRight="true"
-        android:layout_alignTop="@id/fixed_view"
         android:layout_marginTop="-50dp"
         android:layout_marginRight="10dp"
         android:textSize="32dp"

@@ -139,3 +139,7 @@ dependencies {
 repositories {
     mavenCentral()
 }
+
+configurations {
+    all*.exclude group: "com.squareup.okio"
+}

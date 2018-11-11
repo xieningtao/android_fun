@@ -30,9 +30,6 @@ import com.basesmartframe.baseui.BaseActivity;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.example.sfchat.media.MediaPlayManager;
-import com.hanks.htextview.base.AnimationListener;
-import com.hanks.htextview.base.HTextView;
-import com.hanks.htextview.typer.TyperTextView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.opensource.svgaplayer.SVGACallback;
 import com.opensource.svgaplayer.SVGADrawable;
@@ -68,7 +65,6 @@ import cn.bmob.v3.listener.UpdateListener;
 import xnt.com.fun.BeautyModel;
 import xnt.com.fun.BuildConfig;
 import xnt.com.fun.DialogHelper;
-import xnt.com.fun.FontManager;
 import xnt.com.fun.FragmentUtils;
 import xnt.com.fun.R;
 import xnt.com.fun.ViewPagerTransformManger;
@@ -92,7 +88,7 @@ public class NYBeautyShowActivity extends BaseActivity implements BeautyModel.On
     private Dialog mShareDialog;
     private int mTotalSize = 100;
     private int mCurPos = -1;
-    private TyperTextView mTyperTextView;
+//    private TyperTextView mTyperTextView;
     private ImageView mMusicIv;
     private HashMap<Integer, TaskState> mTaskState = new HashMap<>();
     private List<Music> mMusics = new ArrayList<>();
@@ -254,18 +250,18 @@ public class NYBeautyShowActivity extends BaseActivity implements BeautyModel.On
             MediaPlayManager.getInstance().createMediaPlay();
             getMusic("pure");
         }
-        mTyperTextView = (TyperTextView) findViewById(R.id.word_ttv);
+//        mTyperTextView = (TyperTextView) findViewById(R.id.word_ttv);
 //        mTyperTextView.setTypeface(FontManager.getInstance(getAssets()).getFont("fonts/Oswald-Stencbab.ttf"));
-        mTyperTextView.setTypeface(FontManager.getInstance(getAssets()).getFont("fonts/yong.ttf"));
-        mTyperTextView.setAnimationListener(new AnimationListener() {
-            @Override
-            public void onAnimationEnd(HTextView hTextView) {
-                //加载成功以后，2s后翻页
-//                if (mViewPagerState == ViewPager.SCROLL_STATE_IDLE) {
-//                    mHandler.postDelayed(mRunnable, 1000);
-//                }
-            }
-        });
+//        mTyperTextView.setTypeface(FontManager.getInstance(getAssets()).getFont("fonts/yong.ttf"));
+//        mTyperTextView.setAnimationListener(new AnimationListener() {
+//            @Override
+//            public void onAnimationEnd(HTextView hTextView) {
+//                //加载成功以后，2s后翻页
+////                if (mViewPagerState == ViewPager.SCROLL_STATE_IDLE) {
+////                    mHandler.postDelayed(mRunnable, 1000);
+////                }
+//            }
+//        });
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -282,11 +278,11 @@ public class NYBeautyShowActivity extends BaseActivity implements BeautyModel.On
                 L.info(TAG, "onPageScrollStateChanged");
                 mViewPagerState = state;
                 if (state == ViewPager.SCROLL_STATE_IDLE) {
-                    mTyperTextView.setVisibility(View.VISIBLE);
+//                    mTyperTextView.setVisibility(View.VISIBLE);
                     showWords(getCurrentItem());
                 } else {
-                    mTyperTextView.setText("");
-                    mTyperTextView.setVisibility(View.GONE);
+//                    mTyperTextView.setText("");
+//                    mTyperTextView.setVisibility(View.GONE);
                     mHandler.removeCallbacks(mRunnable);
                     if (mTypeRunnable != null) {
                         mHandler.removeCallbacks(mTypeRunnable);
@@ -304,7 +300,7 @@ public class NYBeautyShowActivity extends BaseActivity implements BeautyModel.On
         final BeautyComment picComment = new BeautyComment();
         Beauty beauty = new Beauty();
         beauty.setObjectId(beautyId);
-        picComment.topicId = new BmobPointer(beauty);
+        picComment.beautyId = new BmobPointer(beauty);
         picComment.content = commentContent;
         if (TextUtils.isEmpty(userId)) {
             picComment.userId = null;
@@ -342,14 +338,14 @@ public class NYBeautyShowActivity extends BaseActivity implements BeautyModel.On
         if (TextUtils.isEmpty(beautyWords)) {
             beautyWords = "我\n是\n一\n个\n大\n美\n女";
         }
-        ViewGroup.LayoutParams layoutParams = mTyperTextView.getLayoutParams();
-        layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
-        mTyperTextView.setLayoutParams(layoutParams);
-        mTyperTextView.setTextColor(getResources().getColor(R.color.transparent));
-        mTyperTextView.setText(beautyWords);
-        YoYo.with(Techniques.SlideInRight)
-                .duration(500)
-                .playOn(mTyperTextView);
+//        ViewGroup.LayoutParams layoutParams = mTyperTextView.getLayoutParams();
+//        layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+//        mTyperTextView.setLayoutParams(layoutParams);
+//        mTyperTextView.setTextColor(getResources().getColor(R.color.transparent));
+//        mTyperTextView.setText(beautyWords);
+//        YoYo.with(Techniques.SlideInRight)
+//                .duration(500)
+//                .playOn(mTyperTextView);
         final String finalBeautyWords = beautyWords;
         if (mTypeRunnable != null) {
             mHandler.removeCallbacks(mTypeRunnable);
@@ -358,11 +354,11 @@ public class NYBeautyShowActivity extends BaseActivity implements BeautyModel.On
         mTypeRunnable = new Runnable() {
             @Override
             public void run() {
-                ViewGroup.LayoutParams layoutParams = mTyperTextView.getLayoutParams();
-                layoutParams.height = mTyperTextView.getHeight();
-                mTyperTextView.setLayoutParams(layoutParams);
-                mTyperTextView.setTextColor(getResources().getColor(R.color.white));
-                mTyperTextView.animateText(finalBeautyWords);
+//                ViewGroup.LayoutParams layoutParams = mTyperTextView.getLayoutParams();
+//                layoutParams.height = mTyperTextView.getHeight();
+//                mTyperTextView.setLayoutParams(layoutParams);
+//                mTyperTextView.setTextColor(getResources().getColor(R.color.white));
+//                mTyperTextView.animateText(finalBeautyWords);
             }
         };
         mHandler.postDelayed(mTypeRunnable, 500);
@@ -540,16 +536,16 @@ public class NYBeautyShowActivity extends BaseActivity implements BeautyModel.On
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-        if (hasFocus) {
-            View decorView = getWindow().getDecorView();
-            decorView.setSystemUiVisibility(
-                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                            | View.SYSTEM_UI_FLAG_FULLSCREEN
-                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
-        }
+//        if (hasFocus) {
+//            View decorView = getWindow().getDecorView();
+//            decorView.setSystemUiVisibility(
+//                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+//                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+//                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+//                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+//                            | View.SYSTEM_UI_FLAG_FULLSCREEN
+//                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+//        }
     }
 
 

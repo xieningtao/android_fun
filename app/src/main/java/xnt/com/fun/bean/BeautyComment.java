@@ -2,14 +2,13 @@ package xnt.com.fun.bean;
 
 import cn.bmob.v3.BmobObject;
 import cn.bmob.v3.datatype.BmobPointer;
-import xnt.com.fun.comment.PicComment;
 
 /**
  * Created by mac on 2018/6/2.
  */
 
 public class BeautyComment extends BmobObject {
-    public BmobPointer topicId;
+    public BmobPointer beautyId;
     public String content;
     public BmobPointer userId;
 
@@ -19,7 +18,7 @@ public class BeautyComment extends BmobObject {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        PicComment that = (PicComment) o;
+        BeautyComment that = (BeautyComment) o;
         return getObjectId().equals(that.getObjectId());
     }
 
