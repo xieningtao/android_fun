@@ -1,5 +1,6 @@
 package xnt.com.fun.tiantu;
 
+import android.animation.Animator;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -9,11 +10,14 @@ import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -30,6 +34,11 @@ import com.hanks.htextview.base.AnimationListener;
 import com.hanks.htextview.base.HTextView;
 import com.hanks.htextview.typer.TyperTextView;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.opensource.svgaplayer.SVGACallback;
+import com.opensource.svgaplayer.SVGADrawable;
+import com.opensource.svgaplayer.SVGAImageView;
+import com.opensource.svgaplayer.SVGAParser;
+import com.opensource.svgaplayer.SVGAVideoEntity;
 import com.sf.loglib.L;
 import com.sf.utils.baseutil.NetWorkManagerUtil;
 import com.sf.utils.baseutil.SFToast;
@@ -68,7 +77,6 @@ import xnt.com.fun.bean.BeautyComment;
 import xnt.com.fun.bean.Music;
 import xnt.com.fun.comment.BeautyCommentListFragment;
 import xnt.com.fun.share.NYShareView;
-import xnt.com.fun.view.GestureView;
 
 public class NYBeautyShowActivity extends BaseActivity implements BeautyModel.OnDataChangeListener {
 
@@ -95,6 +103,7 @@ public class NYBeautyShowActivity extends BaseActivity implements BeautyModel.On
     private TextView mSendTv;
     private EditTextClearDroidView mCommentEt;
 
+    private SVGAParser mSvgaParser;
     private int mViewPagerState = ViewPager.SCROLL_STATE_IDLE;
     private Handler mHandler = new Handler();
     private Runnable mTypeRunnable = null;
@@ -107,6 +116,9 @@ public class NYBeautyShowActivity extends BaseActivity implements BeautyModel.On
         }
     };
 
+    private SVGAImageView mSvgaView;
+    private View mCurBottomView;
+    private GestureDetector mDetector;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -123,6 +135,7 @@ public class NYBeautyShowActivity extends BaseActivity implements BeautyModel.On
     @Override
     protected void onPause() {
         super.onPause();
+        mSvgaView.pauseAnimation();
     }
 
     public void initViews() {
@@ -143,6 +156,43 @@ public class NYBeautyShowActivity extends BaseActivity implements BeautyModel.On
         this.mViewPager.setPageMarginDrawable(R.drawable.black_shape);
         this.mAdapter = new NYBeautyShowActivity.ViewPagerAdapter(this);
         this.mViewPager.setAdapter(this.mAdapter);
+        this.mSvgaView = findViewById(R.id.praise_animation_svga);
+
+        //底部actionBar
+        final ViewGroup bottomBarGroup = findViewById(R.id.bottom_show_bar_rl);
+        CommentManager commentManager = new CommentManager(bottomBarGroup);
+        commentManager.initAction();
+        mViewPager.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if(mDetector == null){
+                    mDetector = new GestureDetector(NYBeautyShowActivity.this,new GestureDetector.SimpleOnGestureListener(){
+                        @Override
+                        public boolean onDown(MotionEvent e) {
+                            return true;
+                        }
+
+                        @Override
+                        public boolean onSingleTapConfirmed(MotionEvent e) {
+                            toggleBottomBar(bottomBarGroup);
+                            return true;
+                        }
+
+                        @Override
+                        public boolean onDoubleTap(MotionEvent e) {
+                            doSvgaAnimation("");
+                            return true;
+                        }
+                    });
+                }
+                return mDetector.onTouchEvent(event);
+            }
+        });
+
+//
+//        GestureView gestureView = (GestureView)findViewById(R.id.ny_beauty_gesture);
+//        gestureView.setOnGestureListener();
+
 
         //评论
         mCommentView = findViewById(R.id.comment_view);
@@ -391,12 +441,43 @@ public class NYBeautyShowActivity extends BaseActivity implements BeautyModel.On
     }
 
     public void onDestroy() {
+        mSvgaView.stopAnimation();
         MediaPlayManager.getInstance().destroyPlayer();
         BeautyModel.getInstance().unregisterListener(this);
         mTask.cancel(false);
         super.onDestroy();
 
     }
+
+    private void toggleBottomBar(final View bottomBar) {
+        if (bottomBar.getVisibility() != View.GONE) {
+            YoYo.with(Techniques.SlideOutDown).withListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    bottomBar.setVisibility(View.GONE);
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animation) {
+                    bottomBar.setVisibility(View.GONE);
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animation) {
+
+                }
+            }).duration(500).playOn(bottomBar);
+        } else {
+            bottomBar.setVisibility(View.VISIBLE);
+            YoYo.with(Techniques.SlideInUp).duration(500).playOn(bottomBar);
+        }
+    }
+
 
     private void showUpdateDialog(final Beauty beauty, final TextView bottomBarTv) {
         LayoutInflater layoutInflater = LayoutInflater.from(NYBeautyShowActivity.this);
@@ -471,6 +552,104 @@ public class NYBeautyShowActivity extends BaseActivity implements BeautyModel.On
         }
     }
 
+
+    private void doSvgaAnimation(final String channel) {
+        if (mSvgaParser == null) {
+            mSvgaParser = new SVGAParser(this);
+        }
+        mSvgaParser.parse("praise.svga", new SVGAParser.ParseCompletion() {
+            @Override
+            public void onComplete(@NonNull SVGAVideoEntity videoItem) {
+                final SVGADrawable drawable = new SVGADrawable(videoItem);
+//                drawable.setBounds(0,0,DpAndPxUtils.dip2px(150),DpAndPxUtils.dip2px(150));
+                mSvgaView.setImageDrawable(drawable);
+                mSvgaView.setLoops(1);
+                mSvgaView.setCallback(new SVGACallback() {
+                    @Override
+                    public void onPause() {
+                        L.info(TAG, "svga onPause");
+                    }
+
+                    @Override
+                    public void onFinished() {
+                        L.info(TAG, "svga onFinish");
+                    }
+
+                    @Override
+                    public void onRepeat() {
+                        L.info(TAG, "svga onRepeat");
+                    }
+
+                    @Override
+                    public void onStep(int frame, double percentage) {
+                        L.info(TAG, "svga onStep frame: " + frame + " percentage: " + percentage);
+                    }
+                });
+                mSvgaView.startAnimation();
+
+//                updatePraise(channel);
+
+            }
+
+            @Override
+            public void onError() {
+                SFToast.showToast("播放svga失败");
+            }
+        });
+    }
+
+    private class CommentManager{
+        private View mRootView;
+        private View writeCommentView;
+        private View showCommentView;
+        public CommentManager(View rootView){
+            writeCommentView = rootView.findViewById(R.id.beauty_write_comment_tv);
+            final ViewGroup firstCommentView = rootView.findViewById(R.id.first_comment_view);
+            firstCommentView.setVisibility(View.GONE);
+            showCommentView = rootView.findViewById(R.id.beauty_show_comment_tv);
+        }
+
+        public void initAction(){
+            writeCommentView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Beauty beauty = mAdapter.getBeauty(mViewPager.getCurrentItem());
+                    showEditCommentView(beauty);
+                }
+            });
+
+            showCommentView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Beauty beauty = mAdapter.getBeauty(mViewPager.getCurrentItem());
+                    showCommentListDialog(beauty.getObjectId());
+                }
+            });
+        }
+    }
+
+
+    private void showCommentListDialog(String beautyId){
+        Bundle bundle = new Bundle();
+        bundle.putString(BeautyCommentListFragment.BEAUTY_GROUP_ID,beautyId);
+        FragmentUtils.showViewWithSlideBottom(NYBeautyShowActivity.this,
+                R.id.beauty_dialog_container,
+                BeautyCommentListFragment.class,
+                "beautyComment",bundle);
+    }
+
+    private void showEditCommentView(Beauty beauty) {
+        mCommentView.setVisibility(View.VISIBLE);
+        mCommentEt.getEditText().requestFocus();
+        mCommentView.post(new Runnable() {
+            @Override
+            public void run() {
+                SystemUIHelp.showSoftKeyboard(NYBeautyShowActivity.this, mCommentEt.getEditText());
+            }
+        });
+        curBeautyId = beauty.getObjectId();
+    }
+
     private class ViewPagerAdapter extends PagerAdapter {
         private LayoutInflater mInflater;
 
@@ -495,11 +674,6 @@ public class NYBeautyShowActivity extends BaseActivity implements BeautyModel.On
             View view = this.mInflater.inflate(R.layout.ny_beauty_show_item, (ViewGroup) null);
             View progressView = view.findViewById(R.id.progress_bar);
             View noDataView = view.findViewById(R.id.no_data_view);
-            View writeCommentView = view.findViewById(R.id.beauty_write_comment_tv);
-            final ViewGroup firstCommentView = view.findViewById(R.id.first_comment_view);
-            firstCommentView.setVisibility(View.GONE);
-            final View showCommentView = view.findViewById(R.id.beauty_show_comment_tv);
-            GestureView gestureView = (GestureView) view.findViewById(R.id.gesture_view);
             if (beauty == null) {
                 if (mTaskState.containsKey(position) && mTaskState.get(position) == TaskState.FAIL) {
                     view.setTag(UNCHANGE);
@@ -516,23 +690,20 @@ public class NYBeautyShowActivity extends BaseActivity implements BeautyModel.On
                 noDataView.setVisibility(View.GONE);
                 final View bottomBar = view.findViewById(R.id.bottom_show_bar_rl);
                 final TextView bottomBarTv = (TextView) view.findViewById(R.id.pic_desc);
-                if (!TextUtils.isEmpty(beauty.imgDesc)) {
-                    bottomBar.setVisibility(View.VISIBLE);
-                    bottomBarTv.setText(beauty.imgDesc);
-                } else {
-                    bottomBar.setVisibility(View.GONE);
-                }
+//                if (!TextUtils.isEmpty(beauty.imgDesc)) {
+//                    bottomBar.setVisibility(View.VISIBLE);
+//                    bottomBarTv.setText(beauty.imgDesc);
+//                } else {
+//                    bottomBar.setVisibility(View.GONE);
+//                }
+
                 ImageView imageView = (ImageView) view.findViewById(R.id.photo_view);
-                imageView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (bottomBar.getVisibility() != View.GONE) {
-                            bottomBar.setVisibility(View.GONE);
-                        } else {
-                            bottomBar.setVisibility(View.VISIBLE);
-                        }
-                    }
-                });
+//                imageView.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//
+//                    }
+//                });
                 if (BuildConfig.SUPER_USER) {
                     imageView.setOnLongClickListener(new View.OnLongClickListener() {
                         @Override
@@ -572,58 +743,14 @@ public class NYBeautyShowActivity extends BaseActivity implements BeautyModel.On
                     }
                 });
 
-//                gestureView.setOnGestureListener(new GestureDetector.SimpleOnGestureListener(){
-//                    @Override
-//                    public boolean onDown(MotionEvent e) {
-//                        return true;
-//                    }
-//
-//                    @Override
-//                    public void onLongPress(MotionEvent e) {
-//                        showEditCommentView(beauty);
-//                    }
-//
-//                    @Override
-//                    public boolean onDoubleTap(MotionEvent e) {
-//                        return super.onDoubleTap(e);
-//                    }
-//
-//                    @Override
-//                    public boolean onSingleTapUp(MotionEvent e) {
-//                        if (bottomBar.getVisibility() != View.GONE) {
-//                            bottomBar.setVisibility(View.GONE);
-//                        } else {
-//                            bottomBar.setVisibility(View.VISIBLE);
-//                        }
-//                        return true;
-//                    }
-//                });
-//                firstCommentView.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                            showCommentListDialog(beauty.getObjectId());
-//                    }
-//                });
 
-                writeCommentView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        showEditCommentView(beauty);
-                    }
-                });
-
-                showCommentView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        showCommentListDialog(beauty.getObjectId());
-                    }
-                });
 //                getBeautyCommentList(beauty.getObjectId(),firstCommentView);
                 ImageLoader.getInstance().displayImage(beauty.imgUrl, imageView);
             }
             ((ViewPager) container).addView(view);
             return view;
         }
+
 
         private void getBeautyCommentList(String beautyId, final ViewGroup commentContainer) {
             BmobQuery<BeautyComment> query = new BmobQuery<>();
@@ -648,26 +775,6 @@ public class NYBeautyShowActivity extends BaseActivity implements BeautyModel.On
             });
         }
 
-        private void showCommentListDialog(String beautyId){
-            Bundle bundle = new Bundle();
-            bundle.putString(BeautyCommentListFragment.BEAUTY_GROUP_ID,beautyId);
-            FragmentUtils.showViewWithSlideBottom(NYBeautyShowActivity.this,
-                    R.id.beauty_dialog_container,
-                    BeautyCommentListFragment.class,
-                    "beautyComment",bundle);
-        }
-
-        private void showEditCommentView(Beauty beauty) {
-            mCommentView.setVisibility(View.VISIBLE);
-            mCommentEt.getEditText().requestFocus();
-            mCommentView.post(new Runnable() {
-                @Override
-                public void run() {
-                    SystemUIHelp.showSoftKeyboard(NYBeautyShowActivity.this, mCommentEt.getEditText());
-                }
-            });
-            curBeautyId = beauty.getObjectId();
-        }
 
         @Override
         public int getItemPosition(Object object) {

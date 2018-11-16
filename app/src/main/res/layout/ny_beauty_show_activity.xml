@@ -7,11 +7,35 @@
     >
 
 
+
+
     <android.support.v4.view.ViewPager
         android:id="@+id/viewpager"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         />
+
+    <ImageView
+        android:id="@+id/music_iv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/music_icon"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:visibility="invisible"
+        tools:visibility="visible"
+        />
+
+    <xnt.com.fun.view.GestureView
+        android:id="@+id/ny_beauty_gesture"
+        android:layout_below="@id/music_iv"
+        android:layout_marginTop="8dp"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
     <View
         android:id="@+id/fixed_view"
         android:layout_width="match_parent"
@@ -36,18 +60,7 @@
         app:charIncrease="3"
         app:typerSpeed="160"/>
 
-    <ImageView
-        android:id="@+id/music_iv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/music_icon"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_marginTop="10dp"
-        android:layout_marginLeft="10dp"
-        android:visibility="gone"
-        tools:visibility="visible"
-        />
+
     <include
         android:id="@+id/comment_view"
         layout="@layout/comment_item"
@@ -57,4 +70,96 @@
         android:visibility="gone"
         tools:visibility="visible"
         />
+    <com.opensource.svgaplayer.SVGAImageView
+        android:id="@+id/praise_animation_svga"
+        android:layout_height="150dp"
+        android:layout_width="150dp"
+        android:scaleType="fitCenter"
+        android:layout_centerInParent="true"
+        app:antiAlias="true"
+        />
+
+    <RelativeLayout
+        android:id="@+id/bottom_show_bar_rl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="8dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/transparent_half"
+        >
+        <TextView
+            android:id="@+id/pic_desc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textSize="16dp"
+            android:maxLines="3"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            />
+        <View
+            android:id="@+id/beauty_desc_divider"
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/white"
+            android:layout_below="@id/pic_desc"
+            android:visibility="gone"
+            />
+        <include
+            android:id="@+id/first_comment_view"
+            layout="@layout/beauty_comment_item_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/beauty_desc_divider"
+            android:visibility="gone"
+            />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp"
+            android:background="@color/white"
+            android:layout_below="@id/pic_desc"
+            >
+            <TextView
+                android:id="@+id/beauty_write_comment_tv"
+                android:layout_width="0dp"
+                android:layout_weight="2"
+                android:layout_height="40dp"
+                android:textSize="14sp"
+                android:text="写评论"
+                android:gravity="center"
+                />
+            <View
+                android:layout_width="1dp"
+                android:layout_height="40dp"
+                android:background="@color/lb_grey"
+                />
+            <TextView
+                android:id="@+id/beauty_show_comment_tv"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="40dp"
+                android:textSize="14sp"
+                android:text="展示评论"
+                android:gravity="center"
+                />
+            <View
+                android:layout_width="1dp"
+                android:layout_height="40dp"
+                android:background="@color/lb_grey"
+                />
+            <TextView
+                android:id="@+id/beauty_praise_tv"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="40dp"
+                android:textSize="14sp"
+                android:text="点赞"
+                android:gravity="center"
+                />
+
+        </LinearLayout>
+    </RelativeLayout>
 </RelativeLayout>

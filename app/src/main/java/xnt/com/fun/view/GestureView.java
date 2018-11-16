@@ -30,7 +30,39 @@ public class GestureView extends FrameLayout {
     }
 
     private void init(){
-        mDetector = new GestureDetector(getContext(), mGestureListener);
+        mDetector = new GestureDetector(getContext(), new GestureDetector.SimpleOnGestureListener(){
+            @Override
+            public boolean onDoubleTap(MotionEvent e) {
+                if(mGestureListener != null){
+                    return mGestureListener.onDoubleTap(e);
+                }
+                return super.onDoubleTap(e);
+            }
+
+            @Override
+            public boolean onDown(MotionEvent e) {
+                if(mGestureListener != null){
+                    return mGestureListener.onDown(e);
+                }
+                return super.onDown(e);
+            }
+
+            @Override
+            public boolean onSingleTapConfirmed(MotionEvent e) {
+                if(mGestureListener != null){
+                    return mGestureListener.onSingleTapConfirmed(e);
+                }
+                return super.onSingleTapConfirmed(e);
+            }
+
+            @Override
+            public boolean onSingleTapUp(MotionEvent e) {
+                if(mGestureListener != null){
+                    return mGestureListener.onSingleTapUp(e);
+                }
+                return super.onSingleTapUp(e);
+            }
+        });
         setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {

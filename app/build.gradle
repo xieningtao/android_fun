@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
-
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
 ext{
     htextview_version ="0.1.6"
 }
@@ -50,6 +51,12 @@ android {
     }
 }
 
+//configurations {
+//    compile.exclude 'com.squareup.okio:okio:1.11.0@jar'
+//}
+configurations {
+        compile.exclude group: 'com.squareup.okio'
+}
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation fileTree(dir: 'libs', include: ['*.aar'])
@@ -123,4 +130,12 @@ dependencies {
 
     //permission
     implementation 'com.github.tbruyelle:rxpermissions:0.10.2'
+//    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+    //animation
+    implementation 'com.daimajia.easing:library:2.0@aar'
+    implementation 'com.daimajia.androidanimations:library:2.3@aar'
+}
+repositories {
+    mavenCentral()
 }

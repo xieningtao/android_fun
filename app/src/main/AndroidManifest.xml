@@ -6,10 +6,10 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"></uses-permission>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"></uses-permission>
-    <uses-permission android:name="android.permission.WAKE_LOCK"></uses-permission>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
 
     <!--百度地图-->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
@@ -20,34 +20,33 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <uses-permission android:name="android.permission.GET_TASKS"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
     <!--保持CPU 运转，屏幕和键盘灯有可能是关闭的,用于文件上传和下载 -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <!--百度定位-->
     <!-- 这个权限用于进行网络定位-->
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"></uses-permission>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <!-- 这个权限用于访问GPS定位-->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"></uses-permission>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <!-- 用于访问wifi网络信息，wifi信息会用于进行网络定位-->
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"></uses-permission>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <!-- 获取运营商信息，用于支持提供运营商信息相关的接口-->
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"></uses-permission>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <!-- 这个权限用于获取wifi的获取权限，wifi信息会用来进行网络定位-->
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"></uses-permission>
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
     <!-- 用于读取手机当前的状态-->
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"></uses-permission>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
     <!-- 写入扩展存储，向扩展卡写入数据，用于写入离线定位数据-->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <!-- 访问网络，网络定位需要上网-->
     <uses-permission android:name="android.permission.INTERNET"/>
     <!-- SD卡读取权限，用户写入离线定位数据-->
-    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"></uses-permission>
     <!--微博分享权限-->
-    <uses-permission android:name="android.permission.CALL_PHONE"></uses-permission>
-    <uses-permission android:name="android.permission.READ_LOGS"></uses-permission>
-    <uses-permission android:name="android.permission.SET_DEBUG_APP"></uses-permission>
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"></uses-permission>
-    <uses-permission android:name="android.permission.GET_ACCOUNTS"></uses-permission>
+    <uses-permission android:name="android.permission.CALL_PHONE"/>
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
+
+    <!--DownloadManager下载时不显示Notification-->
+    <uses-permission android:name="android.permission.DOWNLOAD_WITHOUT_NOTIFICATION" />
 
     <application
         android:name=".SFApp"
@@ -55,6 +54,7 @@
         android:icon="@drawable/m_logo"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
+
         <activity android:name=".SplashActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar"
             >
@@ -68,12 +68,17 @@
         <activity android:name=".NYHomeActivity"
             android:windowSoftInputMode="stateHidden|adjustPan"
             android:theme="@style/Theme.AppCompat.NoActionBar"
-            />
+            >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+            </intent-filter>
+        </activity>
         <activity android:name=".VideoPlayActivity"/>
         <activity android:name=".NYLoginActivity"/>
         <activity android:name=".NYRegisterActivity"/>
         <activity android:name=".NYNewsDetailWebViewActivity"/>
         <activity android:name=".NYNewsDetailActivity"/>
+        <activity android:name=".login.ThirdLoginActivity"/>
         <activity android:name=".NYFragmentContainerActivity"/>
         <activity android:name=".tiantu.ActivityPhotoPreview"/>
         <activity android:name=".tiantu.NYPhotoShowActivity"

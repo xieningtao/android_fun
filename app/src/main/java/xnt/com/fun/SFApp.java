@@ -4,6 +4,7 @@ import com.basesmartframe.baseapp.BaseApp;
 import com.nostra13.universalimageloader.utils.L;
 import com.sf.baidulib.SFBaiduLocationManager;
 import com.sflib.reflection.core.ThreadHelp;
+import com.umeng.commonsdk.UMConfigure;
 
 import cdc.sed.yff.nm.sp.SpotManager;
 import cdc.sed.yff.nm.sp.SpotRequestListener;
@@ -40,6 +41,7 @@ public class SFApp extends BaseApp {
 //                .setDefaultFontPath("fonts/Oswald-Stencbab.ttf")
 //                .setFontAttrId(R.attr.fontPath)
 //                .build());
+        UMConfigure.setLogEnabled(true);
         SFBaiduLocationManager.getInstance().init(getApplicationContext());
         SFBaiduLocationManager.getInstance().requestLocate();
         ThreadHelp.initThread(this);

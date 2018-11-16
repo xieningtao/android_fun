@@ -45,7 +45,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_marginTop="8dp"
-            android:background="@color/white"
+            android:background="@color/transparent_half"
             android:layout_below="@id/pic_desc"
             >
             <TextView
@@ -54,8 +54,10 @@
                 android:layout_weight="2"
                 android:layout_height="40dp"
                 android:textSize="14sp"
-                android:text="写评论"
-                android:gravity="center"
+                android:text="说点什么"
+                android:textColor="@color/white"
+                android:gravity="left|center_vertical"
+                android:paddingLeft="8dp"
                 />
             <View
                 android:layout_width="1dp"
@@ -64,11 +66,15 @@
                 />
             <TextView
                 android:id="@+id/pic_show_comment_tv"
-                android:layout_width="0dp"
-                android:layout_weight="1"
+                android:layout_width="wrap_content"
                 android:layout_height="40dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
                 android:textSize="14sp"
-                android:text="展示评论"
+                android:drawablePadding="8dp"
+                android:drawableLeft="@drawable/comment_icon"
+                android:text="10"
+                android:textColor="@color/white"
                 android:gravity="center"
                 />
             <View
@@ -78,11 +84,15 @@
                 />
             <TextView
                 android:id="@+id/pic_praise_tv"
-                android:layout_width="0dp"
-                android:layout_weight="1"
+                android:layout_width="wrap_content"
                 android:layout_height="40dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
                 android:textSize="14sp"
-                android:text="点赞"
+                android:text="20"
+                android:textColor="@color/white"
+                android:drawablePadding="8dp"
+                android:drawableLeft="@drawable/pic_praise"
                 android:gravity="center"
                 />
 

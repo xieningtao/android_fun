@@ -29,8 +29,6 @@ allprojects {
         jcenter()
         //bmod sdk repository
         maven { url "https://raw.github.com/bmob/bmob-android-sdk/master" }
-
-        google()
     }
 }
 
