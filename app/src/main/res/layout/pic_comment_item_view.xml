@@ -58,7 +58,6 @@
         android:layout_alignLeft="@id/pic_comment_content"
         android:layout_marginTop="4dp"
         android:textSize="10sp"
-        android:text="2018-11-05"
         />
 
     <View

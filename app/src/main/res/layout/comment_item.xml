@@ -27,7 +27,7 @@
             android:textSize="16sp" />
 
 
-        <com.sflib.CustomView.baseview.EditTextClearDroidView
+        <EditText
             android:id="@+id/comment_et"
             android:layout_width="match_parent"
             android:layout_height="40dp"
@@ -42,7 +42,6 @@
             android:maxLines="1"
             android:textColor="@color/text_black"
             android:textColorHint="@color/lb_grey"
-
             android:textSize="14sp" />
     </RelativeLayout>
 </FrameLayout>

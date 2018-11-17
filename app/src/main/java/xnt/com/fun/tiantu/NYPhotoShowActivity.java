@@ -13,16 +13,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
-import com.basesmartframe.baseui.BaseActivity;
 import com.basesmartframe.dialoglib.DialogFactory;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.utils.L;
 import com.sf.utils.baseutil.NetWorkManagerUtil;
 import com.sf.utils.baseutil.SFToast;
-import com.sf.utils.baseutil.SystemUIHelp;
-import com.sf.utils.baseutil.UnitHelp;
 import com.sflib.CustomView.baseview.EditTextClearDroidView;
 import com.sflib.umenglib.share.DefaultShareAdapter;
 import com.sflib.umenglib.share.DefaultUMengShareAction;
@@ -51,7 +47,6 @@ import xnt.com.fun.DialogHelper;
 import xnt.com.fun.FragmentHelper;
 import xnt.com.fun.NYFragmentContainerActivity;
 import xnt.com.fun.R;
-import xnt.com.fun.ViewPagerTransformManger;
 import xnt.com.fun.bean.CardPicBean;
 import xnt.com.fun.bean.CardPicGroup;
 import xnt.com.fun.bean.NYBmobUser;
@@ -65,19 +60,22 @@ import static xnt.com.fun.NYFragmentBigPic.PIC_GROUP_ID;
  * Created by mac on 2018/6/2.
  */
 
-public class NYPhotoShowActivity extends BaseActivity {
+public class NYPhotoShowActivity extends NYBaseShowActivity {
 
 
-    protected ViewPager mViewPager;
     private Dialog mShareDialog;
-    protected NYPhotoShowActivity.ViewPagerAdapter mAdapter;
+    protected PhotoPagerAdapter mAdapter;
     private List<CardPicBean> mCardPicBeans = new ArrayList<>();
     public static final String CARD_PIC_BEANS = "card_pic_beans";
 
-    private View mCommentView;
-    private TextView mSendTv;
-    private EditTextClearDroidView mCommentEt;
     private String curPicGroupId;
+
+
+    public static final String COMMENT_COUNT= "comment_count";
+    public static final String PRAISE_COUNT= "praise_count";
+    private int mCommentCount = 0;
+    private int mPraiseCount = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,50 +91,67 @@ public class NYPhotoShowActivity extends BaseActivity {
             imageGroupId = intent.getStringExtra(ActivityPhotoPreview.IMAGE_GROUP_ID);
             curPicGroupId = imageGroupId;
         }
-        this.mViewPager = (ViewPager) findViewById(R.id.viewpager);
-        try {
-            this.mViewPager.setPageTransformer(true, ViewPagerTransformManger.getTransformRandom().clazz.newInstance());
-        } catch (InstantiationException e) {
-            com.sf.loglib.L.error(TAG,e.getMessage());
-        } catch (IllegalAccessException e) {
-            com.sf.loglib.L.error(TAG,e.getMessage());
-        }
-//        this.mViewPager.setPageTransformer(true, new XTranslateTransform());
-        this.mViewPager.setPageMargin(UnitHelp.dip2px(this, 5.0F));
-        this.mViewPager.setPageMarginDrawable(R.drawable.black_shape);
-        this.mAdapter = new NYPhotoShowActivity.ViewPagerAdapter(this);
-        this.mViewPager.setAdapter(this.mAdapter);
+        super.initView();
         if (NetWorkManagerUtil.isNetworkAvailable()) {
             if (!TextUtils.isEmpty(imageGroupId)) {
                 getAllPicByGroupId(imageGroupId);
-            } else {
-                //TODO
             }
         } else {
-            //TODO
+            SFToast.showToast(R.string.net_unavailable);
         }
+    }
 
-        //评论
-        mCommentView = findViewById(R.id.comment_view);
-        mSendTv = (TextView) findViewById(R.id.comment_send_tv);
-        mCommentEt = (EditTextClearDroidView) findViewById(R.id.comment_et);
-        mCommentView.setOnClickListener(new View.OnClickListener() {
+    @Override
+    protected String getCurObjectId() {
+        return curPicGroupId;
+    }
+
+
+    @Override
+    protected void showCommentListDialog(String objectId) {
+        Bundle bundle = new Bundle();
+        bundle.putString(PIC_GROUP_ID, objectId);
+        Intent intent = FragmentHelper.getStartIntent(NYPhotoShowActivity.this, BigPicCommentListFragment.class,
+                bundle, null, NYFragmentContainerActivity.class);
+        intent.putExtra(NYFragmentContainerActivity.CONTAINER_TITLE, "评论");
+        startActivity(intent);
+    }
+
+    @Override
+    protected PagerAdapter createAdapter() {
+        mAdapter = new PhotoPagerAdapter(this);
+        return mAdapter;
+    }
+
+    @Override
+    protected void doPostComment(String curObjectId, String commentContent, String userId) {
+        updateLatestComment(curObjectId, commentContent, null);
+    }
+
+    @Override
+    protected void doPraise(String curObjectId) {
+        CardPicBean picBean = mCardPicBeans.get(mViewPager.getCurrentItem());
+        if(picBean.isPraised){
+            SFToast.showToast(R.string.already_praise);
+            return;
+        }
+        doIncreasePraiseNum(curPicGroupId);
+    }
+
+    private void doIncreasePraiseNum(String picGroupId){
+        final CardPicGroup picGroup = new CardPicGroup();
+        picGroup.setObjectId(picGroupId);
+        picGroup.increment("praiseNum", 1);
+        picGroup.update(new UpdateListener() {
             @Override
-            public void onClick(View v) {
-                mCommentView.setVisibility(View.GONE);
-                SystemUIHelp.hideSoftKeyboard(NYPhotoShowActivity.this, mCommentEt);
-            }
-        });
-        mSendTv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (TextUtils.isEmpty(mCommentEt.getEditText().getText())) {
-                    SFToast.showToast("请输入内容");
-                    return;
+            public void done(BmobException e) {
+                if(e == null){
+                   CardPicBean picBean = mCardPicBeans.get(mViewPager.getCurrentItem());
+                   picBean.isPraised = true;
+//                   increasePraise(1);
+                    mPraiseCount++;
+                   updatePraiseNum(String.valueOf(mPraiseCount));
                 }
-                SystemUIHelp.hideSoftKeyboard(NYPhotoShowActivity.this, mCommentEt);
-                String commentContent = mCommentEt.getEditText().getText().toString();
-                updateLatestComment(curPicGroupId, commentContent, null);
             }
         });
     }
@@ -151,7 +166,6 @@ public class NYPhotoShowActivity extends BaseActivity {
             picGroup.latestUserId = new BmobPointer(user);
         }
         picGroup.increment("commentNum", 1);
-        mCommentView.setVisibility(View.GONE);
 
         Observable.create(new Observable.OnSubscribe<String>() {
 
@@ -173,14 +187,16 @@ public class NYPhotoShowActivity extends BaseActivity {
                 .subscribe(new Subscriber<Object>() {
                     @Override
                     public void onCompleted() {
+                        handleCommentResult(null);
+                        mCommentCount++;
+                        updateCommentNum(String.valueOf(mCommentCount));
                         com.sf.loglib.L.info(TAG, "onCompleted thread: " + Thread.currentThread().getName());
-                        SFToast.showToast("发表成功");
                     }
 
                     @Override
                     public void onError(Throwable throwable) {
+                        handleCommentResult(throwable);
                         com.sf.loglib.L.info(TAG, "onError thread: " + Thread.currentThread().getName());
-                        SFToast.showToast("发表失败");
                     }
 
                     @Override
@@ -243,7 +259,7 @@ public class NYPhotoShowActivity extends BaseActivity {
         super.onDestroy();
     }
 
-    private void showUpdateDialog(final CardPicBean cardPicBean, final TextView bottomBarTv) {
+    private void showUpdateDialog(final CardPicBean cardPicBean) {
         LayoutInflater layoutInflater = LayoutInflater.from(NYPhotoShowActivity.this);
         View editContentView = layoutInflater.inflate(R.layout.super_user_edit_dialog,null);
         final Dialog editDialog = DialogHelper.getNoTitleDialog(NYPhotoShowActivity.this,editContentView);
@@ -265,7 +281,7 @@ public class NYPhotoShowActivity extends BaseActivity {
                     public void done(BmobException e) {
                         if(e==null){
                             SFToast.showToast("更新成功");
-                            bottomBarTv.setText(content);
+                            mBottomContentTv.setText(content);
                         }else{
                             SFToast.showToast("更新失败");
                         }
@@ -275,10 +291,10 @@ public class NYPhotoShowActivity extends BaseActivity {
         });
     }
 
-    private class ViewPagerAdapter extends PagerAdapter {
+    private class PhotoPagerAdapter extends PagerAdapter {
         private LayoutInflater mInflater;
 
-        public ViewPagerAdapter(Context context) {
+        public PhotoPagerAdapter(Context context) {
             this.mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         }
 
@@ -296,35 +312,14 @@ public class NYPhotoShowActivity extends BaseActivity {
 
         public Object instantiateItem(View container, final int position) {
             View view = this.mInflater.inflate(R.layout.ny_pic_show_item, (ViewGroup) null);
-            final View bottomBar = view.findViewById(R.id.bottom_show_bar_rl);
-            final TextView bottomBarTv = (TextView) view.findViewById(R.id.pic_desc);
 
-            View writeCommentView = view.findViewById(R.id.pic_write_comment_tv);
-            final View showCommentView = view.findViewById(R.id.pic_show_comment_tv);
-
-            String desc = mCardPicBeans.get(position).imgDesc;
-            if (!TextUtils.isEmpty(desc)) {
-                bottomBar.setVisibility(View.VISIBLE);
-                bottomBarTv.setText(desc);
-            } else {
-                bottomBar.setVisibility(View.GONE);
-            }
             ImageView imageView = (ImageView) view.findViewById(R.id.photo_view);
-            imageView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (bottomBar.getVisibility() != View.GONE) {
-                        bottomBar.setVisibility(View.GONE);
-                    } else {
-                        bottomBar.setVisibility(View.VISIBLE);
-                    }
-                }
-            });
+
             if(BuildConfig.SUPER_USER){
                 imageView.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View v) {
-                        showUpdateDialog(mCardPicBeans.get(position),bottomBarTv);
+                        showUpdateDialog(mCardPicBeans.get(position));
                         return true;
                     }
                 });
@@ -355,41 +350,11 @@ public class NYPhotoShowActivity extends BaseActivity {
             });
             final CardPicBean bean = mCardPicBeans.get(position);
 
-            writeCommentView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    showEditCommentView();
-                }
-            });
-
-            showCommentView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-//                    showCommentListDialog(beauty.getObjectId());
-                    Bundle bundle = new Bundle();
-                    bundle.putString(PIC_GROUP_ID, bean.getObjectId());
-                    Intent intent = FragmentHelper.getStartIntent(NYPhotoShowActivity.this, BigPicCommentListFragment.class,
-                            bundle, null, NYFragmentContainerActivity.class);
-                    intent.putExtra(NYFragmentContainerActivity.CONTAINER_TITLE, "评论");
-                    startActivity(intent);
-                }
-            });
-
             ImageLoader.getInstance().displayImage(bean.imageUrl, imageView);
             ((ViewPager) container).addView(view);
             return view;
         }
 
-        private void showEditCommentView() {
-            mCommentView.setVisibility(View.VISIBLE);
-            mCommentEt.getEditText().requestFocus();
-            mCommentView.post(new Runnable() {
-                @Override
-                public void run() {
-                    SystemUIHelp.showSoftKeyboard(NYPhotoShowActivity.this, mCommentEt.getEditText());
-                }
-            });
-        }
     }
 
     private ShareAction getShareAction(String content){
@@ -411,15 +376,15 @@ public class NYPhotoShowActivity extends BaseActivity {
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-        if (hasFocus) {
-            View decorView = getWindow().getDecorView();
-            decorView.setSystemUiVisibility(
-                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                            | View.SYSTEM_UI_FLAG_FULLSCREEN
-                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
-        }
+//        if (hasFocus) {
+//            View decorView = getWindow().getDecorView();
+//            decorView.setSystemUiVisibility(
+//                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+//                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+//                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+//                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+//                            | View.SYSTEM_UI_FLAG_FULLSCREEN
+//                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+//        }
     }
 }

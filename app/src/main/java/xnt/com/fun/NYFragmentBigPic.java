@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -69,7 +70,7 @@ public class NYFragmentBigPic extends NYBasePullListFragment<CardPicGroup> {
     private View mCommentView;
     private KeyBoardFrameLayout mKeyBoardView;
     private TextView mSendTv;
-    private EditTextClearDroidView mCommentEt;
+    private EditText mCommentEt;
     private String curPicGroupId;
 
     @Override
@@ -96,7 +97,7 @@ public class NYFragmentBigPic extends NYBasePullListFragment<CardPicGroup> {
         getPullToRefreshListView().getRefreshableView().setDividerHeight(UnitHelp.dip2px(getActivity(), 8));
         mCommentView = view.findViewById(R.id.comment_view);
         mSendTv = (TextView) view.findViewById(R.id.comment_send_tv);
-        mCommentEt = (EditTextClearDroidView) view.findViewById(R.id.comment_et);
+        mCommentEt = (EditText) view.findViewById(R.id.comment_et);
         mKeyBoardView = (KeyBoardFrameLayout) view.findViewById(R.id.keyboard_fl);
         mKeyBoardView.setOnKeyBoardListener(new KeyBoardFrameLayout.onKeyBoardListener() {
             @Override
@@ -118,12 +119,12 @@ public class NYFragmentBigPic extends NYBasePullListFragment<CardPicGroup> {
         mSendTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (TextUtils.isEmpty(mCommentEt.getEditText().getText())) {
+                if (TextUtils.isEmpty(mCommentEt.getText())) {
                     SFToast.showToast("请输入内容");
                     return;
                 }
                 SystemUIHelp.hideSoftKeyboard(getActivity(), mCommentEt);
-                String commentContent = mCommentEt.getEditText().getText().toString();
+                String commentContent = mCommentEt.getText().toString();
                 updateLatestComment(curPicGroupId, commentContent, null);
             }
         });
@@ -433,11 +434,11 @@ public class NYFragmentBigPic extends NYBasePullListFragment<CardPicGroup> {
             @Override
             public void onClick(View v) {
                 mCommentView.setVisibility(View.VISIBLE);
-                mCommentEt.getEditText().requestFocus();
+                mCommentEt.requestFocus();
                 mCommentView.post(new Runnable() {
                     @Override
                     public void run() {
-                        SystemUIHelp.showSoftKeyboard(getActivity(), mCommentEt.getEditText());
+                        SystemUIHelp.showSoftKeyboard(getActivity(), mCommentEt);
                     }
                 });
                 curPicGroupId = cardPicGroup.getObjectId();
@@ -459,6 +460,8 @@ public class NYFragmentBigPic extends NYBasePullListFragment<CardPicGroup> {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), NYPhotoShowActivity.class);
+                intent.putExtra(ActivityPhotoPreview.IMAGE_GROUP_ID, cardPicGroup.getObjectId());
+                intent.putExtra(ActivityPhotoPreview.IMAGE_GROUP_ID, cardPicGroup.getObjectId());
                 intent.putExtra(ActivityPhotoPreview.IMAGE_GROUP_ID, cardPicGroup.getObjectId());
                 startActivity(intent);
             }

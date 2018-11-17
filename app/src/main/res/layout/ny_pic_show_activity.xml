@@ -6,11 +6,21 @@
     xmlns:tools="http://schemas.android.com/tools">
 
 
-    <android.support.v4.view.ViewPager
+    <xnt.com.fun.view.ExViewPager
         android:id="@+id/viewpager"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         />
+
+
+    <com.opensource.svgaplayer.SVGAImageView
+        android:id="@+id/praise_animation_svga"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_centerInParent="true"
+        android:scaleType="fitCenter"
+        app:antiAlias="true" />
+
     <include
         android:id="@+id/comment_view"
         layout="@layout/comment_item"
@@ -20,4 +30,15 @@
         android:visibility="gone"
         tools:visibility="visible"
         />
+
+  <include
+      layout="@layout/comment_bottom"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_alignParentBottom="true"
+      />
+    <FrameLayout
+        android:id="@+id/dialog_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </RelativeLayout>

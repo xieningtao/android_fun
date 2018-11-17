@@ -40,8 +40,5 @@
         android:layout_centerInParent="true"
         android:visibility="gone"
         />
-    <FrameLayout
-        android:id="@+id/beauty_dialog_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+
 </xnt.com.fun.view.FixRelativeLayout>

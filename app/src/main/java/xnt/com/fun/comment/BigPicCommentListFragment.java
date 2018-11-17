@@ -23,6 +23,7 @@ import cn.bmob.v3.datatype.BmobDate;
 import cn.bmob.v3.datatype.BmobPointer;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
+import xnt.com.fun.NYDateFormatHelper;
 import xnt.com.fun.R;
 import xnt.com.fun.bean.CardPicGroup;
 
@@ -93,6 +94,7 @@ public class BigPicCommentListFragment extends BasePullListFragment<PicComment> 
     protected void bindView(BaseAdapterHelper helper, int i, PicComment picComment) {
         helper.setText(R.id.pic_comment_content, picComment.content);
         helper.setText(R.id.pic_comment_name, "随机");
+        helper.setText(R.id.pic_comment_time,NYDateFormatHelper.formatTime(picComment.getCreatedAt()));
 //        helper.setImageBitmap(R.id.pic_user_iv,R.drawable.app_icon);
         if (i == getDataSize() - 1) {//最后一个
             helper.setVisible(R.id.pic_comment_divider, View.GONE);

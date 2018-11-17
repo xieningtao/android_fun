@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/bottom_show_bar_rl"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignParentBottom="true"
+    android:background="@color/transparent_half"
+    android:paddingTop="8dp">
+
+    <TextView
+        android:id="@+id/pic_desc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxLines="3"
+        android:paddingLeft="4dp"
+        android:paddingRight="4dp"
+        android:textColor="@color/white"
+        android:textSize="16dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/pic_desc"
+        android:layout_marginTop="8dp"
+        android:background="@color/transparent_half"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/write_comment_tv"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="2"
+            android:gravity="left|center_vertical"
+            android:paddingLeft="8dp"
+            android:text="说点什么"
+            android:textColor="@color/white"
+            android:textSize="14sp" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="40dp"
+            android:background="@color/lb_grey" />
+
+        <TextView
+            android:id="@+id/show_comment_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:drawableLeft="@drawable/comment_icon"
+            android:drawablePadding="8dp"
+            android:gravity="center"
+            android:text="10"
+            android:textColor="@color/white"
+            android:textSize="14sp" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="40dp"
+            android:background="@color/lb_grey" />
+
+        <TextView
+            android:id="@+id/pic_praise_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:drawableLeft="@drawable/pic_praise"
+            android:drawablePadding="8dp"
+            android:gravity="center"
+            android:text="20"
+            android:textColor="@color/white"
+            android:textSize="14sp" />
+
+    </LinearLayout>
+</RelativeLayout>

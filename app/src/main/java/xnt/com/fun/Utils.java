@@ -22,7 +22,7 @@ public class Utils {
 
     public static int getBeautyPicWidth(Activity activity) {
         int screenWidth = SystemUIWHHelp.getScreenRealWidth(activity);
-        int reminderWidth = screenWidth - UnitHelp.dip2px(activity, 4*4);
+        int reminderWidth = screenWidth - UnitHelp.dip2px(activity, 4*2);
         return reminderWidth;
     }
 
