@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.basesmartframe.baseui.BaseFragment;
 import com.nostra13.universalimageloader.utils.L;
@@ -28,22 +29,41 @@ public class NYFragmentProfile extends BaseFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        view.findViewById(R.id.personal_rl).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), ThirdLoginActivity.class);
-                startActivity(intent);
-//                Intent intent = new Intent(getActivity(), NYLoginActivity.class);
-//                startActivity(intent);
-            }
-        });
 
+
+       initView(view);
+    }
+
+    private void initView(View view){
+        //version
+        TextView versionContentTv = view.findViewById(R.id.version_name_tv);
+        versionContentTv.setText(BuildConfig.VERSION_NAME);
+        //upgrade
         view.findViewById(R.id.version_rl).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 upgrade();
             }
         });
+        //login
+        view.findViewById(R.id.personal_rl).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toLogin();
+            }
+        });
+
+        view.findViewById(R.id.logout_bt).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                toLogin();
+            }
+        });
+    }
+
+    private void toLogin() {
+        Intent intent = new Intent(getActivity(), ThirdLoginActivity.class);
+        startActivity(intent);
     }
 
     private void upgrade() {
@@ -55,8 +75,6 @@ public class NYFragmentProfile extends BaseFragment {
         request.setDescription("正在下载...");
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
         request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI);
-//        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_HIDDEN);
-//        request.setMimeType("application/cn.trinea.download.file");
         long downloadId = downloadManager.enqueue(request);
         L.i(TAG,"downloadId: "+downloadId);
     }

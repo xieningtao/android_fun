@@ -51,4 +51,8 @@
     <string name="microphone_permission">麦克风</string>
     <string name="divider">、</string>
     <string name="already_praise">你已经点赞了</string>
+    <string name="logout">登出</string>
+    <string name="clear_cache">清理缓存</string>
+    <string name="about">关于</string>
+    <string name="login">登陆</string>
 </resources>

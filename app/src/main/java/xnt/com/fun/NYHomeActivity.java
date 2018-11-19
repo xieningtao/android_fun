@@ -12,7 +12,9 @@ import android.widget.TextView;
 import android.widget.Toolbar;
 
 import com.basesmartframe.baseui.BaseSFTabActivity;
+import com.sf.loglib.L;
 
+import cdc.sed.yff.nm.sp.SpotListener;
 import cdc.sed.yff.nm.sp.SpotManager;
 
 /**
@@ -26,6 +28,28 @@ public class NYHomeActivity extends BaseSFTabActivity {
         getTabWidget().setDividerDrawable(null);
         getTabWidget().setBackgroundResource(R.drawable.ny_home_bottom_layer);
         setTabAdapter(new FragmentTabAdapter());
+        SpotManager.getInstance(this).showSlideableSpot(this,
+                new SpotListener() {
+                    @Override
+                    public void onShowSuccess() {
+                        L.info(TAG,"onShowSuccess ");
+                    }
+
+                    @Override
+                    public void onShowFailed(int i) {
+                        L.info(TAG,"onShowFailed i: "+i);
+                    }
+
+                    @Override
+                    public void onSpotClosed() {
+
+                    }
+
+                    @Override
+                    public void onSpotClicked(boolean b) {
+
+                    }
+                });
 //        initActionBar();
 //        updateActionBar();
     }
@@ -143,10 +167,17 @@ public class NYHomeActivity extends BaseSFTabActivity {
 
     @Override
     public void onBackPressed() {
+
         // 如果有需要，可以点击后退关闭插播广告。
+        if (SpotManager.getInstance(this).isSlideableSpotShowing()) {
+            SpotManager.getInstance(this).hideSlideableSpot();
+            return;
+        }
         if (SpotManager.getInstance(this).isSpotShowing()) {
             SpotManager.getInstance(this).hideSpot();
-        } else {
+            return;
+        }
+
             mBackPressCount++;
             if (mBackPressCount == 0 && mBackPressTime == 0) {
                 mBackPressTime = System.currentTimeMillis();
@@ -161,8 +192,8 @@ public class NYHomeActivity extends BaseSFTabActivity {
                     mBackPressTime = 0;
                 }
             }
+//            FansStationManager.getInstance(this).onAppExit();
             super.onBackPressed();
-        }
     }
     @Override
     protected void onDestroy() {

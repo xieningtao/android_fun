@@ -4,7 +4,6 @@
                 android:layout_height="match_parent"
                 android:background="@drawable/ny_topic_list_selector"
                 android:orientation="vertical"
-                android:padding="8dp"
     >
 
     <ImageView

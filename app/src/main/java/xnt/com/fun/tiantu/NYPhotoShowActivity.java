@@ -312,9 +312,7 @@ public class NYPhotoShowActivity extends NYBaseShowActivity {
 
         public Object instantiateItem(View container, final int position) {
             View view = this.mInflater.inflate(R.layout.ny_pic_show_item, (ViewGroup) null);
-
             ImageView imageView = (ImageView) view.findViewById(R.id.photo_view);
-
             if(BuildConfig.SUPER_USER){
                 imageView.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override

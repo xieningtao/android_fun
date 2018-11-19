@@ -1,8 +1,8 @@
 package xnt.com.fun;
 
 import com.basesmartframe.baseapp.BaseApp;
-import com.nostra13.universalimageloader.utils.L;
 import com.sf.baidulib.SFBaiduLocationManager;
+import com.sf.loglib.L;
 import com.sflib.reflection.core.ThreadHelp;
 import com.umeng.commonsdk.UMConfigure;
 
@@ -35,6 +35,9 @@ public class SFApp extends BaseApp {
 
     }
 
+    private void initYouMi(){
+
+    }
 
     private void init() {
 //        CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
@@ -46,17 +49,7 @@ public class SFApp extends BaseApp {
         SFBaiduLocationManager.getInstance().requestLocate();
         ThreadHelp.initThread(this);
         initBmob();
-        SpotManager.getInstance(this).requestSpot(new SpotRequestListener() {
-            @Override
-            public void onRequestSuccess() {
-                L.i(TAG, "spot onRequestSuccess");
-            }
 
-            @Override
-            public void onRequestFailed(int i) {
-                L.e(TAG, "spot onRequestFailed result: " + i);
-            }
-        });
 
     }
 

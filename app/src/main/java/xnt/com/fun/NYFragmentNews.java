@@ -4,8 +4,10 @@ import android.content.Intent;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 
 import com.basesmartframe.baseadapter.BaseAdapterHelper;
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.sf.loglib.L;
 import com.sf.utils.baseutil.DateFormatHelp;
 import com.sf.utils.baseutil.SFToast;
@@ -161,7 +163,7 @@ public class NYFragmentNews extends NYBasePullListFragment<StyleNews> {
 
     @Override
     protected void bindView(BaseAdapterHelper help, int position, StyleNews bean) {
-        help.setImageBuilder(R.id.news_iv, bean.imgUrl, DisplayOptionConfig.getDefaultDisplayOption());
+        ImageLoader.getInstance().displayImage(bean.imgUrl,(ImageView) help.getView(R.id.news_iv),DisplayOptionConfig.getDefaultDisplayOption());
         help.setText(R.id.news_label_tv, bean.imgLabel);
         help.setText(R.id.news_title_tv, bean.title);
     }

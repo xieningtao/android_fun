@@ -1,9 +1,14 @@
 package xnt.com.fun.login;
 
+import android.app.ActionBar;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toolbar;
 
 import com.basesmartframe.baseui.BaseActivity;
 import com.nostra13.universalimageloader.utils.L;
@@ -15,6 +20,7 @@ import com.umeng.socialize.bean.SHARE_MEDIA;
 import java.util.Map;
 
 import xnt.com.fun.R;
+import xnt.com.fun.Utils;
 
 public class ThirdLoginActivity extends BaseActivity {
     private final String TAG = "ThirdLoginActivity";
@@ -47,7 +53,28 @@ public class ThirdLoginActivity extends BaseActivity {
         initView();
     }
 
+    private void initActionBar() {
+        getActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        ActionBar.LayoutParams params = new ActionBar.LayoutParams(ActionBar.LayoutParams.FILL_PARENT, ActionBar.LayoutParams.FILL_PARENT);
+        View actionView = LayoutInflater.from(this).inflate(R.layout.ny_home_title, null);
+        getActionBar().setCustomView(actionView, params);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Toolbar parent = (Toolbar) actionView.getParent();
+            parent.setContentInsetsAbsolute(0, 0);
+        }
+    }
+
+    private void updateActionBar() {
+        View rootView = getActionBar().getCustomView();
+        rootView.setBackgroundColor(getResources().getColor(R.color.white));
+        ImageView logoIv = (ImageView) rootView.findViewById(R.id.ny_logo);
+        logoIv.setImageResource(R.drawable.app_icon);
+        TextView titleTv = rootView.findViewById(R.id.ny_title_tv);
+        titleTv.setText(R.string.login);
+    }
     private void initView() {
+        Utils.setActionBar(this);
+        updateActionBar();
         UMShareConfig config = new UMShareConfig();
         config.isNeedAuthOnGetUserInfo(true);
         UMShareAPI.get(ThirdLoginActivity.this).setShareConfig(config);
