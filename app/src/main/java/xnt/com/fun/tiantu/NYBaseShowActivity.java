@@ -170,6 +170,10 @@ public class NYBaseShowActivity extends BaseActivity {
         mViewHolder.praiseView.setText(text);
     }
 
+    public void updatePraiseState(boolean selected){
+        mViewHolder.praiseView.setSelected(selected);
+    }
+
     public void updateDescContent(String text){
         mViewHolder.descView.setText(text);
     }
@@ -180,6 +184,8 @@ public class NYBaseShowActivity extends BaseActivity {
     protected void doPraise(String curObjectId){
 
     }
+
+
 
     protected String getCurObjectId(){
         return "";
@@ -249,7 +255,21 @@ public class NYBaseShowActivity extends BaseActivity {
         });
     }
 
+    protected void showDesc(boolean show){
+        if(show){
+            mViewHolder.descView.setVisibility(View.VISIBLE);
+        }else {
+            mViewHolder.descView.setVisibility(View.GONE);
+        }
+    }
 
+    protected void showBottomBar(boolean show){
+        if(show) {
+            mBottomBarGroup.setVisibility(View.VISIBLE);
+        }else {
+            mBottomBarGroup.setVisibility(View.GONE);
+        }
+    }
 
     protected void handleCommentResult(Throwable e) {
         if (e == null) {

@@ -76,6 +76,11 @@ public class NYBeautyShowActivity extends NYBaseShowActivity implements BeautyMo
     private int mTotalSize = 100;
     private int mCurPos = -1;
 
+    public static final String COMMENT_COUNT= "comment_count";
+    public static final String PRAISE_COUNT= "praise_count";
+    private int mCommentCount = 0;
+    private int mPraiseCount = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -118,9 +123,36 @@ public class NYBeautyShowActivity extends NYBaseShowActivity implements BeautyMo
         if (intent != null) {
             mTotalSize = intent.getIntExtra(BEAUTY_TOTAL_SIZE, 0);
             mCurPos = intent.getIntExtra(BEAUTY_CUR_POS, 0);
+            mCommentCount = intent.getIntExtra(COMMENT_COUNT,0);
+            mPraiseCount = intent.getIntExtra(PRAISE_COUNT,0);
         }
         super.initView();
         mViewPager.setCurrentItem(mCurPos);
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                Beauty beauty = mAdapter.getBeauty(position);
+                if(beauty != null && position == getCurrentItem()) {
+                    showBottomBar(true);
+                    if(TextUtils.isEmpty(beauty.imgDesc)){
+                        showDesc(false);
+                    }else {
+                        showDesc(true);
+                        updateDescContent(beauty.imgDesc);
+                    }
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
         mMusicIv = (ImageView) findViewById(R.id.music_iv);
         //animation
         mTask = new MusicAnimationTask();
@@ -161,7 +193,33 @@ public class NYBeautyShowActivity extends NYBaseShowActivity implements BeautyMo
 
     @Override
     protected void doPraise(String curObjectId) {
-        super.doPraise(curObjectId);
+        Beauty beauty = mAdapter.getBeauty(mViewPager.getCurrentItem());
+        if(beauty == null){
+            return;
+        }
+        if(beauty.isPraised){
+            SFToast.showToast(R.string.already_praise);
+            return;
+        }
+        doIncreasePraiseNum(curObjectId);
+    }
+
+    private void doIncreasePraiseNum(String curObjectId){
+        final Beauty beauty = new Beauty();
+        beauty.setObjectId(curObjectId);
+        beauty.increment("praiseNum", 1);
+        beauty.update(new UpdateListener() {
+            @Override
+            public void done(BmobException e) {
+                if(e == null){
+                    Beauty praisedBeauty = mAdapter.getBeauty(getCurrentItem());
+                    praisedBeauty.isPraised = true;
+                    mPraiseCount++;
+                    updatePraiseNum(String.valueOf(mPraiseCount));
+                    updatePraiseState(true);
+                }
+            }
+        });
     }
 
     @Override
@@ -187,6 +245,10 @@ public class NYBeautyShowActivity extends NYBaseShowActivity implements BeautyMo
             @Override
             public void done(String s, BmobException e) {
                 handleCommentResult(e);
+                if(e == null){
+                    mCommentCount++;
+                    updateCommentNum(String.valueOf(mCommentCount));
+                }
             }
         });
     }
@@ -274,7 +336,7 @@ public class NYBeautyShowActivity extends NYBaseShowActivity implements BeautyMo
 
 
 
-    private void showUpdateDialog(final Beauty beauty, final TextView bottomBarTv) {
+    private void showUpdateDialog(final Beauty beauty) {
         LayoutInflater layoutInflater = LayoutInflater.from(NYBeautyShowActivity.this);
         View editContentView = layoutInflater.inflate(R.layout.super_user_edit_dialog, null);
         final Dialog editDialog = DialogHelper.getNoTitleDialog(NYBeautyShowActivity.this, editContentView);
@@ -296,7 +358,7 @@ public class NYBeautyShowActivity extends NYBaseShowActivity implements BeautyMo
                     public void done(BmobException e) {
                         if (e == null) {
                             SFToast.showToast("更新成功");
-                            bottomBarTv.setText(content);
+                            updateDescContent(content);
                         } else {
                             SFToast.showToast("更新失败");
                         }
@@ -386,31 +448,28 @@ public class NYBeautyShowActivity extends NYBaseShowActivity implements BeautyMo
                     progressView.setVisibility(View.VISIBLE);
                     noDataView.setVisibility(View.GONE);
                 }
+                if(position == getCurrentItem()) {
+                    showBottomBar(false);
+                }
             } else {
+                if(position == getCurrentItem()) {
+                    showBottomBar(true);
+                    if(TextUtils.isEmpty(beauty.imgDesc)){
+                        showDesc(false);
+                    }else {
+                        showDesc(true);
+                        updateDescContent(beauty.imgDesc);
+                    }
+                }
                 view.setTag(UNCHANGE);
                 progressView.setVisibility(View.GONE);
                 noDataView.setVisibility(View.GONE);
-                final View bottomBar = view.findViewById(R.id.bottom_show_bar_rl);
-                final TextView bottomBarTv = (TextView) view.findViewById(R.id.pic_desc);
-//                if (!TextUtils.isEmpty(beauty.imgDesc)) {
-//                    bottomBar.setVisibility(View.VISIBLE);
-//                    bottomBarTv.setText(beauty.imgDesc);
-//                } else {
-//                    bottomBar.setVisibility(View.GONE);
-//                }
-
                 ImageView imageView = (ImageView) view.findViewById(R.id.photo_view);
-//                imageView.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//
-//                    }
-//                });
                 if (BuildConfig.SUPER_USER) {
                     imageView.setOnLongClickListener(new View.OnLongClickListener() {
                         @Override
                         public boolean onLongClick(View v) {
-                            showUpdateDialog(BeautyModel.getInstance().getBeauty(position), bottomBarTv);
+                            showUpdateDialog(BeautyModel.getInstance().getBeauty(position));
                             return true;
                         }
                     });
@@ -490,7 +549,7 @@ public class NYBeautyShowActivity extends NYBaseShowActivity implements BeautyMo
         }
 
         @Nullable
-        private Beauty getBeauty(int position) {
+        public Beauty getBeauty(int position) {
             Beauty beauty = null;
             if (BeautyModel.getInstance().getBeautySize() > position) {
                 beauty = BeautyModel.getInstance().getBeauty(position);

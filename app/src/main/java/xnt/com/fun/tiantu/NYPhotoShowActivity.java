@@ -90,8 +90,37 @@ public class NYPhotoShowActivity extends NYBaseShowActivity {
         if (intent != null) {
             imageGroupId = intent.getStringExtra(ActivityPhotoPreview.IMAGE_GROUP_ID);
             curPicGroupId = imageGroupId;
+            mCommentCount = intent.getIntExtra(COMMENT_COUNT,0);
+            mPraiseCount = intent.getIntExtra(PRAISE_COUNT,0);
         }
         super.initView();
+        updateCommentNum(String.valueOf(mCommentCount));
+        updatePraiseNum(String.valueOf(mPraiseCount));
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                if(position >=0 && position < mCardPicBeans.size()) {
+                    CardPicBean cardPicBean = mCardPicBeans.get(position);
+                    updatePraiseState(cardPicBean.isPraised);
+                    if(TextUtils.isEmpty(cardPicBean.imgDesc)){
+                        showDesc(false);
+                    }else {
+                        showDesc(true);
+                        updateDescContent(cardPicBean.imgDesc);
+                    }
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
         if (NetWorkManagerUtil.isNetworkAvailable()) {
             if (!TextUtils.isEmpty(imageGroupId)) {
                 getAllPicByGroupId(imageGroupId);
@@ -135,7 +164,7 @@ public class NYPhotoShowActivity extends NYBaseShowActivity {
             SFToast.showToast(R.string.already_praise);
             return;
         }
-        doIncreasePraiseNum(curPicGroupId);
+        doIncreasePraiseNum(curObjectId);
     }
 
     private void doIncreasePraiseNum(String picGroupId){
@@ -148,9 +177,9 @@ public class NYPhotoShowActivity extends NYBaseShowActivity {
                 if(e == null){
                    CardPicBean picBean = mCardPicBeans.get(mViewPager.getCurrentItem());
                    picBean.isPraised = true;
-//                   increasePraise(1);
                     mPraiseCount++;
                    updatePraiseNum(String.valueOf(mPraiseCount));
+                   updatePraiseState(true);
                 }
             }
         });
@@ -347,7 +376,6 @@ public class NYPhotoShowActivity extends NYBaseShowActivity {
                 }
             });
             final CardPicBean bean = mCardPicBeans.get(position);
-
             ImageLoader.getInstance().displayImage(bean.imageUrl, imageView);
             ((ViewPager) container).addView(view);
             return view;

@@ -14,6 +14,9 @@ public class Beauty extends BmobObject {
     public String imgDesc;
     public int indexId ;
     public String beautyWords;
+    public boolean isPraised;
+    public int commentNum;
+    public int praiseNum;
 
     @Override
     public boolean equals(Object o) {

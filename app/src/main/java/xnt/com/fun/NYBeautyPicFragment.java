@@ -210,7 +210,7 @@ public class NYBeautyPicFragment extends BaseRecycleViewFragment implements Beau
             picParams.width = mPicWidth;
             picParams.height = mPicHeight;
             holder.mPicIv.setLayoutParams(picParams);
-            Beauty beauty = BeautyModel.getInstance().getBeauty(position);
+            final Beauty beauty = BeautyModel.getInstance().getBeauty(position);
             ImageLoader.getInstance().displayImage(beauty.imgUrl,holder.mPicIv, DisplayOptionConfig.getDefaultDisplayOption());
             if (TextUtils.isEmpty(beauty.imgDesc)){
                 holder.mPicDesc.setVisibility(View.GONE);
@@ -227,6 +227,8 @@ public class NYBeautyPicFragment extends BaseRecycleViewFragment implements Beau
                     int indexId = BeautyModel.getInstance().getBeauty(0).indexId;
                     intent.putExtra(NYBeautyShowActivity.BEAUTY_TOTAL_SIZE,indexId);
                     intent.putExtra(NYBeautyShowActivity.BEAUTY_CUR_POS,position);
+                    intent.putExtra(NYBeautyShowActivity.COMMENT_COUNT,beauty.commentNum);
+                    intent.putExtra(NYBeautyShowActivity.PRAISE_COUNT,beauty.praiseNum);
                     getActivity().startActivity(intent);
                 }
             });

@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_alignParentBottom="true"
-    android:background="@color/transparent_half"
     android:paddingTop="8dp">
 
     <TextView
@@ -22,7 +21,6 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/pic_desc"
         android:layout_marginTop="8dp"
-        android:background="@color/transparent_half"
         android:orientation="horizontal">
 
         <TextView
@@ -41,14 +39,19 @@
             android:layout_height="40dp"
             android:background="@color/lb_grey" />
 
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/comment"
+            android:layout_marginLeft="8dp"
+            android:layout_gravity="center_vertical"
+            />
         <TextView
             android:id="@+id/show_comment_tv"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
-            android:drawableLeft="@drawable/comment_icon"
-            android:drawablePadding="8dp"
             android:gravity="center"
             android:text="10"
             android:textColor="@color/white"

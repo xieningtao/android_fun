@@ -9,8 +9,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.EditText;
+import android.widget.HeaderViewListAdapter;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import com.basesmartframe.baseadapter.BaseAdapterHelper;
@@ -54,7 +57,6 @@ import xnt.com.fun.tiantu.ActivityPhotoPreview;
 import xnt.com.fun.tiantu.NYPhotoShowActivity;
 
 
-
 /**
  * Created by mac on 2018/6/2.
  */
@@ -71,7 +73,8 @@ public class NYFragmentBigPic extends NYBasePullListFragment<CardPicGroup> {
     private KeyBoardFrameLayout mKeyBoardView;
     private TextView mSendTv;
     private EditText mCommentEt;
-    private String curPicGroupId;
+    private String curPicGroupId = "";
+    private int mCurPosition = -1;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -233,7 +236,9 @@ public class NYFragmentBigPic extends NYBasePullListFragment<CardPicGroup> {
                 L.info(TAG, "subscribe call thread: " + Thread.currentThread().getName());
                 String result = picGroup.updateSync();
                 subscriber.onNext(result);
+                L.info(TAG,"updateLatest onNext");
                 subscriber.onCompleted();
+                L.info(TAG,"updateLatest onCompleted");
             }
         }).flatMap(new Func1<String, Observable<String>>() {
             @Override
@@ -248,6 +253,7 @@ public class NYFragmentBigPic extends NYBasePullListFragment<CardPicGroup> {
                     public void onCompleted() {
                         L.info(TAG, "onCompleted thread: " + Thread.currentThread().getName());
                         SFToast.showToast("发表成功");
+                        updateLocalCommentNum(commentContent);
                     }
 
                     @Override
@@ -261,6 +267,21 @@ public class NYFragmentBigPic extends NYBasePullListFragment<CardPicGroup> {
                         L.info(TAG, "onNext thread: " + Thread.currentThread().getName());
                     }
                 });
+    }
+
+    private void updateLocalCommentNum(String commentContent) {
+        CardPicGroup cardPicGroup = getPullItem(mCurPosition);
+        cardPicGroup.commentNum++;
+        cardPicGroup.latestCommentContent = commentContent;
+        ListAdapter adapter = getPullToRefreshListView().getRefreshableView().getAdapter();
+        if (adapter instanceof HeaderViewListAdapter) {
+            HeaderViewListAdapter listAdapter = (HeaderViewListAdapter) adapter;
+            adapter = listAdapter.getWrappedAdapter();
+        }
+        if (adapter instanceof BaseAdapter) {
+            BaseAdapter baseAdapter = (BaseAdapter) adapter;
+            baseAdapter.notifyDataSetChanged();
+        }
     }
 
     private Observable<String> postComment(String picGroupId, String commentContent, String userId) {
@@ -280,18 +301,13 @@ public class NYFragmentBigPic extends NYBasePullListFragment<CardPicGroup> {
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
-                L.info(TAG,"postComment call thread: "+Thread.currentThread().getName());
+                L.info(TAG, "postComment call thread: " + Thread.currentThread().getName());
                 String result = picComment.saveSync();
                 subscriber.onNext(result);
-                if(TextUtils.isEmpty(result)){
-                    subscriber.onError(null);
-                }else {
-                    subscriber.onCompleted();
-                }
+                L.info(TAG,"postComment onNext");
             }
         });
     }
-
 
 
     private String getRefreshTime() {//刷新时间
@@ -421,7 +437,7 @@ public class NYFragmentBigPic extends NYBasePullListFragment<CardPicGroup> {
     }
 
     @Override
-    protected void bindView(BaseAdapterHelper help, int i, final CardPicGroup cardPicGroup) {
+    protected void bindView(BaseAdapterHelper help, final int position, final CardPicGroup cardPicGroup) {
         ImageView picLayout = help.getView(R.id.big_pic_iv);
         ViewGroup.LayoutParams picParams = picLayout.getLayoutParams();
         picParams.width = mPicWidth;
@@ -442,6 +458,7 @@ public class NYFragmentBigPic extends NYBasePullListFragment<CardPicGroup> {
                     }
                 });
                 curPicGroupId = cardPicGroup.getObjectId();
+                mCurPosition = position;
             }
         });
         help.setOnClickListener(R.id.comment_rl, new View.OnClickListener() {
@@ -461,21 +478,21 @@ public class NYFragmentBigPic extends NYBasePullListFragment<CardPicGroup> {
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), NYPhotoShowActivity.class);
                 intent.putExtra(ActivityPhotoPreview.IMAGE_GROUP_ID, cardPicGroup.getObjectId());
-                intent.putExtra(ActivityPhotoPreview.IMAGE_GROUP_ID, cardPicGroup.getObjectId());
-                intent.putExtra(ActivityPhotoPreview.IMAGE_GROUP_ID, cardPicGroup.getObjectId());
+                intent.putExtra(NYPhotoShowActivity.COMMENT_COUNT, cardPicGroup.commentNum);
+                intent.putExtra(NYPhotoShowActivity.PRAISE_COUNT, cardPicGroup.praiseNum);
                 startActivity(intent);
             }
         });
 
         //comment
-        if(TextUtils.isEmpty(cardPicGroup.latestCommentContent)){
-            help.setVisible(R.id.pic_comment_view,View.GONE);
-        }else {
-            help.setVisible(R.id.pic_comment_view,View.VISIBLE);
-            help.setText(R.id.pic_comment_name,"随机");
-            help.setText(R.id.pic_comment_content,cardPicGroup.latestCommentContent);
+        if (TextUtils.isEmpty(cardPicGroup.latestCommentContent)) {
+            help.setVisible(R.id.pic_comment_view, View.GONE);
+        } else {
+            help.setVisible(R.id.pic_comment_view, View.VISIBLE);
+            help.setText(R.id.pic_comment_name, "随机");
+            help.setText(R.id.pic_comment_content, cardPicGroup.latestCommentContent);
         }
-        help.setText(R.id.comment_tv,String.valueOf(cardPicGroup.commentNum));
+        help.setText(R.id.comment_tv, String.valueOf(cardPicGroup.commentNum));
         if (BuildConfig.SUPER_USER) {
             help.setOnLongClickListener(R.id.big_pic_iv, new View.OnLongClickListener() {
                 @Override
