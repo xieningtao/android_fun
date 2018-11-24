@@ -305,6 +305,11 @@ public class NYFragmentBigPic extends NYBasePullListFragment<CardPicGroup> {
                 String result = picComment.saveSync();
                 subscriber.onNext(result);
                 L.info(TAG,"postComment onNext");
+                if(TextUtils.isEmpty(result)){
+                    subscriber.onError(null);
+                }else {
+                    subscriber.onCompleted();
+                }
             }
         });
     }
