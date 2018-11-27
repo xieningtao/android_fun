@@ -26,7 +26,9 @@ import com.sf.utils.baseutil.SystemUIHelp;
 import com.sf.utils.baseutil.UnitHelp;
 
 import xnt.com.fun.R;
+import xnt.com.fun.Utils;
 import xnt.com.fun.ViewPagerTransformManger;
+import xnt.com.fun.login.ThirdLoginActivity;
 import xnt.com.fun.view.ExViewPager;
 
 public class NYBaseShowActivity extends BaseActivity {
@@ -142,7 +144,11 @@ public class NYBaseShowActivity extends BaseActivity {
                 }
                 SystemUIHelp.hideSoftKeyboard(NYBaseShowActivity.this, mCommentEt);
                 String commentContent = mCommentEt.getText().toString();
-                doPostComment(getCurObjectId(), commentContent, null);
+                if(Utils.isLogin()) {
+                    doPostComment(getCurObjectId(), commentContent);
+                }else {
+                    ThirdLoginActivity.toLogin(NYBaseShowActivity.this);
+                }
             }
         });
     }
@@ -177,7 +183,7 @@ public class NYBaseShowActivity extends BaseActivity {
     public void updateDescContent(String text){
         mViewHolder.descView.setText(text);
     }
-    protected void doPostComment(String curObjectId,String commentContent,String userId){
+    protected void doPostComment(String curObjectId,String commentContent){
 
     }
 

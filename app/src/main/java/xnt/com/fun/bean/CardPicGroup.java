@@ -1,7 +1,6 @@
 package xnt.com.fun.bean;
 
 import cn.bmob.v3.BmobObject;
-import cn.bmob.v3.datatype.BmobPointer;
 
 /**
  * Created by mac on 2018/6/2.
@@ -16,7 +15,7 @@ public class CardPicGroup extends BmobObject {
     public int praiseNum;
 
     public String latestCommentContent;
-    public BmobPointer latestUserId;
+    public NYBmobUser latestUserId;
 
     @Override
     public boolean equals(Object o) {

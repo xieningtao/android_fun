@@ -12,6 +12,9 @@ import android.widget.Toolbar;
 import com.sf.utils.baseutil.SystemUIWHHelp;
 import com.sf.utils.baseutil.UnitHelp;
 
+import cn.bmob.v3.BmobUser;
+import xnt.com.fun.bean.NYBmobUser;
+
 public class Utils {
 
     public static int getPicWidth(Activity activity) {
@@ -63,5 +66,16 @@ public class Utils {
         return title;
     }
 
+    public static boolean isLogin(){
+        NYBmobUser user = BmobUser.getCurrentUser(NYBmobUser.class);
+        return user != null;
+    }
 
+    public static String getUserId(){
+        NYBmobUser user = BmobUser.getCurrentUser(NYBmobUser.class);
+        if(user != null){
+            return user.getObjectId();
+        }
+        return "";
+    }
 }

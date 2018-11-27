@@ -53,6 +53,8 @@ import xnt.com.fun.bean.NYBmobUser;
 import xnt.com.fun.comment.BigPicCommentListFragment;
 import xnt.com.fun.comment.PicComment;
 import xnt.com.fun.config.DisplayOptionConfig;
+import xnt.com.fun.dialog.DialogHelper;
+import xnt.com.fun.login.ThirdLoginActivity;
 import xnt.com.fun.tiantu.ActivityPhotoPreview;
 import xnt.com.fun.tiantu.NYPhotoShowActivity;
 
@@ -128,7 +130,11 @@ public class NYFragmentBigPic extends NYBasePullListFragment<CardPicGroup> {
                 }
                 SystemUIHelp.hideSoftKeyboard(getActivity(), mCommentEt);
                 String commentContent = mCommentEt.getText().toString();
-                updateLatestComment(curPicGroupId, commentContent, null);
+                if(Utils.isLogin()) {
+                    updateLatestComment(curPicGroupId, commentContent);
+                }else {
+                    ThirdLoginActivity.toLogin(getActivity());
+                }
             }
         });
         mPicWidth = Utils.getBigPicWidth(getActivity());
@@ -217,15 +223,11 @@ public class NYFragmentBigPic extends NYBasePullListFragment<CardPicGroup> {
     }
 
 
-    private void updateLatestComment(final String picGroupId, final String commentContent, String userId) {
+    private void updateLatestComment(final String picGroupId, final String commentContent) {
         final CardPicGroup picGroup = new CardPicGroup();
         picGroup.setObjectId(picGroupId);
         picGroup.latestCommentContent = commentContent;
-        if (!TextUtils.isEmpty(userId)) {
-            NYBmobUser user = new NYBmobUser();
-            user.setObjectId(userId);
-            picGroup.latestUserId = new BmobPointer(user);
-        }
+        picGroup.latestUserId = BmobUser.getCurrentUser(NYBmobUser.class);
         picGroup.increment("commentNum", 1);
         mCommentView.setVisibility(View.GONE);
 
@@ -244,7 +246,7 @@ public class NYFragmentBigPic extends NYBasePullListFragment<CardPicGroup> {
             @Override
             public Observable<String> call(String s) {
                 L.info(TAG, "flatMap call thread: " + Thread.currentThread().getName());
-                return postComment(picGroupId, commentContent, null);
+                return postComment(picGroupId, commentContent);
             }
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -254,6 +256,7 @@ public class NYFragmentBigPic extends NYBasePullListFragment<CardPicGroup> {
                         L.info(TAG, "onCompleted thread: " + Thread.currentThread().getName());
                         SFToast.showToast("发表成功");
                         updateLocalCommentNum(commentContent);
+                        mCommentEt.setText("");
                     }
 
                     @Override
@@ -284,20 +287,13 @@ public class NYFragmentBigPic extends NYBasePullListFragment<CardPicGroup> {
         }
     }
 
-    private Observable<String> postComment(String picGroupId, String commentContent, String userId) {
+    private Observable<String> postComment(String picGroupId, String commentContent) {
         final PicComment picComment = new PicComment();
         CardPicGroup picGroup = new CardPicGroup();
         picGroup.setObjectId(picGroupId);
         picComment.topicId = new BmobPointer(picGroup);
         picComment.content = commentContent;
-        if (TextUtils.isEmpty(userId)) {
-            picComment.userId = null;
-        } else {
-            BmobUser user = new BmobUser();
-            user.setObjectId(userId);
-            picComment.userId = new BmobPointer(user);
-        }
-
+        picComment.userId = BmobUser.getCurrentUser(NYBmobUser.class);
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {

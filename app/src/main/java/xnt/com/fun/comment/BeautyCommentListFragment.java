@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.sf.loglib.L;
 import com.sf.utils.baseutil.DateFormatHelp;
 
@@ -30,12 +31,15 @@ import xnt.com.fun.R;
 import xnt.com.fun.base.BaseRecycleViewFragment;
 import xnt.com.fun.bean.Beauty;
 import xnt.com.fun.bean.BeautyComment;
+import xnt.com.fun.config.DisplayOptionConfig;
 
 //评论对话框
 public class BeautyCommentListFragment extends BaseRecycleViewFragment {
     public static final String BEAUTY_GROUP_ID = "beauty_group_id";
+    private static final int PIC_PAGE_SIZE = 10;
     private List<BeautyComment> mBeautyComments = new ArrayList<>();
     private BeautyAdapter mAdapter;
+    private String mLatestTime;
 
     @Override
     protected boolean onRefresh() {
@@ -74,10 +78,6 @@ public class BeautyCommentListFragment extends BaseRecycleViewFragment {
         mAdapter = new BeautyAdapter();
         mPullLoadMoreRv.setAdapter(mAdapter);
     }
-
-    private static final int PIC_PAGE_SIZE = 10;
-    private String mLatestTime;
-
 
     private String getRefreshTime() {//刷新时间
         if (TextUtils.isEmpty(mLatestTime)) {
@@ -216,7 +216,10 @@ public class BeautyCommentListFragment extends BaseRecycleViewFragment {
         public void onBindViewHolder(BeautyCommentViewHolder holder, final int position) {
             BeautyComment beautyComment = mBeautyComments.get(position);
             holder.mContentTv.setText(beautyComment.content);
-            holder.mUserNameTv.setText("随机");
+            if (beautyComment.userId != null) {
+                holder.mUserNameTv.setText(beautyComment.userId.getNick());
+                ImageLoader.getInstance().displayImage(beautyComment.userId.getAvatarUrl(), holder.mUserIv, DisplayOptionConfig.getDisplayOption(R.drawable.base_avatar_default_bg));
+            }
             holder.mTimeTv.setText(NYDateFormatHelper.formatTime(beautyComment.getCreatedAt()));
         }
 

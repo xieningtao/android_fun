@@ -9,7 +9,7 @@ android {
     buildToolsVersion '27.0.3'
 
     defaultConfig {
-        applicationId "com.xnt.fun"
+        applicationId "xnt.com.fun"
         minSdkVersion 17
         multiDexEnabled true
         versionCode 1000

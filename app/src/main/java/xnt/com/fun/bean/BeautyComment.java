@@ -10,7 +10,7 @@ import cn.bmob.v3.datatype.BmobPointer;
 public class BeautyComment extends BmobObject {
     public BmobPointer beautyId;
     public String content;
-    public BmobPointer userId;
+    public NYBmobUser userId;
 
     @Override
     public boolean equals(Object o) {

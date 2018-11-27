@@ -1,9 +1,11 @@
-package xnt.com.fun;
+package xnt.com.fun.dialog;
 
 import android.app.Dialog;
 import android.content.Context;
 import android.view.View;
 import android.view.Window;
+
+import xnt.com.fun.R;
 
 public class DialogHelper {
 

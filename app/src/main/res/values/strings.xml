@@ -27,7 +27,9 @@
     <string name="fail_load_content">加载内容失败</string>
 
     <string name="wei_xin_app_id">1107867746</string>
+    <string name="new_wei_xin_app_id">wxf2debda04ee5e56f</string>
     <string name="wei_xin_secret_key">8YRWHEDuGHqCLLEo</string>
+    <string name="new_wei_xin_secret_key">501733a381e59f768bb83914af332ef0</string>
     <string name="sina_app_id">2337852165</string>
     <string name="sina_secret_key">434e47009f1ea321415a1fc203289e73</string>
     <string name="remove">删除</string>
@@ -55,4 +57,8 @@
     <string name="clear_cache">清理缓存</string>
     <string name="about">关于</string>
     <string name="login">登陆</string>
+    <string name="install_sina_app_tip">请安装新浪微博客户端</string>
+    <string name="login_fail">登录失败</string>
+    <string name="logout_tip">正在登出...</string>
+    <string name="random_name">随机</string>
 </resources>

@@ -43,7 +43,6 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 import xnt.com.fun.BuildConfig;
-import xnt.com.fun.DialogHelper;
 import xnt.com.fun.FragmentHelper;
 import xnt.com.fun.NYFragmentContainerActivity;
 import xnt.com.fun.R;
@@ -52,6 +51,7 @@ import xnt.com.fun.bean.CardPicGroup;
 import xnt.com.fun.bean.NYBmobUser;
 import xnt.com.fun.comment.BigPicCommentListFragment;
 import xnt.com.fun.comment.PicComment;
+import xnt.com.fun.dialog.DialogHelper;
 import xnt.com.fun.share.NYShareView;
 
 import static xnt.com.fun.NYFragmentBigPic.PIC_GROUP_ID;
@@ -63,16 +63,13 @@ import static xnt.com.fun.NYFragmentBigPic.PIC_GROUP_ID;
 public class NYPhotoShowActivity extends NYBaseShowActivity {
 
 
-    private Dialog mShareDialog;
-    protected PhotoPagerAdapter mAdapter;
-    private List<CardPicBean> mCardPicBeans = new ArrayList<>();
     public static final String CARD_PIC_BEANS = "card_pic_beans";
-
+    public static final String COMMENT_COUNT = "comment_count";
+    public static final String PRAISE_COUNT = "praise_count";
+    protected PhotoPagerAdapter mAdapter;
+    private Dialog mShareDialog;
+    private List<CardPicBean> mCardPicBeans = new ArrayList<>();
     private String curPicGroupId;
-
-
-    public static final String COMMENT_COUNT= "comment_count";
-    public static final String PRAISE_COUNT= "praise_count";
     private int mCommentCount = 0;
     private int mPraiseCount = 0;
 
@@ -90,8 +87,8 @@ public class NYPhotoShowActivity extends NYBaseShowActivity {
         if (intent != null) {
             imageGroupId = intent.getStringExtra(ActivityPhotoPreview.IMAGE_GROUP_ID);
             curPicGroupId = imageGroupId;
-            mCommentCount = intent.getIntExtra(COMMENT_COUNT,0);
-            mPraiseCount = intent.getIntExtra(PRAISE_COUNT,0);
+            mCommentCount = intent.getIntExtra(COMMENT_COUNT, 0);
+            mPraiseCount = intent.getIntExtra(PRAISE_COUNT, 0);
         }
         super.initView();
         updateCommentNum(String.valueOf(mCommentCount));
@@ -104,12 +101,12 @@ public class NYPhotoShowActivity extends NYBaseShowActivity {
 
             @Override
             public void onPageSelected(int position) {
-                if(position >=0 && position < mCardPicBeans.size()) {
+                if (position >= 0 && position < mCardPicBeans.size()) {
                     CardPicBean cardPicBean = mCardPicBeans.get(position);
                     updatePraiseState(cardPicBean.isPraised);
-                    if(TextUtils.isEmpty(cardPicBean.imgDesc)){
+                    if (TextUtils.isEmpty(cardPicBean.imgDesc)) {
                         showDesc(false);
-                    }else {
+                    } else {
                         showDesc(true);
                         updateDescContent(cardPicBean.imgDesc);
                     }
@@ -153,47 +150,43 @@ public class NYPhotoShowActivity extends NYBaseShowActivity {
     }
 
     @Override
-    protected void doPostComment(String curObjectId, String commentContent, String userId) {
-        updateLatestComment(curObjectId, commentContent, null);
+    protected void doPostComment(String curObjectId, String commentContent) {
+        updateLatestComment(curObjectId, commentContent);
     }
 
     @Override
     protected void doPraise(String curObjectId) {
         CardPicBean picBean = mCardPicBeans.get(mViewPager.getCurrentItem());
-        if(picBean.isPraised){
+        if (picBean.isPraised) {
             SFToast.showToast(R.string.already_praise);
             return;
         }
         doIncreasePraiseNum(curObjectId);
     }
 
-    private void doIncreasePraiseNum(String picGroupId){
+    private void doIncreasePraiseNum(String picGroupId) {
         final CardPicGroup picGroup = new CardPicGroup();
         picGroup.setObjectId(picGroupId);
         picGroup.increment("praiseNum", 1);
         picGroup.update(new UpdateListener() {
             @Override
             public void done(BmobException e) {
-                if(e == null){
-                   CardPicBean picBean = mCardPicBeans.get(mViewPager.getCurrentItem());
-                   picBean.isPraised = true;
+                if (e == null) {
+                    CardPicBean picBean = mCardPicBeans.get(mViewPager.getCurrentItem());
+                    picBean.isPraised = true;
                     mPraiseCount++;
-                   updatePraiseNum(String.valueOf(mPraiseCount));
-                   updatePraiseState(true);
+                    updatePraiseNum(String.valueOf(mPraiseCount));
+                    updatePraiseState(true);
                 }
             }
         });
     }
 
-    private void updateLatestComment(final String picGroupId, final String commentContent, String userId) {
+    private void updateLatestComment(final String picGroupId, final String commentContent) {
         final CardPicGroup picGroup = new CardPicGroup();
         picGroup.setObjectId(picGroupId);
         picGroup.latestCommentContent = commentContent;
-        if (!TextUtils.isEmpty(userId)) {
-            NYBmobUser user = new NYBmobUser();
-            user.setObjectId(userId);
-            picGroup.latestUserId = new BmobPointer(user);
-        }
+        picGroup.latestUserId = BmobUser.getCurrentUser(NYBmobUser.class);
         picGroup.increment("commentNum", 1);
 
         Observable.create(new Observable.OnSubscribe<String>() {
@@ -209,7 +202,7 @@ public class NYPhotoShowActivity extends NYBaseShowActivity {
             @Override
             public Observable<String> call(String s) {
                 com.sf.loglib.L.info(TAG, "flatMap call thread: " + Thread.currentThread().getName());
-                return postComment(picGroupId, commentContent, null);
+                return postComment(picGroupId, commentContent);
             }
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -235,29 +228,22 @@ public class NYPhotoShowActivity extends NYBaseShowActivity {
                 });
     }
 
-    private Observable<String> postComment(String picGroupId, String commentContent, String userId) {
+    private Observable<String> postComment(String picGroupId, String commentContent) {
         final PicComment picComment = new PicComment();
         CardPicGroup picGroup = new CardPicGroup();
         picGroup.setObjectId(picGroupId);
         picComment.topicId = new BmobPointer(picGroup);
         picComment.content = commentContent;
-        if (TextUtils.isEmpty(userId)) {
-            picComment.userId = null;
-        } else {
-            BmobUser user = new BmobUser();
-            user.setObjectId(userId);
-            picComment.userId = new BmobPointer(user);
-        }
-
+        picComment.userId = BmobUser.getCurrentUser(NYBmobUser.class);
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
-                com.sf.loglib.L.info(TAG,"postComment call thread: "+Thread.currentThread().getName());
+                com.sf.loglib.L.info(TAG, "postComment call thread: " + Thread.currentThread().getName());
                 String result = picComment.saveSync();
                 subscriber.onNext(result);
-                if(TextUtils.isEmpty(result)){
+                if (TextUtils.isEmpty(result)) {
                     subscriber.onError(null);
-                }else {
+                } else {
                     subscriber.onCompleted();
                 }
             }
@@ -290,15 +276,15 @@ public class NYPhotoShowActivity extends NYBaseShowActivity {
 
     private void showUpdateDialog(final CardPicBean cardPicBean) {
         LayoutInflater layoutInflater = LayoutInflater.from(NYPhotoShowActivity.this);
-        View editContentView = layoutInflater.inflate(R.layout.super_user_edit_dialog,null);
-        final Dialog editDialog = DialogHelper.getNoTitleDialog(NYPhotoShowActivity.this,editContentView);
+        View editContentView = layoutInflater.inflate(R.layout.super_user_edit_dialog, null);
+        final Dialog editDialog = DialogHelper.getNoTitleDialog(NYPhotoShowActivity.this, editContentView);
         editDialog.show();
         final EditTextClearDroidView droidView = (EditTextClearDroidView) editContentView.findViewById(R.id.edit_view);
         droidView.getEditText().setText(cardPicBean.imgDesc);
         editContentView.findViewById(R.id.modify_tv).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(TextUtils.isEmpty(droidView.getEditText().getText())){
+                if (TextUtils.isEmpty(droidView.getEditText().getText())) {
                     SFToast.showToast(getString(R.string.input_word));
                     return;
                 }
@@ -308,16 +294,48 @@ public class NYPhotoShowActivity extends NYBaseShowActivity {
                 cardPicBean.update(new UpdateListener() {
                     @Override
                     public void done(BmobException e) {
-                        if(e==null){
+                        if (e == null) {
                             SFToast.showToast("更新成功");
                             mBottomContentTv.setText(content);
-                        }else{
+                        } else {
                             SFToast.showToast("更新失败");
                         }
                     }
                 });
             }
         });
+    }
+
+    private ShareAction getShareAction(String content) {
+        String title = "M拍";
+        String url = "https://xieningtao.github.io/";
+        String imgUrl = "https://raw.githubusercontent.com/xieningtao/documents/master/icon/app_icon.png";
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.app_icon);
+        ShareContent shareContent = new ShareContent.ShareContentBuilder()
+                .setTitle(title)
+                .setContent(content)
+                .setUrl(url)
+                .setImage_url(imgUrl)
+                .setBitmap(bitmap)
+                .build();
+        UMImage thumb = new UMImage(NYPhotoShowActivity.this, imgUrl);
+        UMWeb linker = UmengBuildHelper.getUMWeb(url, title, content, thumb);
+        return DefaultUMengShareAction.getLinkAction(NYPhotoShowActivity.this, linker);
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+//        if (hasFocus) {
+//            View decorView = getWindow().getDecorView();
+//            decorView.setSystemUiVisibility(
+//                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+//                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+//                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+//                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+//                            | View.SYSTEM_UI_FLAG_FULLSCREEN
+//                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+//        }
     }
 
     private class PhotoPagerAdapter extends PagerAdapter {
@@ -342,7 +360,7 @@ public class NYPhotoShowActivity extends NYBaseShowActivity {
         public Object instantiateItem(View container, final int position) {
             View view = this.mInflater.inflate(R.layout.ny_pic_show_item, (ViewGroup) null);
             ImageView imageView = (ImageView) view.findViewById(R.id.photo_view);
-            if(BuildConfig.SUPER_USER){
+            if (BuildConfig.SUPER_USER) {
                 imageView.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View v) {
@@ -381,36 +399,5 @@ public class NYPhotoShowActivity extends NYBaseShowActivity {
             return view;
         }
 
-    }
-
-    private ShareAction getShareAction(String content){
-        String title = "M拍";
-        String url = "https://xieningtao.github.io/";
-        String imgUrl="https://raw.githubusercontent.com/xieningtao/documents/master/icon/app_icon.png";
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.app_icon);
-        ShareContent shareContent = new ShareContent.ShareContentBuilder()
-                .setTitle(title)
-                .setContent(content)
-                .setUrl(url)
-                .setImage_url(imgUrl)
-                .setBitmap(bitmap)
-                .build();
-        UMImage thumb = new UMImage(NYPhotoShowActivity.this,imgUrl);
-        UMWeb linker = UmengBuildHelper.getUMWeb(url,title,content,thumb);
-        return DefaultUMengShareAction.getLinkAction(NYPhotoShowActivity.this,linker);
-    }
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-//        if (hasFocus) {
-//            View decorView = getWindow().getDecorView();
-//            decorView.setSystemUiVisibility(
-//                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-//                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-//                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-//                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-//                            | View.SYSTEM_UI_FLAG_FULLSCREEN
-//                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
-//        }
     }
 }

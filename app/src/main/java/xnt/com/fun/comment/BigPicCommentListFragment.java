@@ -4,9 +4,11 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 
 import com.basesmartframe.baseadapter.BaseAdapterHelper;
 import com.basesmartframe.baseui.BasePullListFragment;
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.sf.loglib.L;
 import com.sf.utils.baseutil.DateFormatHelp;
 import com.sf.utils.baseutil.UnitHelp;
@@ -26,6 +28,7 @@ import cn.bmob.v3.listener.FindListener;
 import xnt.com.fun.NYDateFormatHelper;
 import xnt.com.fun.R;
 import xnt.com.fun.bean.CardPicGroup;
+import xnt.com.fun.config.DisplayOptionConfig;
 
 import static xnt.com.fun.NYFragmentBigPic.PIC_GROUP_ID;
 
@@ -93,8 +96,12 @@ public class BigPicCommentListFragment extends BasePullListFragment<PicComment> 
     @Override
     protected void bindView(BaseAdapterHelper helper, int i, PicComment picComment) {
         helper.setText(R.id.pic_comment_content, picComment.content);
-        helper.setText(R.id.pic_comment_name, "随机");
-        helper.setText(R.id.pic_comment_time,NYDateFormatHelper.formatTime(picComment.getCreatedAt()));
+        if (picComment.userId != null) {
+            helper.setText(R.id.pic_comment_name, picComment.userId.getNick());
+            ImageView avatarIv = helper.getView(R.id.pic_user_iv);
+            ImageLoader.getInstance().displayImage(picComment.userId.getAvatarUrl(),avatarIv,DisplayOptionConfig.getDisplayOption(R.drawable.base_avatar_default_bg));
+        }
+        helper.setText(R.id.pic_comment_time, NYDateFormatHelper.formatTime(picComment.getCreatedAt()));
 //        helper.setImageBitmap(R.id.pic_user_iv,R.drawable.app_icon);
         if (i == getDataSize() - 1) {//最后一个
             helper.setVisible(R.id.pic_comment_divider, View.GONE);
@@ -117,6 +124,7 @@ public class BigPicCommentListFragment extends BasePullListFragment<PicComment> 
         //返回50条数据，如果不加上这条语句，默认返回10条数据
         query.setLimit(PIC_PAGE_SIZE);
         query.order("-updatedAt");
+        query.include("userId");
         String updateContent = refresh ? getRefreshTime() : getLoadMoreTime();
         Date updateData = DateFormatHelp.StrDateToCalendar(updateContent, DateFormatHelp._YYYYMMDDHHMMSS);
         if (refresh) { //refresh

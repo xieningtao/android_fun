@@ -7,7 +7,7 @@ import cn.bmob.v3.BmobUser;
  */
 
 public class NYBmobUser extends BmobUser {
-
+    private String avatarUrl;
     private Boolean sex;
     private String nick;
     private Integer age;
@@ -34,6 +34,14 @@ public class NYBmobUser extends BmobUser {
 
     public void setAge(Integer age) {
         this.age = age;
+    }
+
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
+
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
     }
 
     @Override

@@ -49,13 +49,14 @@ import cn.bmob.v3.listener.SaveListener;
 import cn.bmob.v3.listener.UpdateListener;
 import xnt.com.fun.BeautyModel;
 import xnt.com.fun.BuildConfig;
-import xnt.com.fun.DialogHelper;
 import xnt.com.fun.FragmentUtils;
 import xnt.com.fun.R;
 import xnt.com.fun.bean.Beauty;
 import xnt.com.fun.bean.BeautyComment;
 import xnt.com.fun.bean.Music;
+import xnt.com.fun.bean.NYBmobUser;
 import xnt.com.fun.comment.BeautyCommentListFragment;
+import xnt.com.fun.dialog.DialogHelper;
 import xnt.com.fun.share.NYShareView;
 
 public class NYBeautyShowActivity extends NYBaseShowActivity implements BeautyModel.OnDataChangeListener {
@@ -66,6 +67,8 @@ public class NYBeautyShowActivity extends NYBaseShowActivity implements BeautyMo
     public static final String BEAUTY_CUR_POS = "beauty_cur_pos";
     public static final String NO_POSITION = "NO_POSITION";
     public static final String UNCHANGE = "UNCHANGE";
+    public static final String COMMENT_COUNT = "comment_count";
+    public static final String PRAISE_COUNT = "praise_count";
     private BeautyPagerAdapter mAdapter;
     private Dialog mShareDialog;
     private ImageView mMusicIv;
@@ -75,9 +78,6 @@ public class NYBeautyShowActivity extends NYBaseShowActivity implements BeautyMo
     private MusicAnimationTask mTask;
     private int mTotalSize = 100;
     private int mCurPos = -1;
-
-    public static final String COMMENT_COUNT= "comment_count";
-    public static final String PRAISE_COUNT= "praise_count";
     private int mCommentCount = 0;
     private int mPraiseCount = 0;
 
@@ -103,12 +103,12 @@ public class NYBeautyShowActivity extends NYBaseShowActivity implements BeautyMo
 
     @Override
     protected void showCommentListDialog(String objectId) {
-            Bundle bundle = new Bundle();
-            bundle.putString(BeautyCommentListFragment.BEAUTY_GROUP_ID,objectId);
-            FragmentUtils.showViewWithSlideBottom(NYBeautyShowActivity.this,
-                    R.id.dialog_container,
-                    BeautyCommentListFragment.class,
-                    "beautyComment",bundle);
+        Bundle bundle = new Bundle();
+        bundle.putString(BeautyCommentListFragment.BEAUTY_GROUP_ID, objectId);
+        FragmentUtils.showViewWithSlideBottom(NYBeautyShowActivity.this,
+                R.id.dialog_container,
+                BeautyCommentListFragment.class,
+                "beautyComment", bundle);
     }
 
     @Override
@@ -117,14 +117,13 @@ public class NYBeautyShowActivity extends NYBaseShowActivity implements BeautyMo
     }
 
 
-
     protected void initViews() {
         Intent intent = this.getIntent();
         if (intent != null) {
             mTotalSize = intent.getIntExtra(BEAUTY_TOTAL_SIZE, 0);
             mCurPos = intent.getIntExtra(BEAUTY_CUR_POS, 0);
-            mCommentCount = intent.getIntExtra(COMMENT_COUNT,0);
-            mPraiseCount = intent.getIntExtra(PRAISE_COUNT,0);
+            mCommentCount = intent.getIntExtra(COMMENT_COUNT, 0);
+            mPraiseCount = intent.getIntExtra(PRAISE_COUNT, 0);
         }
         super.initView();
         mViewPager.setCurrentItem(mCurPos);
@@ -137,11 +136,11 @@ public class NYBeautyShowActivity extends NYBaseShowActivity implements BeautyMo
             @Override
             public void onPageSelected(int position) {
                 Beauty beauty = mAdapter.getBeauty(position);
-                if(beauty != null && position == getCurrentItem()) {
+                if (beauty != null && position == getCurrentItem()) {
                     showBottomBar(true);
-                    if(TextUtils.isEmpty(beauty.imgDesc)){
+                    if (TextUtils.isEmpty(beauty.imgDesc)) {
                         showDesc(false);
-                    }else {
+                    } else {
                         showDesc(true);
                         updateDescContent(beauty.imgDesc);
                     }
@@ -194,24 +193,24 @@ public class NYBeautyShowActivity extends NYBaseShowActivity implements BeautyMo
     @Override
     protected void doPraise(String curObjectId) {
         Beauty beauty = mAdapter.getBeauty(mViewPager.getCurrentItem());
-        if(beauty == null){
+        if (beauty == null) {
             return;
         }
-        if(beauty.isPraised){
+        if (beauty.isPraised) {
             SFToast.showToast(R.string.already_praise);
             return;
         }
         doIncreasePraiseNum(curObjectId);
     }
 
-    private void doIncreasePraiseNum(String curObjectId){
+    private void doIncreasePraiseNum(String curObjectId) {
         final Beauty beauty = new Beauty();
         beauty.setObjectId(curObjectId);
         beauty.increment("praiseNum", 1);
         beauty.update(new UpdateListener() {
             @Override
             public void done(BmobException e) {
-                if(e == null){
+                if (e == null) {
                     Beauty praisedBeauty = mAdapter.getBeauty(getCurrentItem());
                     praisedBeauty.isPraised = true;
                     mPraiseCount++;
@@ -223,29 +222,23 @@ public class NYBeautyShowActivity extends NYBaseShowActivity implements BeautyMo
     }
 
     @Override
-    protected void doPostComment(String curObjectId, String commentContent, String userId) {
-        postComment(curObjectId,commentContent,userId);
+    protected void doPostComment(String curObjectId, String commentContent) {
+        postComment(curObjectId, commentContent);
     }
 
-    private void postComment(String beautyId, String commentContent, String userId) {
+    private void postComment(String beautyId, String commentContent) {
         final BeautyComment picComment = new BeautyComment();
         Beauty beauty = new Beauty();
         beauty.setObjectId(beautyId);
         picComment.beautyId = new BmobPointer(beauty);
         picComment.content = commentContent;
-        if (TextUtils.isEmpty(userId)) {
-            picComment.userId = null;
-        } else {
-            BmobUser user = new BmobUser();
-            user.setObjectId(userId);
-            picComment.userId = new BmobPointer(user);
-        }
+        picComment.userId = BmobUser.getCurrentUser(NYBmobUser.class);
 
         picComment.save(new SaveListener<String>() {
             @Override
             public void done(String s, BmobException e) {
                 handleCommentResult(e);
-                if(e == null){
+                if (e == null) {
                     mCommentCount++;
                     updateCommentNum(String.valueOf(mCommentCount));
                 }
@@ -334,8 +327,6 @@ public class NYBeautyShowActivity extends NYBaseShowActivity implements BeautyMo
     }
 
 
-
-
     private void showUpdateDialog(final Beauty beauty) {
         LayoutInflater layoutInflater = LayoutInflater.from(NYBeautyShowActivity.this);
         View editContentView = layoutInflater.inflate(R.layout.super_user_edit_dialog, null);
@@ -410,10 +401,6 @@ public class NYBeautyShowActivity extends NYBaseShowActivity implements BeautyMo
     }
 
 
-
-
-
-
     private class BeautyPagerAdapter extends PagerAdapter {
         private LayoutInflater mInflater;
 
@@ -448,15 +435,15 @@ public class NYBeautyShowActivity extends NYBaseShowActivity implements BeautyMo
                     progressView.setVisibility(View.VISIBLE);
                     noDataView.setVisibility(View.GONE);
                 }
-                if(position == getCurrentItem()) {
+                if (position == getCurrentItem()) {
                     showBottomBar(false);
                 }
             } else {
-                if(position == getCurrentItem()) {
+                if (position == getCurrentItem()) {
                     showBottomBar(true);
-                    if(TextUtils.isEmpty(beauty.imgDesc)){
+                    if (TextUtils.isEmpty(beauty.imgDesc)) {
                         showDesc(false);
-                    }else {
+                    } else {
                         showDesc(true);
                         updateDescContent(beauty.imgDesc);
                     }

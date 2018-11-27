@@ -22,6 +22,9 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
+-keep class * extends com.basesmartframe.baseui.BaseFragment{
+*;
+}
 ###bmob sdk
 -ignorewarnings
 

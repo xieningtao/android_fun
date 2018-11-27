@@ -11,11 +11,9 @@ import xnt.com.fun.R;
  */
 
 public class DisplayOptionConfig {
-    private static DisplayImageOptions globalOption;
     private static DisplayImageOptions defaultDisplayOption;
     public static DisplayImageOptions getDisplayOption(int resId){
-        if (globalOption == null) {
-            globalOption = new DisplayImageOptions.Builder()
+             return new DisplayImageOptions.Builder()
                     .cacheInMemory(true)
                     .cacheOnDisk(true)
                     .bitmapConfig(Bitmap.Config.RGB_565)
@@ -23,9 +21,8 @@ public class DisplayOptionConfig {
                     .showImageForEmptyUri(resId)
                     .showImageOnFail(resId)
                     .build();
-        }
-        return globalOption;
     }
+
     public static DisplayImageOptions getDefaultDisplayOption(){
         if (defaultDisplayOption == null) {
             defaultDisplayOption = new DisplayImageOptions.Builder()
