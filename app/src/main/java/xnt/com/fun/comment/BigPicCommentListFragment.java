@@ -1,5 +1,7 @@
 package xnt.com.fun.comment;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -25,7 +27,9 @@ import cn.bmob.v3.datatype.BmobDate;
 import cn.bmob.v3.datatype.BmobPointer;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
+import xnt.com.fun.FragmentHelper;
 import xnt.com.fun.NYDateFormatHelper;
+import xnt.com.fun.NYFragmentContainerActivity;
 import xnt.com.fun.R;
 import xnt.com.fun.bean.CardPicGroup;
 import xnt.com.fun.config.DisplayOptionConfig;
@@ -39,6 +43,14 @@ public class BigPicCommentListFragment extends BasePullListFragment<PicComment> 
     private String mLatestTime;
 
 
+    public static void toBigPicCommentFragment(Activity activity,String objectId){
+        Bundle bundle = new Bundle();
+        bundle.putString(PIC_GROUP_ID, objectId);
+        Intent intent = FragmentHelper.getStartIntent(activity, BigPicCommentListFragment.class,
+                bundle, null, NYFragmentContainerActivity.class);
+        intent.putExtra(NYFragmentContainerActivity.CONTAINER_TITLE, "评论");
+        activity.startActivity(intent);
+    }
     private String getRefreshTime() {//刷新时间
         if (TextUtils.isEmpty(mLatestTime)) {
             mLatestTime = "2015-05-05 16:20:22";

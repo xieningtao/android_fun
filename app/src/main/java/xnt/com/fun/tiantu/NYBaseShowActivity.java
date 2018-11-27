@@ -77,7 +77,7 @@ public class NYBaseShowActivity extends BaseActivity {
                 showEditCommentView(getCurObjectId());
             }
         });
-        mViewHolder.showCommentView.setOnClickListener(new View.OnClickListener() {
+        mViewHolder.showCommentLl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showCommentListDialog(getCurObjectId());
@@ -169,7 +169,7 @@ public class NYBaseShowActivity extends BaseActivity {
 //        return mCommentCount;
 //    }
     public void updateCommentNum(String text){
-        mViewHolder.showCommentView.setText(text);
+        mViewHolder.showCommentNumTv.setText(text);
     }
 
     public void updatePraiseNum(String text){

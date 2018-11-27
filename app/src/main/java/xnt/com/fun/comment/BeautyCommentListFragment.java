@@ -6,12 +6,16 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.sf.loglib.L;
 import com.sf.utils.baseutil.DateFormatHelp;
+import com.sf.utils.baseutil.SFBus;
+import com.sf.utils.baseutil.SFToast;
+import com.sf.utils.baseutil.SystemUIHelp;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -21,17 +25,24 @@ import java.util.Date;
 import java.util.List;
 
 import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.datatype.BmobDate;
 import cn.bmob.v3.datatype.BmobPointer;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
+import cn.bmob.v3.listener.SaveListener;
+import cn.bmob.v3.listener.UpdateListener;
 import xnt.com.fun.FragmentUtils;
+import xnt.com.fun.MessageId;
 import xnt.com.fun.NYDateFormatHelper;
 import xnt.com.fun.R;
+import xnt.com.fun.Utils;
 import xnt.com.fun.base.BaseRecycleViewFragment;
 import xnt.com.fun.bean.Beauty;
 import xnt.com.fun.bean.BeautyComment;
+import xnt.com.fun.bean.NYBmobUser;
 import xnt.com.fun.config.DisplayOptionConfig;
+import xnt.com.fun.login.ThirdLoginActivity;
 
 //评论对话框
 public class BeautyCommentListFragment extends BaseRecycleViewFragment {
@@ -40,6 +51,9 @@ public class BeautyCommentListFragment extends BaseRecycleViewFragment {
     private List<BeautyComment> mBeautyComments = new ArrayList<>();
     private BeautyAdapter mAdapter;
     private String mLatestTime;
+
+    private TextView mSendTv;
+    private EditText mCommentEt;
 
     @Override
     protected boolean onRefresh() {
@@ -73,10 +87,59 @@ public class BeautyCommentListFragment extends BaseRecycleViewFragment {
                 FragmentUtils.removeViewWithSlideBottom(getActivity(), "beautyComment");
             }
         });
+
+        mSendTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (TextUtils.isEmpty(mCommentEt.getText())) {
+                    SFToast.showToast("请输入内容");
+                    return;
+                }
+                SystemUIHelp.hideSoftKeyboard(getActivity(), mCommentEt);
+                String commentContent = mCommentEt.getText().toString();
+                if(Utils.isLogin()) {
+                    postComment(getBeautyId(), commentContent);
+                }else {
+                    ThirdLoginActivity.toLogin(getActivity());
+                }
+            }
+        });
 //        mPullLoadMoreRv.getRecyclerView().setHasFixedSize(true);
         mPullLoadMoreRv.setLinearLayout();
         mAdapter = new BeautyAdapter();
         mPullLoadMoreRv.setAdapter(mAdapter);
+    }
+
+    private void increaseCommentNum(){
+        final Beauty beauty = new Beauty();
+        beauty.setObjectId(getBeautyId());
+        beauty.increment("commentNum");
+        beauty.update(new UpdateListener() {
+            @Override
+            public void done(BmobException e) {
+            }
+        });
+    }
+
+    private void postComment(String beautyId, String commentContent) {
+        final BeautyComment beautyComment = new BeautyComment();
+        final Beauty beauty = new Beauty();
+        beauty.setObjectId(beautyId);
+        beautyComment.beautyId = new BmobPointer(beauty);
+        beautyComment.content = commentContent;
+        beautyComment.userId = BmobUser.getCurrentUser(NYBmobUser.class);
+        beautyComment.save(new SaveListener<String>() {
+            @Override
+            public void done(String s, BmobException e) {
+                if (e == null) {
+                    mCommentEt.setText("");
+                    mBeautyComments.add(0,beautyComment);
+                    mAdapter.notifyDataSetChanged();
+                    increaseCommentNum();
+                    SFBus.send(MessageId.COMMENT_NUM_CHANGE);
+                }
+            }
+        });
     }
 
     private String getRefreshTime() {//刷新时间
@@ -119,6 +182,7 @@ public class BeautyCommentListFragment extends BaseRecycleViewFragment {
         //返回50条数据，如果不加上这条语句，默认返回10条数据
         query.setLimit(PIC_PAGE_SIZE);
         query.order("-updatedAt");
+        query.include("userId");
         String updateContent = refresh ? getRefreshTime() : getLoadMoreTime();
         Date updateData = DateFormatHelp.StrDateToCalendar(updateContent, DateFormatHelp._YYYYMMDDHHMMSS);
         if (refresh) { //refresh

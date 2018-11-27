@@ -18,6 +18,7 @@ import com.basesmartframe.dialoglib.DialogFactory;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.utils.L;
 import com.sf.utils.baseutil.NetWorkManagerUtil;
+import com.sf.utils.baseutil.SFBus;
 import com.sf.utils.baseutil.SFToast;
 import com.sflib.CustomView.baseview.EditTextClearDroidView;
 import com.sflib.umenglib.share.DefaultShareAdapter;
@@ -43,8 +44,7 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 import xnt.com.fun.BuildConfig;
-import xnt.com.fun.FragmentHelper;
-import xnt.com.fun.NYFragmentContainerActivity;
+import xnt.com.fun.MessageId;
 import xnt.com.fun.R;
 import xnt.com.fun.bean.CardPicBean;
 import xnt.com.fun.bean.CardPicGroup;
@@ -53,8 +53,6 @@ import xnt.com.fun.comment.BigPicCommentListFragment;
 import xnt.com.fun.comment.PicComment;
 import xnt.com.fun.dialog.DialogHelper;
 import xnt.com.fun.share.NYShareView;
-
-import static xnt.com.fun.NYFragmentBigPic.PIC_GROUP_ID;
 
 /**
  * Created by mac on 2018/6/2.
@@ -66,10 +64,12 @@ public class NYPhotoShowActivity extends NYBaseShowActivity {
     public static final String CARD_PIC_BEANS = "card_pic_beans";
     public static final String COMMENT_COUNT = "comment_count";
     public static final String PRAISE_COUNT = "praise_count";
+    public static final String CARD_POS = "card_pos";
     protected PhotoPagerAdapter mAdapter;
     private Dialog mShareDialog;
     private List<CardPicBean> mCardPicBeans = new ArrayList<>();
     private String curPicGroupId;
+    private int mPosition = 0;
     private int mCommentCount = 0;
     private int mPraiseCount = 0;
 
@@ -89,6 +89,7 @@ public class NYPhotoShowActivity extends NYBaseShowActivity {
             curPicGroupId = imageGroupId;
             mCommentCount = intent.getIntExtra(COMMENT_COUNT, 0);
             mPraiseCount = intent.getIntExtra(PRAISE_COUNT, 0);
+            mPosition = intent.getIntExtra(CARD_POS,0);
         }
         super.initView();
         updateCommentNum(String.valueOf(mCommentCount));
@@ -135,12 +136,7 @@ public class NYPhotoShowActivity extends NYBaseShowActivity {
 
     @Override
     protected void showCommentListDialog(String objectId) {
-        Bundle bundle = new Bundle();
-        bundle.putString(PIC_GROUP_ID, objectId);
-        Intent intent = FragmentHelper.getStartIntent(NYPhotoShowActivity.this, BigPicCommentListFragment.class,
-                bundle, null, NYFragmentContainerActivity.class);
-        intent.putExtra(NYFragmentContainerActivity.CONTAINER_TITLE, "评论");
-        startActivity(intent);
+        BigPicCommentListFragment.toBigPicCommentFragment(this,objectId);
     }
 
     @Override
@@ -167,7 +163,7 @@ public class NYPhotoShowActivity extends NYBaseShowActivity {
     private void doIncreasePraiseNum(String picGroupId) {
         final CardPicGroup picGroup = new CardPicGroup();
         picGroup.setObjectId(picGroupId);
-        picGroup.increment("praiseNum", 1);
+        picGroup.increment("praiseNum");
         picGroup.update(new UpdateListener() {
             @Override
             public void done(BmobException e) {
@@ -176,6 +172,7 @@ public class NYPhotoShowActivity extends NYBaseShowActivity {
                     picBean.isPraised = true;
                     mPraiseCount++;
                     updatePraiseNum(String.valueOf(mPraiseCount));
+                    SFBus.send(MessageId.PHOTO_COMMENT_PRAISE_NUM_CHANGE,2,mPosition);
                     updatePraiseState(true);
                 }
             }
@@ -187,7 +184,7 @@ public class NYPhotoShowActivity extends NYBaseShowActivity {
         picGroup.setObjectId(picGroupId);
         picGroup.latestCommentContent = commentContent;
         picGroup.latestUserId = BmobUser.getCurrentUser(NYBmobUser.class);
-        picGroup.increment("commentNum", 1);
+        picGroup.increment("commentNum");
 
         Observable.create(new Observable.OnSubscribe<String>() {
 
@@ -211,6 +208,7 @@ public class NYPhotoShowActivity extends NYBaseShowActivity {
                     public void onCompleted() {
                         handleCommentResult(null);
                         mCommentCount++;
+                        SFBus.send(MessageId.PHOTO_COMMENT_PRAISE_NUM_CHANGE,1,mPosition);
                         updateCommentNum(String.valueOf(mCommentCount));
                         com.sf.loglib.L.info(TAG, "onCompleted thread: " + Thread.currentThread().getName());
                     }

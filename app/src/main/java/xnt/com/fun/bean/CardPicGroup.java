@@ -11,8 +11,8 @@ public class CardPicGroup extends BmobObject {
     public String imgLabel;
     public String imgDesc;
 
-    public int commentNum;
-    public int praiseNum;
+    public Integer commentNum;
+    public Integer praiseNum;
 
     public String latestCommentContent;
     public NYBmobUser latestUserId;

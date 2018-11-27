@@ -38,32 +38,37 @@
             android:layout_width="1dp"
             android:layout_height="40dp"
             android:background="@color/lb_grey"
-            android:visibility="gone"
-            />
+            android:visibility="gone" />
 
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/comment"
-            android:layout_marginLeft="8dp"
-            android:layout_gravity="center_vertical"
-            />
-        <TextView
-            android:id="@+id/show_comment_tv"
+        <LinearLayout
+            android:id="@+id/show_comment_ll"
             android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:gravity="center"
-            android:text="10"
-            android:textColor="@color/white"
-            android:textSize="14sp" />
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="8dp"
+                android:src="@drawable/comment" />
+
+            <TextView
+                android:id="@+id/show_comment_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:gravity="center"
+                android:text="10"
+                android:textColor="@color/white"
+                android:textSize="14sp" />
+        </LinearLayout>
 
         <View
             android:layout_width="1dp"
             android:layout_height="40dp"
-            android:visibility="gone"
-            android:background="@color/lb_grey" />
+            android:background="@color/lb_grey"
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/pic_praise_tv"

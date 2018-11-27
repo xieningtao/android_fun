@@ -61,4 +61,6 @@
     <string name="login_fail">登录失败</string>
     <string name="logout_tip">正在登出...</string>
     <string name="random_name">随机</string>
+    <string name="comment_success">评论成功</string>
+    <string name="commet_fail">评论失败</string>
 </resources>

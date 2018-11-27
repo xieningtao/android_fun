@@ -25,8 +25,11 @@ import com.example.sfchat.media.MediaPlayManager;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.sf.loglib.L;
 import com.sf.utils.baseutil.NetWorkManagerUtil;
+import com.sf.utils.baseutil.SFBus;
 import com.sf.utils.baseutil.SFToast;
 import com.sflib.CustomView.baseview.EditTextClearDroidView;
+import com.sflib.reflection.core.SFIntegerMessage;
+import com.sflib.reflection.core.ThreadId;
 import com.sflib.umenglib.share.DefaultShareAdapter;
 import com.sflib.umenglib.share.DefaultUMengShareAction;
 import com.sflib.umenglib.share.ShareContent;
@@ -50,6 +53,7 @@ import cn.bmob.v3.listener.UpdateListener;
 import xnt.com.fun.BeautyModel;
 import xnt.com.fun.BuildConfig;
 import xnt.com.fun.FragmentUtils;
+import xnt.com.fun.MessageId;
 import xnt.com.fun.R;
 import xnt.com.fun.bean.Beauty;
 import xnt.com.fun.bean.BeautyComment;
@@ -80,10 +84,19 @@ public class NYBeautyShowActivity extends NYBaseShowActivity implements BeautyMo
     private int mCurPos = -1;
     private int mCommentCount = 0;
     private int mPraiseCount = 0;
+    private OnCommentNumChangeListener numChangeListener = new OnCommentNumChangeListener() {
+        @Override
+        @SFIntegerMessage(messageId = MessageId.COMMENT_NUM_CHANGE, theadId = ThreadId.MainThread)
+        public void onCommentNumChange() {
+            mCommentCount++;
+            updateCommentNum(String.valueOf(mCommentCount));
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        SFBus.register(numChangeListener);
         setContentView(R.layout.ny_beauty_show_activity);
         initViews();
         BeautyModel.getInstance().registerListener(this);
@@ -115,7 +128,6 @@ public class NYBeautyShowActivity extends NYBaseShowActivity implements BeautyMo
     protected void onResume() {
         super.onResume();
     }
-
 
     protected void initViews() {
         Intent intent = this.getIntent();
@@ -203,10 +215,21 @@ public class NYBeautyShowActivity extends NYBaseShowActivity implements BeautyMo
         doIncreasePraiseNum(curObjectId);
     }
 
+    private void increaseCommentNum() {
+        final Beauty beauty = new Beauty();
+        beauty.setObjectId(getCurObjectId());
+        beauty.increment("commentNum");
+        beauty.update(new UpdateListener() {
+            @Override
+            public void done(BmobException e) {
+            }
+        });
+    }
+
     private void doIncreasePraiseNum(String curObjectId) {
         final Beauty beauty = new Beauty();
         beauty.setObjectId(curObjectId);
-        beauty.increment("praiseNum", 1);
+        beauty.increment("praiseNum");
         beauty.update(new UpdateListener() {
             @Override
             public void done(BmobException e) {
@@ -241,6 +264,7 @@ public class NYBeautyShowActivity extends NYBaseShowActivity implements BeautyMo
                 if (e == null) {
                     mCommentCount++;
                     updateCommentNum(String.valueOf(mCommentCount));
+                    increaseCommentNum();
                 }
             }
         });
@@ -319,13 +343,13 @@ public class NYBeautyShowActivity extends NYBaseShowActivity implements BeautyMo
     }
 
     public void onDestroy() {
+        SFBus.unregister(numChangeListener);
         MediaPlayManager.getInstance().destroyPlayer();
         BeautyModel.getInstance().unregisterListener(this);
         mTask.cancel(false);
         super.onDestroy();
 
     }
-
 
     private void showUpdateDialog(final Beauty beauty) {
         LayoutInflater layoutInflater = LayoutInflater.from(NYBeautyShowActivity.this);
@@ -400,6 +424,9 @@ public class NYBeautyShowActivity extends NYBaseShowActivity implements BeautyMo
 //        }
     }
 
+    private interface OnCommentNumChangeListener {
+        void onCommentNumChange();
+    }
 
     private class BeautyPagerAdapter extends PagerAdapter {
         private LayoutInflater mInflater;
@@ -441,6 +468,10 @@ public class NYBeautyShowActivity extends NYBaseShowActivity implements BeautyMo
             } else {
                 if (position == getCurrentItem()) {
                     showBottomBar(true);
+                    updatePraiseNum(String.valueOf(beauty.praiseNum));
+                    updateCommentNum(String.valueOf(beauty.commentNum));
+                    mCommentCount = beauty.commentNum;
+                    mPraiseCount = beauty.praiseNum;
                     if (TextUtils.isEmpty(beauty.imgDesc)) {
                         showDesc(false);
                     } else {
