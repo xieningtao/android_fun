@@ -521,7 +521,7 @@ public class NYFragmentBigPic extends NYBasePullListFragment<CardPicGroup> {
             }
             help.setText(R.id.pic_comment_content, cardPicGroup.latestCommentContent);
         }
-        help.setText(R.id.comment_tv, String.valueOf(cardPicGroup.commentNum));
+        help.setText(R.id.comment_tv, String.valueOf(cardPicGroup.commentNum == null ? 0 : cardPicGroup.commentNum));
         if (BuildConfig.SUPER_USER) {
             help.setOnLongClickListener(R.id.big_pic_iv, new View.OnLongClickListener() {
                 @Override
@@ -539,8 +539,8 @@ public class NYFragmentBigPic extends NYBasePullListFragment<CardPicGroup> {
     }
 
 
-     interface OnCommentPraiseChangeListener {
-        void onCommentPraiseChange(int type,int position);
+    interface OnCommentPraiseChangeListener {
+        void onCommentPraiseChange(int type, int position);
     }
 
 }
