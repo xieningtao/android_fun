@@ -11,6 +11,7 @@ android {
     defaultConfig {
         applicationId "xnt.com.fun"
         minSdkVersion 17
+        targetSdkVersion 23
         multiDexEnabled true
         versionCode 1000
         versionName "1.0.0"
