@@ -63,4 +63,6 @@
     <string name="random_name">随机</string>
     <string name="comment_success">评论成功</string>
     <string name="commet_fail">评论失败</string>
+    <string name="sharing">正在分享...</string>
+    <string name="share_success">分享成功</string>
 </resources>

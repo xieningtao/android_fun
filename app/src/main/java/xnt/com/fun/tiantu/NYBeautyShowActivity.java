@@ -4,7 +4,6 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -23,6 +22,8 @@ import android.widget.TextView;
 
 import com.example.sfchat.media.MediaPlayManager;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.sf.loglib.L;
 import com.sf.utils.baseutil.NetWorkManagerUtil;
 import com.sf.utils.baseutil.SFBus;
@@ -31,12 +32,7 @@ import com.sflib.CustomView.baseview.EditTextClearDroidView;
 import com.sflib.reflection.core.SFIntegerMessage;
 import com.sflib.reflection.core.ThreadId;
 import com.sflib.umenglib.share.DefaultShareAdapter;
-import com.sflib.umenglib.share.DefaultUMengShareAction;
-import com.sflib.umenglib.share.ShareContent;
-import com.sflib.umenglib.share.UmengBuildHelper;
-import com.umeng.socialize.ShareAction;
-import com.umeng.socialize.media.UMImage;
-import com.umeng.socialize.media.UMWeb;
+import com.umeng.socialize.UMShareAPI;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -54,6 +50,7 @@ import xnt.com.fun.BeautyModel;
 import xnt.com.fun.BuildConfig;
 import xnt.com.fun.FragmentUtils;
 import xnt.com.fun.MessageId;
+import xnt.com.fun.NYShareHelper;
 import xnt.com.fun.R;
 import xnt.com.fun.bean.Beauty;
 import xnt.com.fun.bean.BeautyComment;
@@ -344,6 +341,7 @@ public class NYBeautyShowActivity extends NYBaseShowActivity implements BeautyMo
 
     public void onDestroy() {
         SFBus.unregister(numChangeListener);
+        NYShareHelper.dismissDialog();
         MediaPlayManager.getInstance().destroyPlayer();
         BeautyModel.getInstance().unregisterListener(this);
         mTask.cancel(false);
@@ -392,22 +390,6 @@ public class NYBeautyShowActivity extends NYBaseShowActivity implements BeautyMo
         mAdapter.notifyDataSetChanged();
     }
 
-    private ShareAction getShareAction(String content) {
-        String title = "M拍";
-        String url = "https://xieningtao.github.io/";
-        String imgUrl = "https://raw.githubusercontent.com/xieningtao/documents/master/icon/app_icon.png";
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.app_icon);
-        ShareContent shareContent = new ShareContent.ShareContentBuilder()
-                .setTitle(title)
-                .setContent(content)
-                .setUrl(url)
-                .setImage_url(imgUrl)
-                .setBitmap(bitmap)
-                .build();
-        UMImage thumb = new UMImage(NYBeautyShowActivity.this, imgUrl);
-        UMWeb linker = UmengBuildHelper.getUMWeb(url, title, content, thumb);
-        return DefaultUMengShareAction.getLinkAction(NYBeautyShowActivity.this, linker);
-    }
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
@@ -468,10 +450,11 @@ public class NYBeautyShowActivity extends NYBaseShowActivity implements BeautyMo
             } else {
                 if (position == getCurrentItem()) {
                     showBottomBar(true);
-                    updatePraiseNum(String.valueOf(beauty.praiseNum));
-                    updateCommentNum(String.valueOf(beauty.commentNum));
-                    mCommentCount = beauty.commentNum;
-                    mPraiseCount = beauty.praiseNum;
+
+                    mCommentCount = beauty.commentNum != null ? beauty.commentNum.intValue() : 0;
+                    mPraiseCount = beauty.praiseNum != null ? beauty.praiseNum.intValue() : 0;
+                    updatePraiseNum(String.valueOf(mPraiseCount));
+                    updateCommentNum(String.valueOf(mCommentCount));
                     if (TextUtils.isEmpty(beauty.imgDesc)) {
                         showDesc(false);
                     } else {
@@ -482,7 +465,7 @@ public class NYBeautyShowActivity extends NYBaseShowActivity implements BeautyMo
                 view.setTag(UNCHANGE);
                 progressView.setVisibility(View.GONE);
                 noDataView.setVisibility(View.GONE);
-                ImageView imageView = (ImageView) view.findViewById(R.id.photo_view);
+                final ImageView imageView = (ImageView) view.findViewById(R.id.photo_view);
                 if (BuildConfig.SUPER_USER) {
                     imageView.setOnLongClickListener(new View.OnLongClickListener() {
                         @Override
@@ -492,7 +475,7 @@ public class NYBeautyShowActivity extends NYBaseShowActivity implements BeautyMo
                         }
                     });
                 }
-                ImageView shareIv = (ImageView) view.findViewById(R.id.view_share_iv);
+                final ImageView shareIv = (ImageView) view.findViewById(R.id.view_share_iv);
                 final Beauty finalBeauty = beauty;
                 shareIv.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -506,7 +489,8 @@ public class NYBeautyShowActivity extends NYBaseShowActivity implements BeautyMo
                                     mShareDialog.dismiss();
                                 }
                             });
-                            shareView.setShareContent(getShareAction(finalBeauty.imgDesc));
+                            Bitmap bitmap = NYShareHelper.drawableToBitmap(imageView.getDrawable());
+                            shareView.setShareContent(NYShareHelper.getShareAction(NYBeautyShowActivity.this, finalBeauty.imgDesc, bitmap));
                             shareView.setShareAdapter(new DefaultShareAdapter());
                             shareDialogView.setOnClickListener(new View.OnClickListener() {
                                 @Override
@@ -521,7 +505,27 @@ public class NYBeautyShowActivity extends NYBaseShowActivity implements BeautyMo
                         }
                     }
                 });
-                ImageLoader.getInstance().displayImage(beauty.imgUrl, imageView);
+                ImageLoader.getInstance().displayImage(beauty.imgUrl, imageView, new ImageLoadingListener() {
+                    @Override
+                    public void onLoadingStarted(String imageUri, View view) {
+
+                    }
+
+                    @Override
+                    public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+
+                    }
+
+                    @Override
+                    public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+                                shareIv.setVisibility(View.VISIBLE);
+                    }
+
+                    @Override
+                    public void onLoadingCancelled(String imageUri, View view) {
+
+                    }
+                });
             }
             ((ViewPager) container).addView(view);
             return view;
@@ -600,5 +604,9 @@ public class NYBeautyShowActivity extends NYBaseShowActivity implements BeautyMo
             }
         }
     }
-
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        UMShareAPI.get(this).onActivityResult(requestCode,resultCode,data);
+    }
 }

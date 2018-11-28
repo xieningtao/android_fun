@@ -25,7 +25,7 @@ public class Utils {
 
     public static int getBeautyPicWidth(Activity activity) {
         int screenWidth = SystemUIWHHelp.getScreenRealWidth(activity);
-        int reminderWidth = screenWidth - UnitHelp.dip2px(activity, 4*2);
+        int reminderWidth = screenWidth - UnitHelp.dip2px(activity, 4 * 2);
         return reminderWidth;
     }
 
@@ -58,24 +58,18 @@ public class Utils {
         titleTv.setText(getTitle(activity));
     }
 
-    private static String getTitle(Activity activity){
-        if(activity == null || activity.getIntent() == null){
+    private static String getTitle(Activity activity) {
+        if (activity == null || activity.getIntent() == null) {
             return "";
         }
         String title = activity.getIntent().getStringExtra(NYFragmentContainerActivity.CONTAINER_TITLE);
         return title;
     }
 
-    public static boolean isLogin(){
+    public static boolean isLogin() {
         NYBmobUser user = BmobUser.getCurrentUser(NYBmobUser.class);
         return user != null;
     }
 
-    public static String getUserId(){
-        NYBmobUser user = BmobUser.getCurrentUser(NYBmobUser.class);
-        if(user != null){
-            return user.getObjectId();
-        }
-        return "";
-    }
+
 }
