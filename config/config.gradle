@@ -1,0 +1,7 @@
+ext {
+    version = [
+        android_minisdk_version : 21,
+        android_compile_version : 28,
+        support_version : "27.1.1",
+    ]
+}

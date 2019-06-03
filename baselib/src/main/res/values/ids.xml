@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item type="id" name="tag_page_view_status_type"></item>
+    <item type="id" name="tag_page_view_status"></item>
+</resources>

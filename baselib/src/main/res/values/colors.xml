@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#ffffff</color>
+    <color name="colorPrimaryDark">#ffffff</color>
+    <color name="colorAccent">#D81B60</color>
+
+    <color name="common_color_000000">#000000</color>
+    <color name="common_color_00000000">#00000000</color>
+    <color name="common_color_333333">#333333</color>
+    <color name="common_color_555555">#555555</color>
+    <color name="common_color_999999">#999999</color>
+    <color name="common_color_777777">#777777</color>
+    <color name="common_color_F6F6F6">#f6f6f6</color>
+    <color name="common_color_FFFFFF">#ffffff</color>
+    <color name="common_color_BBBBBB">#bbbbbb</color>
+    <color name="common_color_CCCCCC">#cccccc</color>
+    <color name="common_color_DDDDDD">#dddddd</color>
+    <color name="common_color_EEEEEE">#eeeeee</color>
+    <color name="common_color_FF6F21">#FF6F21</color>
+    <color name="common_color_FB5902">#fb5902</color>
+    <color name="common_color_FF5A00">#FF5A00</color>
+    <color name="common_color_FFEEE5">#FFEEE5</color>
+    <color name="common_color_E5F1FF">#E5F1FF</color>
+    <color name="common_color_0073FF">#0073FF</color>
+    <color name="common_color_00B275">#00B275</color>
+    <color name="common_color_8049FF">#8049FF</color>
+    <color name="common_color_F8F2ED">#F8F2ED</color>
+    <color name="common_color_FFE7E9">#FFE7E9</color>
+    <color name="common_color_E5F5F8">#E5F5F8</color>
+    <color name="common_color_F2ECFF">#F2ECFF</color>
+    <color name="common_color_E5F7F1">#E5F7F1</color>
+    <color name="common_color_AC7D47">#AC7D47</color>
+    <color name="common_color_B9824E">#B9824E</color>
+    <color name="common_color_EC0016">#EC0016</color>
+    <color name="common_color_00A0BD">#00A0BD</color>
+
+    <color name="common_color_FEF2F3">#FEF2F3</color>
+    <color name="common_color_F2F8FF">#F2F8FF</color>
+    <color name="common_color_FFF7F2">#FFF7F2</color>
+    <color name="common_color_1C82FF">#1C82FF</color>
+
+    <!--uCrop Activity-->
+    <color name="ucrop_color_toolbar">#fff</color>
+    <color name="ucrop_color_statusbar">#f5f5f5</color>
+    <color name="ucrop_color_toolbar_widget">#000000</color>
+    <color name="ucrop_color_widget">#000</color>
+    <color name="ucrop_color_widget_active">#FFFFFF</color>
+    <color name="ucrop_color_active_controls_color">#FFFFFF</color>
+    <color name="ucrop_color_widget_rotate_mid_line">#512DA8</color>
+    <color name="ucrop_color_widget_background">#673AB7</color>
+    <color name="ucrop_color_widget_text">#000</color>
+    <color name="ucrop_color_progress_wheel_line">#000000</color>
+    <color name="ucrop_color_crop_background">#000</color>
+
+    <!--Crop View-->
+    <color name="ucrop_color_default_crop_grid">#80ffffff</color>
+    <color name="ucrop_color_default_crop_frame">#ffffff</color>
+    <color name="ucrop_color_default_dimmed">#8c000000</color>
+    <color name="ucrop_color_default_logo">#4f212121</color>
+
+</resources>

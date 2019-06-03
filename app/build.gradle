@@ -71,10 +71,7 @@ dependencies {
 //    implementation 'com.google.code.gson:gson:2.2.4@jar'
 //    implementation 'com.android.support:recyclerview-v7:22.2.0'
     //implementation 'com.android.support:leanback-v17:22.2.0'
-    implementation 'com.android.support:support-v4:27.1.0@aar'
-    implementation 'com.android.support:support-v13:27.1.0@aar'
-    implementation 'com.android.support:recyclerview-v7:27.1.0'
-    implementation "com.android.support:cardview-v7:27.1.0"
+
     implementation "com.sf.core:base_sf_core:1.0.3@aar"
     //implementation "com.sf.core:android_tv:1.0.0@aar"
     implementation "com.sf.core:emoji_lib:1.0.0@aar"
@@ -117,24 +114,16 @@ dependencies {
     //字体
     implementation 'uk.co.chrisjenx:calligraphy:2.3.0'
 
-    //animation
-    implementation 'com.android.support:support-compat:27.1.1'
-    implementation 'com.daimajia.easing:library:2.0@aar'
-    implementation 'com.daimajia.androidanimations:library:2.3@aar'
-
-    //viewPage transform
-    implementation 'com.ToxicBakery.viewpager.transforms:view-pager-transforms:1.2.32@aar'
-
     //svga
     implementation project(":svgalib")
 
-    //permission
-    implementation 'com.github.tbruyelle:rxpermissions:0.10.2'
+    //butterknife
+    annotationProcessor 'com.jakewharton:butterknife-compiler:10.1.0'
+
+
 //    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
-    //animation
-    implementation 'com.daimajia.easing:library:2.0@aar'
-    implementation 'com.daimajia.androidanimations:library:2.3@aar'
+
 }
 repositories {
     mavenCentral()

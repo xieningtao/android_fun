@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@color/common_color_F6F6F6"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!--<com.androidLib.widget.LoadingView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:textSize="24sp"-->
+        <!--android:text="置业咨询师"-->
+        <!--android:textColor="@color/common_color_999999"-->
+        <!--android:layout_centerInParent="true"-->
+        <!--android:gravity="center"-->
+        <!--/>-->
+
+    <LinearLayout
+        android:layout_width="140dp"
+        android:layout_height="60dp"
+        android:layout_centerInParent="true"
+        android:gravity="center_vertical"
+        android:paddingStart="15dp"
+        android:paddingLeft="15dp"
+        android:background="@drawable/shape_common_es_loading_bg"
+        android:elevation="2dp">
+        <ProgressBar
+            android:id="@+id/loadProgressBar"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginEnd="15dp"
+            android:indeterminateDrawable="@drawable/shape_common_es_loading_progress" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/common_color_CCCCCC"
+            android:textSize="15sp"
+            android:text="加载中..."/>
+    </LinearLayout>
+
+</RelativeLayout>
