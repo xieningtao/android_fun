@@ -1,1 +1,1 @@
-include ':app', ':baselib',"svgalib"
+include ':app', ':baselib', ':sglog',"svgalib"

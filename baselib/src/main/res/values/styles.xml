@@ -1,0 +1,21 @@
+<resources>
+
+    <style name="widget_toolbar_nav_button" parent="Widget.AppCompat.Toolbar.Button.Navigation">
+        <!--<item name="android:width">wrap_content</item>-->
+        <item name="android:minWidth">45dp</item>
+        <!--<item name="android:minHeight">0dp</item>-->
+    </style>
+
+    <style name="widget_toolbar_title_style">
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@color/widget_toolbar_title_text_color</item>
+        <item name="android:textSize">18dp</item>
+    </style>
+
+    <style name="toolbar_nav_button" parent="Widget.AppCompat.Toolbar.Button.Navigation">
+        <item name="android:width">15dp</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:minHeight">0dp</item>
+    </style>
+
+</resources>

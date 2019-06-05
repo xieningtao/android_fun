@@ -4,6 +4,9 @@
     <color name="colorPrimaryDark">#ffffff</color>
     <color name="colorAccent">#D81B60</color>
 
+    <color name="widget_toolbar_color">#ffffff</color>
+    <color name="widget_toolbar_title_text_color">#333333</color>
+
     <color name="common_color_000000">#000000</color>
     <color name="common_color_00000000">#00000000</color>
     <color name="common_color_333333">#333333</color>

@@ -7,7 +7,6 @@ public interface IViewStatus {
 
     void showContentStatusView();
 
-
     void showSettingStatusView();
 
 
@@ -59,5 +58,9 @@ public interface IViewStatus {
 
     void showUnLoginStatusView(Drawable drawable, View.OnClickListener onClickListener);
 
+
+    void showNetworkView();
+
+    void showNetworkView(View.OnClickListener onClickListener);
 
 }

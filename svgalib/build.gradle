@@ -1,14 +1,12 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
-
-
-
+def config = rootProject.ext.version;
 android {
-    compileSdkVersion 27
+    compileSdkVersion config.android_compile_version
     buildToolsVersion '27.0.3'
 
     defaultConfig {
-        minSdkVersion 17
+        minSdkVersion config.android_minisdk_version
     }
 
     packagingOptions {

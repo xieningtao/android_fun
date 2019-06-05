@@ -29,4 +29,9 @@
     <dimen name="ucrop_default_crop_rect_corner_touch_threshold">30dp</dimen>
     <dimen name="ucrop_default_crop_rect_min_size">100dp</dimen>
     <dimen name="ucrop_default_crop_rect_corner_touch_area_line_length">10dp</dimen>
+
+    <dimen name="widget_toolbar_height">50dip</dimen>
+
+    <dimen name="widget_toolbar_elevation">1dp</dimen>
+    <dimen name="widget_toolbar_inset_start">0dp</dimen>
 </resources>

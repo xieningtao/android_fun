@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_title_bar_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/title_bar_back_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:text="返回"
+        android:textSize="18sp"
+        android:layout_gravity="left"
+        android:gravity="center"
+        android:padding="10dp"
+        />
+
+    <TextView
+        android:id="@+id/title_bar_title_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:text="首页"
+        android:textSize="18sp"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:padding="10dp"
+        />
+
+    <TextView
+        android:id="@+id/title_bar_confirm_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:text="确定"
+        android:textSize="18sp"
+        android:layout_gravity="right"
+        android:gravity="center"
+        android:padding="10dp"
+        android:layout_marginRight="10dp"
+        />
+
+</FrameLayout>

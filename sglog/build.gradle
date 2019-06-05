@@ -1,0 +1,42 @@
+apply plugin: 'com.android.library'
+
+def config = rootProject.ext.version;
+def lib = rootProject.ext.dependencies;
+android {
+    compileSdkVersion config.android_compile_version
+
+
+    defaultConfig {
+        minSdkVersion config.android_minisdk_version
+        versionCode 1
+        versionName "1.0"
+
+
+    }
+
+    buildTypes {
+        release {
+            buildConfigField "String", "LOG_BUILD_TYPE", "\"RELEASE\""
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        betatest {
+            debuggable true
+            buildConfigField "String", "LOG_BUILD_TYPE", "\"BETATEST\""
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            buildConfigField "String", "LOG_BUILD_TYPE", "\"DEBUG\""
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation lib.supportAnnotations
+    implementation lib.logger
+}

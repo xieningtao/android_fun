@@ -4,4 +4,10 @@ ext {
         android_compile_version : 28,
         support_version : "27.1.1",
     ]
+
+    dependencies =[
+            supportAnnotations: "com.android.support:support-annotations:${version.support_version}",
+            logger            : 'com.orhanobut:logger:2.2.0',
+    ]
 }
+

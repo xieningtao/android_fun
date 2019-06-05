@@ -1,16 +1,17 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+def config = rootProject.ext.version;
 ext{
     htextview_version ="0.1.6"
 }
 android {
-    compileSdkVersion 27
+    compileSdkVersion config.android_compile_version
     buildToolsVersion '27.0.3'
 
     defaultConfig {
         applicationId "xnt.com.fun"
-        minSdkVersion 17
+        minSdkVersion config.android_minisdk_version
         multiDexEnabled true
         versionCode 1000
         versionName "1.0.0"
@@ -73,7 +74,7 @@ dependencies {
     //implementation 'com.android.support:leanback-v17:22.2.0'
 
     implementation "com.sf.core:base_sf_core:1.0.3@aar"
-    //implementation "com.sf.core:android_tv:1.0.0@aar"
+//    implementation "com.sf.core:android_tv:1.0.0@aar"
     implementation "com.sf.core:emoji_lib:1.0.0@aar"
     implementation "com.sf.core:http_client:1.0.0@aar"
     implementation "com.sf.core:opengl_lib:1.0.0@aar"
@@ -101,7 +102,7 @@ dependencies {
     implementation 'com.wuxiaolong.pullloadmorerecyclerview:library:1.1.2'
 
     //HText
-    implementation "com.hanks:htextview-base:$htextview_version"        // base library
+    implementation ("com.hanks:htextview-base:$htextview_version" )     // base library
 
 //    implementation "com.hanks:htextview-fade:$htextview_version"        // optional
 //    implementation "com.hanks:htextview-line:$htextview_version"        // optional
@@ -117,18 +118,20 @@ dependencies {
     //svga
     implementation project(":svgalib")
 
+//    //baseLib
+    implementation project(":baselib")
+
     //butterknife
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.1.0'
-
-
-//    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-
-
 }
-repositories {
-    mavenCentral()
-}
-
 configurations {
     all*.exclude group: "com.squareup.okio"
+}
+
+configurations.all {
+    resolutionStrategy {
+        force "com.android.support:appcompat-v7:${config.support_version}"
+        force "com.android.support:recyclerview-v7:${config.support_version}"
+        force "com.android.support:multidex:1.0.3"
+    }
 }

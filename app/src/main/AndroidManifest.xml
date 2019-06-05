@@ -1,49 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="xnt.com.fun">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <!--百度地图-->
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="com.android.launcher.permission.READ_SETTINGS"/>
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-    <uses-permission android:name="android.permission.GET_TASKS"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="com.android.launcher.permission.READ_SETTINGS" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.GET_TASKS" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <!--保持CPU 运转，屏幕和键盘灯有可能是关闭的,用于文件上传和下载 -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <!--百度定位-->
     <!-- 这个权限用于进行网络定位-->
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <!-- 这个权限用于访问GPS定位-->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <!-- 用于访问wifi网络信息，wifi信息会用于进行网络定位-->
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <!-- 获取运营商信息，用于支持提供运营商信息相关的接口-->
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <!-- 这个权限用于获取wifi的获取权限，wifi信息会用来进行网络定位-->
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <!-- 用于读取手机当前的状态-->
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <!-- 写入扩展存储，向扩展卡写入数据，用于写入离线定位数据-->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <!-- 访问网络，网络定位需要上网-->
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
     <!-- SD卡读取权限，用户写入离线定位数据-->
     <!--微博分享权限-->
-    <uses-permission android:name="android.permission.CALL_PHONE"/>
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
-    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
 
     <!--DownloadManager下载时不显示Notification-->
     <uses-permission android:name="android.permission.DOWNLOAD_WITHOUT_NOTIFICATION" />
@@ -56,9 +57,9 @@
         android:testOnly="false"
         android:theme="@style/NYAppTheme">
 
-        <activity android:name=".SplashActivity"
-            android:theme="@style/NYSplashTheme"
-            >
+        <activity
+            android:name=".SplashActivity"
+            android:theme="@style/NYSplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -66,82 +67,81 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".NYHomeActivity"
-            android:windowSoftInputMode="stateHidden|adjustPan"
+        <activity
+            android:name=".NYHomeActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar"
-            >
+            android:windowSoftInputMode="stateHidden|adjustPan">
             <intent-filter>
-                <action android:name="android.intent.action.VIEW"/>
+                <action android:name="android.intent.action.VIEW" />
             </intent-filter>
         </activity>
-        <activity android:name=".VideoPlayActivity"/>
-        <activity android:name=".NYLoginActivity"/>
-        <activity android:name=".NYRegisterActivity"/>
-        <activity android:name=".NYNewsDetailWebViewActivity"/>
-        <activity android:name=".NYNewsDetailActivity"/>
-        <activity android:name=".login.ThirdLoginActivity"/>
-        <activity android:name=".NYFragmentContainerActivity"/>
-        <activity android:name=".tiantu.ActivityPhotoPreview"/>
-        <activity android:name=".tiantu.NYPhotoShowActivity"
+        <activity android:name=".VideoPlayActivity" />
+        <activity android:name=".NYLoginActivity" />
+        <activity android:name=".NYRegisterActivity" />
+        <activity android:name=".NYNewsDetailWebViewActivity" />
+        <activity android:name=".NYNewsDetailActivity" />
+        <activity android:name=".login.ThirdLoginActivity" />
+        <activity android:name=".NYFragmentContainerActivity" />
+        <activity android:name=".tiantu.ActivityPhotoPreview" />
+        <activity
+            android:name=".tiantu.NYPhotoShowActivity"
             android:theme="@style/NYFullScree"
-            android:windowSoftInputMode="adjustResize"
-            />
-        <activity android:name=".tiantu.NYBeautyShowActivity"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".tiantu.NYBeautyShowActivity"
             android:theme="@style/NYFullScree"
-            android:windowSoftInputMode="adjustResize"
-            />
-        <activity android:name="com.basesmartframe.pickphoto.ActivityFragmentContainer"/>
+            android:windowSoftInputMode="adjustResize" />
+        <activity android:name="com.basesmartframe.pickphoto.ActivityFragmentContainer" />
 
 
         <!--分享-->
         <meta-data
             android:name="wei_xin_app_id"
-            android:value="@string/new_wei_xin_app_id"/>
+            android:value="@string/new_wei_xin_app_id" />
 
         <meta-data
             android:name="wei_xin_secret_key"
-            android:value="@string/new_wei_xin_secret_key"/>
+            android:value="@string/new_wei_xin_secret_key" />
 
         <meta-data
             android:name="sina_app_id"
-            android:value="@string/sina_app_id"/>
+            android:value="@string/sina_app_id" />
 
         <meta-data
             android:name="sina_secret_key"
-            android:value="@string/sina_secret_key"/>
+            android:value="@string/sina_secret_key" />
 
         <!-- 友盟-->
         <meta-data
             android:name="UMENG_APPKEY"
-            android:value="5bab91a6f1f556c09a0002fa"/>
+            android:value="5bab91a6f1f556c09a0002fa" />
         <!--微信-->
         <activity
             android:name=".wxapi.WXEntryActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="true"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
         <!--微博分享-->
         <activity
             android:name="com.umeng.socialize.media.WBShareCallBackActivity"
             android:configChanges="keyboardHidden|orientation"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar"
-            android:launchMode="singleTask"
             android:exported="false"
-            android:screenOrientation="portrait" >
-        </activity>
-        <activity android:name="com.sina.weibo.sdk.web.WeiboSdkWebActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"></activity>
+        <activity
+            android:name="com.sina.weibo.sdk.web.WeiboSdkWebActivity"
             android:configChanges="keyboardHidden|orientation"
             android:exported="false"
-            android:windowSoftInputMode="adjustResize"
-            >
+            android:windowSoftInputMode="adjustResize">
 
         </activity>
         <activity
-            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"
+            android:name="com.sina.weibo.sdk.share.WbShareTransActivity"
             android:launchMode="singleTask"
-            android:name="com.sina.weibo.sdk.share.WbShareTransActivity">
+            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen">
             <intent-filter>
                 <action android:name="com.sina.weibo.sdk.action.ACTION_SDK_REQ_ACTIVITY" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -151,23 +151,27 @@
 
         <activity
             android:name="com.umeng.socialize.editorpage.ShareActivity"
-            android:excludeFromRecents="true"/>
+            android:excludeFromRecents="true" />
         <!---->
 
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
-            android:value="YUU3OEs7NiGfym3xlpUY2ymgWlLHtKPg"/>
+            android:value="YUU3OEs7NiGfym3xlpUY2ymgWlLHtKPg" />
 
         <provider
+
             android:name="android.support.v4.content.FileProvider"
             android:authorities="com.youmi.android.addemo.fileProvider"
             android:exported="false"
-            android:grantUriPermissions="true" >
+            android:grantUriPermissions="true"
+            tools:replace="android:authorities">
 
             <meta-data
+
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_provider" />
-        </provider >
+                android:resource="@xml/file_provider"
+                tools:replace="android:resource" />
+        </provider>
     </application>
 
 </manifest>
