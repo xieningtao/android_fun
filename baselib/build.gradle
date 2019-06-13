@@ -49,6 +49,10 @@ dependencies {
     implementation 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.0-alpha-28'
     implementation 'com.scwang.smartrefresh:SmartRefreshHeader:1.1.0-alpha-28'//没有使用特殊Header，可以不加这行
     implementation 'androidx.appcompat:appcompat:1.0.0'//版本 23以上（必须）
+//    androidx
+//    implementation 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.0-andx-11'
+//    implementation 'com.scwang.smartrefresh:SmartRefreshHeader:1.1.0-andx-11'
+//    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 
     //butterknife
     implementation 'com.jakewharton:butterknife:10.1.0'
@@ -75,5 +79,5 @@ dependencies {
     implementation 'com.hyman:flowlayout-lib:1.1.2'
 
     //utils
-    implementation "com.sf.core:sf_util_lib:1.0.0@aar"
+    implementation 'com.github.xieningtao.new_sflib:SFUtils:1.8.0'
 }

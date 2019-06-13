@@ -1,10 +1,20 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 apply from: "config/config.gradle"
+
+def canPassThroughGreatWall() {
+    String name = System.getenv("USERNAME");
+    System.out.println("USERNAME: " + name)
+    if ("xieningtao".equals(name)) {
+        return false;
+    }
+    return true;
+}
+
 buildscript {
     ext.kotlin_version = "1.2.51"
 
     repositories {
-        if (canPassThroughGreatWall()) {
+        if (!"xieningtao".equals(System.getenv("USERNAME"))) {
             jcenter()
             google()
         } else {
@@ -25,14 +35,7 @@ buildscript {
     }
 }
 
-def canPassThroughGreatWall() {
-    String name = System.getenv("USERNAME");
-    System.out.println("USERNAME: " + name)
-    if ("xieningtao".equals(name)) {
-        return false;
-    }
-    return true;
-}
+
 
 allprojects {
     repositories {
