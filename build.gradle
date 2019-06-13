@@ -4,8 +4,17 @@ buildscript {
     ext.kotlin_version = "1.2.51"
 
     repositories {
-        jcenter()
-        google()
+        if (canPassThroughGreatWall()) {
+            jcenter()
+            google()
+        } else {
+            //切换到阿里镜像，central和jcenter的聚合仓库
+            maven { url 'https://maven.aliyun.com/nexus/content/groups/public' }
+            //gradle plugin
+            maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
+            //google
+            maven { url "https://maven.aliyun.com/nexus/content/repositories/google" }
+        }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.2.0'
@@ -16,15 +25,31 @@ buildscript {
     }
 }
 
+def canPassThroughGreatWall() {
+    String name = System.getenv("USERNAME");
+    System.out.println("USERNAME: " + name)
+    if ("xieningtao".equals(name)) {
+        return false;
+    }
+    return true;
+}
+
 allprojects {
     repositories {
-        jcenter()
-        mavenCentral()
         maven { url 'https://jitpack.io' }
-        maven {
-            url "https://raw.githubusercontent.com/xieningtao/mavenRepo/master"
+//        maven {
+//            url "https://raw.githubusercontent.com/xieningtao/mavenRepo/master"
+//        }
+        if (canPassThroughGreatWall()) {
+            google()
+            mavenCentral()
+            jcenter()
+        } else {
+            //切换到阿里镜像，central和jcenter的聚合仓库
+            maven { url 'https://maven.aliyun.com/nexus/content/groups/public' }
+            //google
+            maven { url 'https://maven.aliyun.com/nexus/content/repositories/google' }
         }
-        google()
         //bmod sdk repository
         maven { url "https://raw.github.com/bmob/bmob-android-sdk/master" }
     }
