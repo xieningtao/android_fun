@@ -1,6 +1,6 @@
 package com.xnt.baselib.adapter;
 
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 
 abstract public class BaseRecyclerViewHolder<T> extends RecyclerView.ViewHolder {

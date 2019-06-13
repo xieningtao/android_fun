@@ -1,15 +1,12 @@
 package com.xnt.sglog.prettylog;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import android.text.TextUtils;
 
 import com.orhanobut.logger.FormatStrategy;
 import com.orhanobut.logger.LogStrategy;
-import com.xnt.sglog.Constant;
-import com.xnt.sglog.MountedSDCard;
 
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -27,10 +24,14 @@ public class TxtFormatStrategy implements FormatStrategy {
     private static final String NEW_LINE_REPLACEMENT = " <br> ";
     private static final String SEPARATOR = ",";
 
-    @NonNull private final Date date;
-    @NonNull private final SimpleDateFormat dateFormat;
-    @NonNull private final LogStrategy logStrategy;
-    @Nullable private final String tag;
+    @NonNull
+    private final Date date;
+    @NonNull
+    private final SimpleDateFormat dateFormat;
+    @NonNull
+    private final LogStrategy logStrategy;
+    @Nullable
+    private final String tag;
 
     private TxtFormatStrategy(@NonNull TxtFormatStrategy.Builder builder) {
 
@@ -40,11 +41,13 @@ public class TxtFormatStrategy implements FormatStrategy {
         tag = builder.tag;
     }
 
-    @NonNull public static TxtFormatStrategy.Builder newBuilder() {
+    @NonNull
+    public static TxtFormatStrategy.Builder newBuilder() {
         return new TxtFormatStrategy.Builder();
     }
 
-    @Override public void log(int priority, @Nullable String onceOnlyTag, @NonNull String message) {
+    @Override
+    public void log(int priority, @Nullable String onceOnlyTag, @NonNull String message) {
 
         String tag = formatTag(onceOnlyTag);
 
@@ -81,7 +84,8 @@ public class TxtFormatStrategy implements FormatStrategy {
         logStrategy.log(priority, tag, builder.toString());
     }
 
-    @Nullable private String formatTag(@Nullable String tag) {
+    @Nullable
+    private String formatTag(@Nullable String tag) {
         if (!TextUtils.isEmpty(tag) && !tag.equals(this.tag)) {
             return this.tag + "-" + tag;
         }
@@ -91,6 +95,7 @@ public class TxtFormatStrategy implements FormatStrategy {
     public static final class Builder {
         private static final int MAX_BYTES = 500 * 1024; // 500K averages to a 4000 lines per file
 
+        String rootLogPath;
         Date date;
         SimpleDateFormat dateFormat;
         LogStrategy logStrategy;
@@ -117,6 +122,11 @@ public class TxtFormatStrategy implements FormatStrategy {
             return this;
         }
 
+        public TxtFormatStrategy.Builder rootLogPath(String rootLogPath) {
+            this.rootLogPath = rootLogPath;
+            return this;
+        }
+
         @NonNull
         public TxtFormatStrategy.Builder tag(@Nullable String tag) {
             this.tag = tag;
@@ -132,7 +142,7 @@ public class TxtFormatStrategy implements FormatStrategy {
                 dateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss.SSS", Locale.UK);
             }
             if (logStrategy == null) {
-                logStrategy = HTDiskLogStrategy.createInstance(Constant.ELK_STORAGE_DIR, MAX_BYTES);
+                logStrategy = HTDiskLogStrategy.createInstance(rootLogPath, MAX_BYTES);
             }
             return new TxtFormatStrategy(this);
         }

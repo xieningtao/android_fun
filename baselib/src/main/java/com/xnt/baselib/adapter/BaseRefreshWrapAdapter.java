@@ -1,7 +1,7 @@
 package com.xnt.baselib.adapter;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.view.ViewGroup;
 
 import com.xnt.baselib.pager.DataHandler;

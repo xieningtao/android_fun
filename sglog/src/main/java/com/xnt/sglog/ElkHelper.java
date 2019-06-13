@@ -14,8 +14,9 @@ public class ElkHelper {
 
     /**
      * 把字符串中某些字符转义为ascii字符
+     *
      * @param source 源字符串
-     * @param chars 需要转义的字符
+     * @param chars  需要转义的字符
      * @return 转义后的字符串
      */
     public static String replaceCharsByAscii(String source, char[] chars) {
@@ -30,28 +31,28 @@ public class ElkHelper {
     }
 
     private static String getCharAsciiStr(char c) {
-        int i = (int)c;
+        int i = (int) c;
         return String.format(Locale.CHINA, "\\u%04x", i);
     }
 
-    public static File markFile(File file,String markLabel){
-        if(file == null || !file.exists()){
+    public static File markFile(String rootLogPath, File file, String markLabel) {
+        if (file == null || !file.exists()) {
             return file;
         }
-        final File uploadFile = new File(Constant.ELK_STORAGE_DIR,file.getName() + markLabel);
+        final File uploadFile = new File(rootLogPath, file.getName() + markLabel);
         file.renameTo(uploadFile);
         return file;
     }
 
-    public static String remarkFile(File file,String markLabel,String remarkLabel){
-        if(file == null || !file.exists()){
+    public static String remarkFile(String rootLogPath, File file, String markLabel, String remarkLabel) {
+        if (file == null || !file.exists()) {
             return "";
         }
-        if(!TextUtils.isEmpty(file.getName()) && file.getName().contains(markLabel)){
-            String remarkFileName = file.getName().replace(markLabel,remarkLabel);
-            final File uploadFile = new File(Constant.ELK_STORAGE_DIR,remarkFileName);
+        if (!TextUtils.isEmpty(file.getName()) && file.getName().contains(markLabel)) {
+            String remarkFileName = file.getName().replace(markLabel, remarkLabel);
+            final File uploadFile = new File(rootLogPath, remarkFileName);
             boolean result = file.renameTo(uploadFile);
-            Log.i(TAG,"method->remarkFile result: "+result+" file state: "+file.exists()+" uploadFile state: "+uploadFile.exists());
+            Log.i(TAG, "method->remarkFile result: " + result + " file state: " + file.exists() + " uploadFile state: " + uploadFile.exists());
             return uploadFile.getName();
         }
         return "";

@@ -1,7 +1,7 @@
 package com.xnt.baselib.base;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.xnt.baselib.mvp.AbsPresenter;
 import com.xnt.baselib.mvp.IView;

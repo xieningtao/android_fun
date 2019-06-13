@@ -2,11 +2,11 @@ ext {
     version = [
         android_minisdk_version : 21,
         android_compile_version : 28,
-        support_version : "27.1.1",
+        support_version : "28.0.0-rc01",
     ]
 
     dependencies =[
-            supportAnnotations: "com.android.support:support-annotations:${version.support_version}",
+            supportAnnotations: 'androidx.annotation:annotation:1.0.0',
             logger            : 'com.orhanobut:logger:2.2.0',
     ]
 }

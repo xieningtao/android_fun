@@ -1,6 +1,6 @@
 package com.xnt.sglog.prettylog;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.orhanobut.logger.FormatStrategy;
 import com.orhanobut.logger.LogStrategy;

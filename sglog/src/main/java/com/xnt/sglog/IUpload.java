@@ -6,5 +6,5 @@ import java.io.File;
 
 public interface IUpload {
 
-    void upload(Context context, File file);
+    void upload(Context context,String rootLogDir, File file);
 }

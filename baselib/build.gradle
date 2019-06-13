@@ -24,18 +24,20 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "com.android.support:multidex:1.0.3"
+    implementation 'androidx.multidex:multidex:2.0.0'
     //support package
-    implementation "com.android.support:support-v4:${config.support_version}"
-    implementation "com.android.support:support-v13:${config.support_version}"
-    implementation "com.android.support:recyclerview-v7:${config.support_version}"
-    implementation "com.android.support:cardview-v7:${config.support_version}"
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.legacy:legacy-support-v13:1.0.0'
+    implementation 'androidx.recyclerview:recyclerview:1.0.0'
+    implementation 'androidx.cardview:cardview:1.0.0'
+    api 'com.google.android.material:material:1.0.0'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
 
     //viewPage transform
     implementation 'com.ToxicBakery.viewpager.transforms:view-pager-transforms:1.2.32@aar'
 
     //animation
-    implementation "com.android.support:support-compat:${config.support_version}"
+    implementation 'androidx.core:core:1.0.0'
     implementation 'com.daimajia.easing:library:2.0@aar'
     implementation 'com.daimajia.androidanimations:library:2.3@aar'
 
@@ -46,7 +48,7 @@ dependencies {
     //下拉刷新，上拉加载更多
     implementation 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.0-alpha-28'
     implementation 'com.scwang.smartrefresh:SmartRefreshHeader:1.1.0-alpha-28'//没有使用特殊Header，可以不加这行
-    implementation "com.android.support:appcompat-v7:${config.support_version}"//版本 23以上（必须）
+    implementation 'androidx.appcompat:appcompat:1.0.0'//版本 23以上（必须）
 
     //butterknife
     implementation 'com.jakewharton:butterknife:10.1.0'

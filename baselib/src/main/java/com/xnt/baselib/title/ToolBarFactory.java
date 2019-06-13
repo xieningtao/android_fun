@@ -1,6 +1,5 @@
 package com.xnt.baselib.title;
 
-import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;

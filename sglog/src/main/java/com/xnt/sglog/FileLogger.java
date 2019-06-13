@@ -17,12 +17,12 @@ class FileLogger {
             return;
         }
         try {
-            File dir = new File(rootDir + "/log/");
+            File dir = new File(rootDir);
             if (!dir.exists()) {
                 dir.mkdirs();
             }
             String date = new SimpleDateFormat("yyyy-MM-dd").format(new Date(System.currentTimeMillis()));
-            String logName = rootDir + "/log/" + date + ".txt";
+            String logName = rootDir + File.separator + date + ".txt";
             mWriter = new BufferedWriter(new FileWriter(logName, true));
         } catch (Exception e) {
             L.exception(e);
@@ -35,7 +35,7 @@ class FileLogger {
         }
         try {
             String time = new SimpleDateFormat("MM-dd hh:mm:ss:SSS").format(new Date(System.currentTimeMillis()));
-            text = time + " >>> pi: " + android.os.Process.myPid() +" "+ tag + " : " + text;
+            text = time + " >>> pi: " + android.os.Process.myPid() + " " + tag + " : " + text;
             mWriter.write(text);
             mWriter.newLine();
             mWriter.flush();
@@ -59,7 +59,9 @@ class FileLogger {
         try {
             writer = new FileWriter(filePath, true);
             writer.append(content).append('\n').append('\r');
-        } catch (IOException e) {L.exception(e);} finally {
+        } catch (IOException e) {
+            L.exception(e);
+        } finally {
             if (writer != null) {
                 try {
                     writer.close();

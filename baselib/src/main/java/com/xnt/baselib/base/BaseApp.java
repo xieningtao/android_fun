@@ -1,6 +1,6 @@
 package com.xnt.baselib.base;
 
-import android.support.multidex.MultiDexApplication;
+import androidx.multidex.MultiDexApplication;
 
 public class BaseApp extends MultiDexApplication {
 

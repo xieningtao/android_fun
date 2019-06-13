@@ -1,7 +1,7 @@
 package com.xnt.baselib.pagestatus.pagestatus;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.view.View;
 
 public class DefaultPageViewStatus extends AbsPageViewStatus {

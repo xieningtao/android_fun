@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="xnt.com.sg.SGMainActivity">
+
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/sg_main_navigation_view_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        app:cardCornerRadius="3dp"
+        app:cardElevation="10dp"
+        app:cardPreventCornerOverlap="true">
+
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/sg_main_navigation_view"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            app:itemIconTint="@drawable/selector_nav_btn_color"
+            app:itemTextColor="@drawable/selector_nav_btn_color"
+            app:labelVisibilityMode="labeled"
+            app:itemIconSize="20dp"
+            app:menu="@menu/menu_navigation_btn_tab" />
+    </androidx.cardview.widget.CardView>
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/sg_main_vp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/sg_main_navigation_view_container" />
+
+    <View
+        android:id="@+id/sg_main_top_line"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:stateListAnimator="@null"
+        android:layout_alignParentTop="true"
+        android:background="@color/common_color_F6F6F6" />
+
+    <!--android:elevation="10dp"-->
+</RelativeLayout>

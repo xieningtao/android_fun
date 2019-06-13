@@ -20,11 +20,10 @@ public class LogUtils {
     private static final long MAX_LOG_SIZE = 1024 * 1024 * 5;
 
 
-    public synchronized static void cleanExceedLogs(){
+    public synchronized static void cleanExceedLogs(String rootLogDir) {
         //日志文件夹
-        File logDir = new File(Constant.ELK_STORAGE_DIR);
-
-        if(logDir != null && logDir.isDirectory()){
+        File logDir = new File(rootLogDir);
+        if (logDir != null && logDir.exists() && logDir.isDirectory()) {
             List<File> logFiles = Arrays.asList(logDir.listFiles());
             Collections.sort(logFiles, new Comparator<File>() {
                 @Override
@@ -35,14 +34,14 @@ public class LogUtils {
                 }
             });
             long totalSize = 0;
-            if(logFiles != null && logFiles.size() > 0){
+            if (logFiles != null && logFiles.size() > 0) {
                 totalSize = getRemainderSize(logFiles);
-                if(totalSize >= MAX_LOG_SIZE) {
+                if (totalSize >= MAX_LOG_SIZE) {
                     Queue<File> fileQueue = new ArrayDeque<>(logFiles);
-                    while (!fileQueue.isEmpty() && totalSize >= MAX_LOG_SIZE){
-                            File willRemovedFile = fileQueue.poll();
-                            totalSize -= willRemovedFile.length();
-                            willRemovedFile.delete();
+                    while (!fileQueue.isEmpty() && totalSize >= MAX_LOG_SIZE) {
+                        File willRemovedFile = fileQueue.poll();
+                        totalSize -= willRemovedFile.length();
+                        willRemovedFile.delete();
                     }
                 }
             }
@@ -51,9 +50,9 @@ public class LogUtils {
 
     private static long getRemainderSize(List<File> logFiles) {
         long totalSize = 0;
-        for(int i = 0; i < logFiles.size(); i++){
-           long size = logFiles.get(i).length();
-           totalSize += size;
+        for (int i = 0; i < logFiles.size(); i++) {
+            long size = logFiles.get(i).length();
+            totalSize += size;
         }
         return totalSize;
     }

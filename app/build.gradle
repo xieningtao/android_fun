@@ -7,7 +7,6 @@ ext{
 }
 android {
     compileSdkVersion config.android_compile_version
-    buildToolsVersion '27.0.3'
 
     defaultConfig {
         applicationId "xnt.com.fun"
@@ -73,23 +72,37 @@ dependencies {
 //    implementation 'com.android.support:recyclerview-v7:22.2.0'
     //implementation 'com.android.support:leanback-v17:22.2.0'
 
-    implementation "com.sf.core:base_sf_core:1.0.3@aar"
-//    implementation "com.sf.core:android_tv:1.0.0@aar"
-    implementation "com.sf.core:emoji_lib:1.0.0@aar"
-    implementation "com.sf.core:http_client:1.0.0@aar"
-    implementation "com.sf.core:opengl_lib:1.0.0@aar"
-    implementation "com.sf.core:sf_umeng_lib:1.0.2@aar"
-    implementation "com.sf.core:sf_pay_lib:1.0.0@aar"
-    implementation "com.sf.core:sf_circle_lib:1.0.0@aar"
-    implementation "com.sf.core:sfchat_lib:1.0.0@aar"
-    implementation "com.sf.core:sf_log_lib:1.0.0@aar"
-    implementation "com.sf.core:sf_share_lib:1.0.1@aar"
-    implementation "com.sf.core:baidu_lib:1.0.0@aar"
-    implementation "com.sf.core:sf_db_lib:1.0.0@aar"
-    implementation "com.sf.core:sf_util_lib:1.0.0@aar"
-    implementation "com.sf.core:reflection_lib:1.0.0@aar"
-    implementation "com.sf.core:custom_view:1.0.0@aar"
-    implementation "com.sf.core:pull_refresh_lib:1.0.0@aar"
+    implementation 'com.github.xieningtao.new_sflib:BaseSmartFrame:1.7.0'
+    implementation 'com.github.xieningtao.new_sflib:SFChat:1.7.0'
+    implementation 'com.github.xieningtao.new_sflib:BaiduLib:1.7.0'
+    implementation 'com.github.xieningtao.new_sflib:CustomView:1.7.0'
+    implementation 'com.github.xieningtao.new_sflib:Emoji:1.7.0'
+    implementation 'com.github.xieningtao.new_sflib:PullRefreshLib:1.7.0'
+    implementation 'com.github.xieningtao.new_sflib:SFChat:1.7.0'
+    implementation 'com.github.xieningtao.new_sflib:SFCircle:1.7.0'
+    implementation 'com.github.xieningtao.new_sflib:SFLog:1.7.0'
+    implementation 'com.github.xieningtao.new_sflib:SFPay:1.7.0'
+    implementation 'com.github.xieningtao.new_sflib:SFUtils:1.7.0'
+    implementation 'com.github.xieningtao.new_sflib:UMengLib:1.7.0'
+    implementation 'com.github.xieningtao.new_sflib:reflection:1.7.0'
+    implementation 'com.github.xieningtao.new_sflib:sharelib:1.7.0'
+    implementation 'com.github.xieningtao.new_sflib:thirdlib:1.7.0'
+////    implementation "com.sf.core:android_tv:1.0.0@aar"
+//    implementation "com.sf.core:emoji_lib:1.0.0@aar"
+//    implementation "com.sf.core:http_client:1.0.0@aar"
+////    implementation "com.sf.core:opengl_lib:1.0.0@aar"
+//    implementation "com.sf.core:sf_umeng_lib:1.0.2@aar"
+//    implementation "com.sf.core:sf_pay_lib:1.0.0@aar"
+//    implementation "com.sf.core:sf_circle_lib:1.0.0@aar"
+//    implementation "com.sf.core:sfchat_lib:1.0.0@aar"
+////    implementation "com.sf.core:sf_log_lib:1.0.0@aar"
+//    implementation "com.sf.core:sf_share_lib:1.0.1@aar"
+//    implementation "com.sf.core:baidu_lib:1.0.0@aar"
+//    implementation "com.sf.core:sf_db_lib:1.0.0@aar"
+//    implementation "com.sf.core:sf_util_lib:1.0.0@aar"
+//    implementation "com.sf.core:reflection_lib:1.0.0@aar"
+//    implementation "com.sf.core:custom_view:1.0.0@aar"
+//    implementation "com.sf.core:pull_refresh_lib:1.0.0@aar"
     //bmob sdk
     //以下SDK开发者请根据需要自行选择
     //bmob-sdk：Bmob的android sdk包，包含了Bmob的数据存储、文件等服务，以下是最新的bmob-sdk:

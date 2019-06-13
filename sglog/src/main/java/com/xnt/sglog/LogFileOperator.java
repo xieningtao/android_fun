@@ -127,7 +127,7 @@ public class LogFileOperator {
             if (lineCounter >= elkOption.getElkFileSize() || forceNewFile) {
                 writer.close();
                 writer = null;
-                String newFileName = ElkHelper.remarkFile(currentElkFile, WRITE_SUFFIX, IDLE_SUFFIX);
+                String newFileName = ElkHelper.remarkFile(elkOption.getElkStorageDir(),currentElkFile, WRITE_SUFFIX, IDLE_SUFFIX);
                 if (onElkFileFull != null) {
                     onElkFileFull.onCurElkFileFull(elkOption.getElkStorageDir(), newFileName);
                 }
@@ -236,7 +236,7 @@ public class LogFileOperator {
                 //把之前的writing文件变成idle文件
                 File[] mWriteFiles = dir.listFiles(mWritingFileNameFilter);
                 for (File file : mWriteFiles) {
-                    ElkHelper.remarkFile(file, WRITE_SUFFIX, IDLE_SUFFIX);
+                    ElkHelper.remarkFile(elkOption.getElkStorageDir(),file, WRITE_SUFFIX, IDLE_SUFFIX);
                 }
 
                 //检查日志是否满了，需要删除一些日志
@@ -310,7 +310,6 @@ public class LogFileOperator {
 
     public interface OnElkFileFullListener {
         void onCurElkFileFull(String dir, String curFileName);
-
     }
 
     public interface OnElkFileScanListener {
