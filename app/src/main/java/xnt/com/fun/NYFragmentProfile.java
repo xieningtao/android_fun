@@ -13,8 +13,8 @@ import android.widget.TextView;
 import com.basesmartframe.baseui.BaseFragment;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.utils.L;
-import com.sf.utils.baseutil.SFBus;
 import com.sf.utils.baseutil.SpUtil;
+import com.sflib.reflection.core.SFBus;
 import com.sflib.reflection.core.SFIntegerMessage;
 import com.sflib.reflection.core.ThreadId;
 import com.umeng.socialize.UMAuthListener;
@@ -121,7 +121,7 @@ public class NYFragmentProfile extends BaseFragment {
         String loginType = SpUtil.getString(getActivity(), LoginConstant.LOGIN_TYPE);
         if (LoginConstant.SINA.equals(loginType)) {
             UMShareAPI.get(getActivity()).deleteOauth(getActivity(), SHARE_MEDIA.SINA, new UMAuthListener() {
-                @Override
+
                 public void onStart(SHARE_MEDIA share_media) {
 
                 }

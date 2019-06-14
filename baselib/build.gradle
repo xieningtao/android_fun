@@ -23,61 +23,62 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.multidex:multidex:2.0.0'
+    api fileTree(dir: 'libs', include: ['*.jar'])
+    api 'androidx.multidex:multidex:2.0.0'
     //support package
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.legacy:legacy-support-v13:1.0.0'
-    implementation 'androidx.recyclerview:recyclerview:1.0.0'
-    implementation 'androidx.cardview:cardview:1.0.0'
+    api 'androidx.legacy:legacy-support-v4:1.0.0'
+    api 'androidx.legacy:legacy-support-v13:1.0.0'
+    api 'androidx.recyclerview:recyclerview:1.0.0'
+    api 'androidx.cardview:cardview:1.0.0'
     api 'com.google.android.material:material:1.0.0'
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    api 'androidx.constraintlayout:constraintlayout:1.1.3'
 
     //viewPage transform
-    implementation 'com.ToxicBakery.viewpager.transforms:view-pager-transforms:1.2.32@aar'
+    api 'com.ToxicBakery.viewpager.transforms:view-pager-transforms:1.2.32@aar'
 
     //animation
-    implementation 'androidx.core:core:1.0.0'
-    implementation 'com.daimajia.easing:library:2.0@aar'
-    implementation 'com.daimajia.androidanimations:library:2.3@aar'
+    api 'androidx.core:core:1.0.0'
+    api 'com.daimajia.easing:library:2.0@aar'
+    api 'com.daimajia.androidanimations:library:2.3@aar'
 
     //permission
-    implementation 'com.github.tbruyelle:rxpermissions:0.10.2'
+    api 'com.github.tbruyelle:rxpermissions:0.10.2'
 
     //1.1.0 （1.0.5及以前版本的老用户升级需谨慎，API改动过大）
     //下拉刷新，上拉加载更多
-    implementation 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.0-alpha-28'
-    implementation 'com.scwang.smartrefresh:SmartRefreshHeader:1.1.0-alpha-28'//没有使用特殊Header，可以不加这行
-    implementation 'androidx.appcompat:appcompat:1.0.0'//版本 23以上（必须）
+    api 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.0-alpha-28'
+    api 'com.scwang.smartrefresh:SmartRefreshHeader:1.1.0-alpha-28'//没有使用特殊Header，可以不加这行
+    api 'androidx.appcompat:appcompat:1.0.0'//版本 23以上（必须）
 //    androidx
-//    implementation 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.0-andx-11'
-//    implementation 'com.scwang.smartrefresh:SmartRefreshHeader:1.1.0-andx-11'
-//    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+//    api 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.0-andx-11'
+//    api 'com.scwang.smartrefresh:SmartRefreshHeader:1.1.0-andx-11'
+//    api 'androidx.legacy:legacy-support-v4:1.0.0'
 
     //butterknife
-    implementation 'com.jakewharton:butterknife:10.1.0'
+    api 'com.jakewharton:butterknife:10.1.0'
     //indicator
-    implementation 'com.github.hackware1993:MagicIndicator:1.5.0'
+    api 'com.github.hackware1993:MagicIndicator:1.5.0'
     //cardslider
-    implementation 'com.facebook.rebound:rebound:0.3.8'
+    api 'com.facebook.rebound:rebound:0.3.8'
     //circle imageView
-    implementation 'de.hdodenhof:circleimageview:3.0.0'
+    api 'de.hdodenhof:circleimageview:3.0.0'
     //editText
-    implementation 'com.rengwuxian.materialedittext:library:2.1.4'
+    api 'com.rengwuxian.materialedittext:library:2.1.4'
     //photoView
-    implementation 'com.github.chrisbanes:PhotoView:2.3.0'
+    api 'com.github.chrisbanes:PhotoView:2.3.0'
     //take photo and pick photo
     //doc https://github.com/crazycodeboy/TakePhoto
-    implementation 'org.devio.takephoto:takephoto_library:4.1.0'
+    api 'org.devio.takephoto:takephoto_library:4.1.0'
 
     //event bus
-    implementation 'org.greenrobot:eventbus:3.1.1'
+    api 'org.greenrobot:eventbus:3.1.1'
     //reycler animator
     //doc https://github.com/wasabeef/recyclerview-animators
-    implementation 'jp.wasabeef:recyclerview-animators:3.0.0'
+//    api 'jp.wasabeef:recyclerview-animators:3.0.0'
+
     //flowlayout,适合搜索标签
-    implementation 'com.hyman:flowlayout-lib:1.1.2'
+    api 'com.hyman:flowlayout-lib:1.1.2'
 
     //utils
-    implementation 'com.github.xieningtao.new_sflib:SFUtils:1.8.0'
+    api 'com.github.xieningtao.new_sflib:SFUtils:1.8.0'
 }

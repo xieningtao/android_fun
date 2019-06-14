@@ -8,8 +8,9 @@ import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
+
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,9 +27,9 @@ import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.sf.loglib.L;
 import com.sf.utils.baseutil.NetWorkManagerUtil;
-import com.sf.utils.baseutil.SFBus;
 import com.sf.utils.baseutil.SFToast;
 import com.sflib.CustomView.baseview.EditTextClearDroidView;
+import com.sflib.reflection.core.SFBus;
 import com.sflib.reflection.core.SFIntegerMessage;
 import com.sflib.reflection.core.ThreadId;
 import com.sflib.umenglib.share.DefaultShareAdapter;
@@ -490,7 +491,7 @@ public class NYBeautyShowActivity extends NYBaseShowActivity implements BeautyMo
                                 }
                             });
                             Bitmap bitmap = NYShareHelper.drawableToBitmap(imageView.getDrawable());
-                            shareView.setShareContent(NYShareHelper.getShareAction(NYBeautyShowActivity.this, finalBeauty.imgDesc, bitmap));
+                            shareView.setShareAction(NYShareHelper.getShareAction(NYBeautyShowActivity.this, finalBeauty.imgDesc, bitmap));
                             shareView.setShareAdapter(new DefaultShareAdapter());
                             shareDialogView.setOnClickListener(new View.OnClickListener() {
                                 @Override

@@ -2,10 +2,11 @@ package xnt.com.fun;
 
 import android.Manifest;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.view.View;
 
-import com.sflib.reflection.core.ThreadHelp;
+import androidx.fragment.app.FragmentActivity;
+
+import com.sf.utils.ThreadHelp;
 import com.tbruyelle.rxpermissions2.Permission;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 import com.umeng.analytics.MobclickAgent;

@@ -28,7 +28,7 @@ public class NYShareView extends XBaseShareView {
         super(context, attrs);
     }
 
-    public void setShareContent(ShareAction shareAction) {
+    public void setShareAction(ShareAction shareAction) {
         this.mShareAction = shareAction;
     }
 

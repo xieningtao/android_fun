@@ -3,13 +3,15 @@ package xnt.com.fun;
 import com.basesmartframe.baseapp.BaseApp;
 import com.sf.baidulib.SFBaiduLocationManager;
 import com.sf.loglib.L;
-import com.sflib.reflection.core.ThreadHelp;
+import com.sf.utils.ThreadHelp;
 import com.umeng.commonsdk.UMConfigure;
 
 import cdc.sed.yff.nm.sp.SpotManager;
 import cdc.sed.yff.nm.sp.SpotRequestListener;
 import cn.bmob.v3.Bmob;
 import xnt.com.fun.config.NYBMobConfig;
+
+import static cn.bmob.v3.Bmob.getApplicationContext;
 
 
 public class SFApp extends BaseApp {

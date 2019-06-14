@@ -2,13 +2,15 @@ package xnt.com.fun;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.sf.loglib.L;
@@ -40,9 +42,9 @@ public class NYBeautyPicFragment extends BaseRecycleViewFragment implements Beau
         super.onViewCreated(view, savedInstanceState);
         mPicWidth = Utils.getBeautyPicWidth(getActivity())/2;
         mPicHeight = Utils.getPicHeight(mPicWidth,mWH);
-        mPullLoadMoreRv.setStaggeredGridLayout(2);
+        mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL));
         mAdapter = new BeautyAdapter();
-        mPullLoadMoreRv.setAdapter(mAdapter);
+        mRecyclerView.setAdapter(mAdapter);
         BeautyModel.getInstance().registerListener(this);
     }
 

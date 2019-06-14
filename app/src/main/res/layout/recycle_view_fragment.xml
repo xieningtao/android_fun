@@ -2,14 +2,9 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/ny_main_bg"
-    >
+    android:background="@color/ny_main_bg">
 
-   <com.wuxiaolong.pullloadmorerecyclerview.PullLoadMoreRecyclerView
-       android:id="@+id/load_more_rv"
-       android:layout_width="match_parent"
-       android:layout_height="match_parent"
-       />
+    <include layout="@layout/base_refresh_layout" />
 
     <FrameLayout
         android:id="@+id/http_container"

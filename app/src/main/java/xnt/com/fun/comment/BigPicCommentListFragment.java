@@ -177,7 +177,7 @@ public class BigPicCommentListFragment extends BasePullListFragment<PicComment> 
                     }
                     //去重复
                     if (refresh) {
-                        finishRefreshOrLoading(pairPicBeans, 0, true);
+                        finishRefreshOrLoading(pairPicBeans,  true);
                     } else {
                         finishRefreshOrLoading(pairPicBeans, true);
                     }

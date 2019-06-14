@@ -2,8 +2,9 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 def config = rootProject.ext.version;
-ext{
-    htextview_version ="0.1.6"
+ext {
+    htextview_version = "0.1.6"
+    new_sf_lib_version = "1.9.0"
 }
 android {
     compileSdkVersion config.android_compile_version
@@ -16,13 +17,6 @@ android {
         versionName "1.0.0"
         ndk {
             abiFilters 'armeabi'//, 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64', 'mips', 'mips64'
-        }
-    }
-
-    sourceSets {
-        main {
-            assets.srcDirs = ['assets']
-            jniLibs.srcDirs = ['libs']
         }
     }
 
@@ -49,20 +43,25 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 //configurations {
 //    compile.exclude 'com.squareup.okio:okio:1.11.0@jar'
 //}
 configurations {
-        compile.exclude group: 'com.squareup.okio'
+    compile.exclude group: 'com.squareup.okio'
 }
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation fileTree(dir: 'libs', include: ['*.aar'])
     implementation('io.socket:socket.io-client:0.6.3') {
         exclude group: 'org.json', module: 'json'
-        exclude group: 'com.squareup.okhttp',module: 'okhttp'
+        exclude group: 'com.squareup.okhttp', module: 'okhttp'
     }
 //    implementation "com.squareup.okhttp3:okhttp:3.2.0"
 
@@ -72,26 +71,32 @@ dependencies {
 //    implementation 'com.android.support:recyclerview-v7:22.2.0'
     //implementation 'com.android.support:leanback-v17:22.2.0'
 
-    implementation 'com.github.xieningtao.new_sflib:BaseSmartFrame:1.8.0'
-    implementation 'com.github.xieningtao.new_sflib:SFChat:1.8.0'
-    implementation 'com.github.xieningtao.new_sflib:BaiduLib:1.8.0'
-    implementation 'com.github.xieningtao.new_sflib:CustomView:1.8.0'
-    implementation 'com.github.xieningtao.new_sflib:Emoji:1.8.0'
-    implementation 'com.github.xieningtao.new_sflib:PullRefreshLib:1.8.0'
-    implementation 'com.github.xieningtao.new_sflib:SFChat:1.8.0'
-    implementation 'com.github.xieningtao.new_sflib:SFCircle:1.8.0'
-    implementation 'com.github.xieningtao.new_sflib:SFLog:1.8.0'
-    implementation 'com.github.xieningtao.new_sflib:SFPay:1.8.0'
-    implementation 'com.github.xieningtao.new_sflib:SFUtils:1.8.0'
-    implementation 'com.github.xieningtao.new_sflib:UMengLib:1.8.0'
-    implementation 'com.github.xieningtao.new_sflib:reflection:1.8.0'
-    implementation 'com.github.xieningtao.new_sflib:sharelib:1.8.0'
-    implementation 'com.github.xieningtao.new_sflib:thirdlib:1.8.0'
+    implementation "com.github.xieningtao.new_sflib:BaseSmartFrame:${new_sf_lib_version}"
+    implementation "com.github.xieningtao.new_sflib:SFChat:${new_sf_lib_version}"
+    implementation "com.github.xieningtao.new_sflib:BaiduLib:${new_sf_lib_version}"
+    implementation "com.github.xieningtao.new_sflib:CustomView:${new_sf_lib_version}"
+    implementation "com.github.xieningtao.new_sflib:Emoji:${new_sf_lib_version}"
+    implementation "com.github.xieningtao.new_sflib:PullRefreshLib:${new_sf_lib_version}"
+    implementation "com.github.xieningtao.new_sflib:SFChat:${new_sf_lib_version}"
+    implementation "com.github.xieningtao.new_sflib:SFCircle:${new_sf_lib_version}"
+    implementation "com.github.xieningtao.new_sflib:SFLog:${new_sf_lib_version}"
+    implementation "com.github.xieningtao.new_sflib:SFPay:${new_sf_lib_version}"
+    implementation "com.github.xieningtao.new_sflib:SFUtils:${new_sf_lib_version}"
+    implementation "com.github.xieningtao.new_sflib:UMengLib:${new_sf_lib_version}"
+    implementation "com.github.xieningtao.new_sflib:reflection:${new_sf_lib_version}"
+    implementation "com.github.xieningtao.new_sflib:sharelib:${new_sf_lib_version}"
+    implementation "com.github.xieningtao.new_sflib:thirdlib:${new_sf_lib_version}"
     //bmob sdk
     //以下SDK开发者请根据需要自行选择
     //bmob-sdk：Bmob的android sdk包，包含了Bmob的数据存储、文件等服务，以下是最新的bmob-sdk:
     //3.5.5：请务必查看下面注释[1]
-    implementation 'cn.bmob.android:bmob-sdk:3.6.3'
+    implementation "cn.bmob.android:bmob-sdk:3.7.3-rc1"
+    implementation "io.reactivex.rxjava2:rxjava:2.2.2"
+    implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
+    implementation 'com.squareup.okio:okio:2.1.0'
+    implementation 'com.google.code.gson:gson:2.8.5'
+    implementation 'com.squareup.okhttp3:okhttp:3.12.0'
+
     //如果你想应用能够兼容Android6.0，请添加此依赖(org.apache.http.legacy.jar)
     implementation 'cn.bmob.android:http-legacy:1.0'
 
@@ -99,7 +104,7 @@ dependencies {
 //    implementation 'com.wuxiaolong.pullloadmorerecyclerview:library:1.1.2'
 
     //HText
-    implementation ("com.hanks:htextview-base:$htextview_version" )     // base library
+    implementation("com.hanks:htextview-base:$htextview_version")     // base library
 
 //    implementation "com.hanks:htextview-fade:$htextview_version"        // optional
 //    implementation "com.hanks:htextview-line:$htextview_version"        // optional
@@ -118,11 +123,14 @@ dependencies {
 //    //baseLib
     implementation project(":baselib")
 
+    //mutildex
+    implementation "androidx.multidex:multidex:2.0.0"
+
     //butterknife
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.1.0'
 }
 configurations {
-    all*.exclude group: "com.squareup.okio"
+//    all*.exclude group: "com.squareup.okio"
 }
 
 configurations.all {
@@ -130,5 +138,8 @@ configurations.all {
         force "com.android.support:appcompat-v7:${config.support_version}"
         force "com.android.support:recyclerview-v7:${config.support_version}"
         force "com.android.support:multidex:1.0.3"
+//        force "com.google.code.gson:gson:2.8.5"
+//        force 'com.squareup.okhttp3:okhttp:3.12.0'
+//        force 'com.squareup.okio:okio:2.1.0'
     }
 }

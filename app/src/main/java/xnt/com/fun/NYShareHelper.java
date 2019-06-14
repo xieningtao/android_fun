@@ -8,7 +8,6 @@ import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 
 import com.sf.utils.baseutil.SFToast;
-import com.sflib.umenglib.share.DefaultUMengShareAction;
 import com.umeng.socialize.ShareAction;
 import com.umeng.socialize.UMShareListener;
 import com.umeng.socialize.bean.SHARE_MEDIA;
@@ -27,12 +26,11 @@ public class NYShareHelper {
         if (TextUtils.isEmpty(content)) {
             content = "M拍，找寻时尚的你";
         }
-        return DefaultUMengShareAction.getTxtAction(activity, content, umImage).setCallback(new UMShareListener() {
-            @Override
-            public void onStart(SHARE_MEDIA share_media) {
-                progressDialog.show();
-            }
+        return createShareAction(activity, content, umImage);
+    }
 
+    private static ShareAction createShareAction(Activity activity, String content, UMImage umImage) {
+        return new ShareAction(activity).withText(content).withExtra(umImage).setCallback(new UMShareListener() {
             @Override
             public void onResult(SHARE_MEDIA share_media) {
                 progressDialog.dismiss();
@@ -52,6 +50,7 @@ public class NYShareHelper {
             }
         });
     }
+
     public static ShareAction getShareAction(Activity activity, String content, Bitmap bitmap) {
         if (progressDialog == null) {
             progressDialog = NYProgressDialog.getProgressDialog(activity, activity.getString(R.string.sharing));
@@ -60,30 +59,7 @@ public class NYShareHelper {
         if (TextUtils.isEmpty(content)) {
             content = "M拍，找寻时尚的你";
         }
-        return DefaultUMengShareAction.getTxtAction(activity, content, umImage).setCallback(new UMShareListener() {
-            @Override
-            public void onStart(SHARE_MEDIA share_media) {
-                progressDialog.show();
-            }
-
-            @Override
-            public void onResult(SHARE_MEDIA share_media) {
-                progressDialog.dismiss();
-                SFToast.showToast(R.string.share_success);
-            }
-
-            @Override
-            public void onError(SHARE_MEDIA share_media, Throwable throwable) {
-                progressDialog.dismiss();
-                SFToast.showToast(R.string.share_fail);
-            }
-
-            @Override
-            public void onCancel(SHARE_MEDIA share_media) {
-                progressDialog.dismiss();
-                SFToast.showToast(R.string.share_cancel);
-            }
-        });
+        return createShareAction(activity, content, umImage);
     }
 
     public static void dismissDialog() {
@@ -115,6 +91,6 @@ public class NYShareHelper {
 
 
     public static Bitmap drawableToBitmap(Drawable drawable) {
-        return resizeDownBySideLength(drawable, UMImage.MAX_WIDTH);
+        return resizeDownBySideLength(drawable, 1024 * 1024);
     }
 }

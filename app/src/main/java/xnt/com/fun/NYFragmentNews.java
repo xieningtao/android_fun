@@ -113,7 +113,7 @@ public class NYFragmentNews extends NYBasePullListFragment<StyleNews> {
                         newBeans = diffNews;
                     }
                     if (refresh) {
-                        finishRefreshOrLoading(newBeans,0, true);
+                        finishRefreshOrLoading(newBeans, true);
                     }else {
                         finishRefreshOrLoading(newBeans, true);
                     }

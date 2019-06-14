@@ -5,22 +5,23 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
+
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.nostra13.universalimageloader.utils.L;
 import com.sf.utils.baseutil.NetWorkManagerUtil;
-import com.sf.utils.baseutil.SFBus;
 import com.sf.utils.baseutil.SFToast;
 import com.sflib.CustomView.baseview.EditTextClearDroidView;
+import com.sflib.reflection.core.SFBus;
 import com.sflib.umenglib.share.DefaultShareAdapter;
 import com.umeng.socialize.UMShareAPI;
 
@@ -370,7 +371,7 @@ public class NYPhotoShowActivity extends NYBaseShowActivity {
                         NYShareView shareView = (NYShareView) shareDialogView.findViewById(R.id.share_view);
                         String desc = mCardPicBeans.get(position).imgDesc;
                         Bitmap bitmap = NYShareHelper.drawableToBitmap(imageView.getDrawable());
-                        shareView.setShareContent(NYShareHelper.getShareAction(NYPhotoShowActivity.this, desc, bitmap));
+                        shareView.setShareAction(NYShareHelper.getShareAction(NYPhotoShowActivity.this, desc, bitmap));
                         shareView.setShareAdapter(new DefaultShareAdapter());
                         shareDialogView.setOnClickListener(new View.OnClickListener() {
                             @Override

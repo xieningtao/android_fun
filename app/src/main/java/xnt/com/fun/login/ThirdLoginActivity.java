@@ -11,12 +11,11 @@ import android.widget.TextView;
 import com.basesmartframe.baseui.BaseActivity;
 import com.sf.loglib.L;
 import com.sf.utils.baseutil.NetWorkManagerUtil;
-import com.sf.utils.baseutil.SFBus;
 import com.sf.utils.baseutil.SFToast;
 import com.sf.utils.baseutil.SpUtil;
+import com.sflib.reflection.core.SFBus;
 import com.umeng.socialize.UMAuthListener;
 import com.umeng.socialize.UMShareAPI;
-import com.umeng.socialize.UMShareConfig;
 import com.umeng.socialize.bean.SHARE_MEDIA;
 
 import org.json.JSONObject;
@@ -37,7 +36,6 @@ public class ThirdLoginActivity extends BaseActivity {
     private final String TAG = "ThirdLoginActivity";
     private Dialog mProgressDialog;
     private UMAuthListener umAuthListener = new UMAuthListener() {
-        @Override
         public void onStart(SHARE_MEDIA share_media) {
             L.info(TAG,"method->onStart");
             mProgressDialog.show();
@@ -105,9 +103,9 @@ public class ThirdLoginActivity extends BaseActivity {
         Utils.setActionBar(this);
         updateActionBar();
         mProgressDialog = NYProgressDialog.getProgressDialog(this,"正在登录中...");
-        UMShareConfig config = new UMShareConfig();
-        config.isNeedAuthOnGetUserInfo(true);
-        UMShareAPI.get(ThirdLoginActivity.this).setShareConfig(config);
+//        UMShareConfig config = new UMShareConfig();
+//        config.isNeedAuthOnGetUserInfo(true);
+//        UMShareAPI.get(ThirdLoginActivity.this).setShareConfig(config);
         TextView weixinLoginTv = findViewById(R.id.weixin_tv);
         TextView sinaLoginTv = findViewById(R.id.sina_tv);
 
@@ -156,7 +154,7 @@ public class ThirdLoginActivity extends BaseActivity {
             L.error(TAG,"method->updateUserInfo nyBmobUser is null");
             return;
         }
-        BmobUser bmobUser = BmobUser.getCurrentUser();
+        BmobUser bmobUser = BmobUser.getCurrentUser(NYBmobUser.class);
         if(bmobUser != null){
             nyBmobUser.update(bmobUser.getObjectId(), new UpdateListener() {
                 @Override

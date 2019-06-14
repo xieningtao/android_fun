@@ -1,27 +1,39 @@
 package xnt.com.fun.base;
 
 import android.os.Bundle;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.basesmartframe.baseevent.GlobalEvent;
 import com.basesmartframe.basepull.PullType;
 import com.basesmartframe.baseui.BaseFragment;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.sf.utils.baseutil.NetWorkManagerUtil;
 import com.sflib.CustomView.newhttpview.HttpViewManager;
 import com.sflib.reflection.core.SFIntegerMessage;
-import com.wuxiaolong.pullloadmorerecyclerview.PullLoadMoreRecyclerView;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import xnt.com.fun.R;
 
 public abstract class BaseRecycleViewFragment extends BaseFragment {
-    protected PullLoadMoreRecyclerView mPullLoadMoreRv;
+
+    @BindView(R.id.smart_refresh)
+    protected SmartRefreshLayout mSmartRefresh;
+
+    @BindView(R.id.recycler_view)
+    protected RecyclerView mRecyclerView;
+
     private FrameLayout mHttpContainer;
     private HttpViewManager mHttpViewManager;
-    private PullType mPullType;
 
     public BaseRecycleViewFragment() {
     }
@@ -30,13 +42,10 @@ public abstract class BaseRecycleViewFragment extends BaseFragment {
         return inflater.inflate(R.layout.recycle_view_fragment, (ViewGroup) null);
     }
 
-    public PullLoadMoreRecyclerView getPullToRefreshListView() {
-        return this.mPullLoadMoreRv;
-    }
-
 
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        ButterKnife.bind(this, view);
         this.initView(view, savedInstanceState);
         this.doRefresh();
     }
@@ -44,25 +53,25 @@ public abstract class BaseRecycleViewFragment extends BaseFragment {
     private void initView(View view, Bundle savedInstanceState) {
         this.mHttpContainer = (FrameLayout) view.findViewById(R.id.http_container);
         this.mHttpViewManager = HttpViewManager.createManagerByDefault(this.getActivity(), this.mHttpContainer);
-        this.mPullLoadMoreRv = (PullLoadMoreRecyclerView) view.findViewById(R.id.load_more_rv);
-        mPullLoadMoreRv.setOnPullLoadMoreListener(new PullLoadMoreRecyclerView.PullLoadMoreListener() {
+        mSmartRefresh.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
-            public void onRefresh() {
-                doRefresh();
-            }
-
-            @Override
-            public void onLoadMore() {
+            public void onLoadMore(@NonNull RefreshLayout refreshLayout) {
                 doLoadMore();
+            }
+        });
+
+        mSmartRefresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(@NonNull RefreshLayout refreshLayout) {
+                doRefresh();
             }
         });
     }
 
 
     private boolean isListViewHasData() {
-        RecyclerView recyclerView = mPullLoadMoreRv.getRecyclerView();
-        if (recyclerView != null) {
-            RecyclerView.Adapter adapter = recyclerView.getAdapter();
+        if (mRecyclerView != null) {
+            RecyclerView.Adapter adapter = mRecyclerView.getAdapter();
             if (adapter != null) {
                 return adapter.getItemCount() > 0;
             }
@@ -74,7 +83,6 @@ public abstract class BaseRecycleViewFragment extends BaseFragment {
     public void doLoadMore() {
         this.showHttpLoadingView();
         if (NetWorkManagerUtil.isNetworkAvailable()) {
-            this.mPullType = PullType.LOADMORE;
             this.onLoadMore();
         } else {
             this.simpleFinishRefreshOrLoading(false);
@@ -100,7 +108,6 @@ public abstract class BaseRecycleViewFragment extends BaseFragment {
     public void doRefresh() {
         if (NetWorkManagerUtil.isNetworkAvailable()) {
             this.showHttpLoadingView();
-            this.mPullType = PullType.REFRESH;
             this.onRefresh();
         } else {
             this.onRefreshNoNetwork();
@@ -110,8 +117,7 @@ public abstract class BaseRecycleViewFragment extends BaseFragment {
     }
 
     protected void simpleFinishRefreshOrLoading(boolean hasMore) {
-        mPullLoadMoreRv.setHasMore(hasMore);
-        mPullLoadMoreRv.setPullLoadMoreCompleted();
+        mSmartRefresh.finishLoadMore();
         this.showHttpResultView();
     }
 

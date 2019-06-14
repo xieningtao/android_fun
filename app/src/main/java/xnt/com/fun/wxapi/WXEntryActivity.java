@@ -41,16 +41,6 @@ public class WXEntryActivity extends WXCallbackActivity  {
     }
 
     @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        L.info(TAG, "onNewIntent,intent: " + intent);
-//        if(!WX_UMENG.equals(config)) {
-//            setIntent(intent);
-//            api.handleIntent(intent, this);
-//        }
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
         NYShareHelper.dismissDialog();

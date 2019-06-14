@@ -34,7 +34,7 @@ public class CommonToolbar extends Toolbar {
     }
 
     public CommonToolbar(Context context, @Nullable AttributeSet attrs) {
-        this(context, attrs, androidx.appcompat.appcompat.R.attr.toolbarStyle);
+        this(context, attrs, R.attr.toolbarStyle);
     }
 
     public CommonToolbar(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {

@@ -1,7 +1,6 @@
 package xnt.com.fun.comment;
 
 import android.os.Bundle;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,12 +9,14 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.sf.loglib.L;
 import com.sf.utils.baseutil.DateFormatHelp;
-import com.sf.utils.baseutil.SFBus;
 import com.sf.utils.baseutil.SFToast;
 import com.sf.utils.baseutil.SystemUIHelp;
+import com.sflib.reflection.core.SFBus;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -104,10 +105,8 @@ public class BeautyCommentListFragment extends BaseRecycleViewFragment {
                 }
             }
         });
-//        mPullLoadMoreRv.getRecyclerView().setHasFixedSize(true);
-        mPullLoadMoreRv.setLinearLayout();
         mAdapter = new BeautyAdapter();
-        mPullLoadMoreRv.setAdapter(mAdapter);
+        mRecyclerView.setAdapter(mAdapter);
     }
 
     private void increaseCommentNum(){

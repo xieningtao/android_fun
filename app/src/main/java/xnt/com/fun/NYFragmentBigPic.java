@@ -20,13 +20,13 @@ import com.basesmartframe.baseadapter.BaseAdapterHelper;
 import com.basesmartframe.data.ViewBind;
 import com.sf.loglib.L;
 import com.sf.utils.baseutil.DateFormatHelp;
-import com.sf.utils.baseutil.SFBus;
 import com.sf.utils.baseutil.SFToast;
 import com.sf.utils.baseutil.SpUtil;
 import com.sf.utils.baseutil.SystemUIHelp;
 import com.sf.utils.baseutil.UnitHelp;
 import com.sflib.CustomView.KeyBoardFrameLayout;
 import com.sflib.CustomView.baseview.EditTextClearDroidView;
+import com.sflib.reflection.core.SFBus;
 import com.sflib.reflection.core.SFIntegerMessage;
 import com.sflib.reflection.core.ThreadId;
 
@@ -412,7 +412,7 @@ public class NYFragmentBigPic extends NYBasePullListFragment<CardPicGroup> {
                     }
                     //去重复
                     if (refresh) {
-                        finishRefreshOrLoading(pairPicBeans, 0, true);
+                        finishRefreshOrLoading(pairPicBeans,  true);
                     } else {
                         finishRefreshOrLoading(pairPicBeans, true);
                     }

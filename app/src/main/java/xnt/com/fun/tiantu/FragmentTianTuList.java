@@ -4,22 +4,19 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import com.basesmartframe.baseui.BaseFragment;
 import com.basesmartframe.pickphoto.ImageBean;
 import com.basesmartframe.pickphoto.PickPhotosPreviewFragment;
-import com.basesmartframe.request.SFHttpGsonHandler;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.sf.httpclient.newcore.MethodType;
-import com.sf.httpclient.newcore.SFHttpStringCallback;
-import com.sf.httpclient.newcore.SFRequest;
 import com.sf.utils.baseutil.UnitHelp;
 
 import java.util.ArrayList;
@@ -61,47 +58,47 @@ public class FragmentTianTuList extends BaseFragment {
     }
 
     private void loadData() {
-        String url = "https://www.baidu.com/";
-        SFRequest request = new SFRequest(url, MethodType.GET) {
-            @Override
-            public Class getClassType() {
-                return TianTuImageBeans.class;
-            }
-        };
-        SFHttpGsonHandler sfHttpGsonHandler = new SFHttpGsonHandler(request, new SFHttpStringCallback<TianTuImageBeans>() {
-            private String url[] = {
-                    "http://g.hiphotos.baidu.com/image/w%3D310/sign=40484034b71c8701d6b6b4e7177e9e6e/21a4462309f79052f619b9ee08f3d7ca7acbd5d8.jpg",
-                    "http://a.hiphotos.baidu.com/image/w%3D310/sign=b0fccc9b8518367aad8979dc1e728b68/3c6d55fbb2fb43166d8f7bc823a4462308f7d3eb.jpg",
-                    "http://d.hiphotos.baidu.com/image/w%3D310/sign=af0348abeff81a4c2632eac8e72b6029/caef76094b36acaf8ded6c2378d98d1000e99ce4.jpg"
-                    , "http://img1.imgtn.bdimg.com/it/u=1967061078,642942007&fm=21&gp=0.jpg",
-                    "http://img2.imgtn.bdimg.com/it/u=2403748927,3196049645&fm=21&gp=0.jpg",
-                    "http://pic.yesky.com/uploadImages/2015/165/47/H4NF287N0833.jpg",
-                    "http://www.bz55.com/uploads/allimg/150527/140-15052G44205.jpg"
-            };
-
-            @Override
-            public void onSuccess(SFRequest request, TianTuImageBeans g) {
-                for (int i = 0; i < url.length; i++) {
-                    TianTuImageBeans.TianTuImageBean tianTuImageBean = new TianTuImageBeans.TianTuImageBean();
-                    tianTuImageBean.setOriginUrl(url[i]);
-                    mTianTuImageBeanList.add(tianTuImageBean);
-                }
-                mTianTuAdapter.notifyDataSetChanged();
-                mSwipeRefreshLayout.setRefreshing(false);
-            }
-
-            @Override
-            public void onFailed(SFRequest request, Exception e) {
-                for (int i = 0; i < url.length; i++) {
-                    TianTuImageBeans.TianTuImageBean tianTuImageBean = new TianTuImageBeans.TianTuImageBean();
-                    tianTuImageBean.setOriginUrl(url[i]);
-                    mTianTuImageBeanList.add(tianTuImageBean);
-                }
-                mTianTuAdapter.notifyDataSetChanged();
-                mSwipeRefreshLayout.setRefreshing(false);
-            }
-        });
-        sfHttpGsonHandler.start();
+//        String url = "https://www.baidu.com/";
+//        SFRequest request = new SFRequest(url, MethodType.GET) {
+//            @Override
+//            public Class getClassType() {
+//                return TianTuImageBeans.class;
+//            }
+//        };
+//        SFHttpGsonHandler sfHttpGsonHandler = new SFHttpGsonHandler(request, new SFHttpStringCallback<TianTuImageBeans>() {
+//            private String url[] = {
+//                    "http://g.hiphotos.baidu.com/image/w%3D310/sign=40484034b71c8701d6b6b4e7177e9e6e/21a4462309f79052f619b9ee08f3d7ca7acbd5d8.jpg",
+//                    "http://a.hiphotos.baidu.com/image/w%3D310/sign=b0fccc9b8518367aad8979dc1e728b68/3c6d55fbb2fb43166d8f7bc823a4462308f7d3eb.jpg",
+//                    "http://d.hiphotos.baidu.com/image/w%3D310/sign=af0348abeff81a4c2632eac8e72b6029/caef76094b36acaf8ded6c2378d98d1000e99ce4.jpg"
+//                    , "http://img1.imgtn.bdimg.com/it/u=1967061078,642942007&fm=21&gp=0.jpg",
+//                    "http://img2.imgtn.bdimg.com/it/u=2403748927,3196049645&fm=21&gp=0.jpg",
+//                    "http://pic.yesky.com/uploadImages/2015/165/47/H4NF287N0833.jpg",
+//                    "http://www.bz55.com/uploads/allimg/150527/140-15052G44205.jpg"
+//            };
+//
+//            @Override
+//            public void onSuccess(SFRequest request, TianTuImageBeans g) {
+//                for (int i = 0; i < url.length; i++) {
+//                    TianTuImageBeans.TianTuImageBean tianTuImageBean = new TianTuImageBeans.TianTuImageBean();
+//                    tianTuImageBean.setOriginUrl(url[i]);
+//                    mTianTuImageBeanList.add(tianTuImageBean);
+//                }
+//                mTianTuAdapter.notifyDataSetChanged();
+//                mSwipeRefreshLayout.setRefreshing(false);
+//            }
+//
+//            @Override
+//            public void onFailed(SFRequest request, Exception e) {
+//                for (int i = 0; i < url.length; i++) {
+//                    TianTuImageBeans.TianTuImageBean tianTuImageBean = new TianTuImageBeans.TianTuImageBean();
+//                    tianTuImageBean.setOriginUrl(url[i]);
+//                    mTianTuImageBeanList.add(tianTuImageBean);
+//                }
+//                mTianTuAdapter.notifyDataSetChanged();
+//                mSwipeRefreshLayout.setRefreshing(false);
+//            }
+//        });
+//        sfHttpGsonHandler.start();
     }
 
     private ArrayList<ImageBean> tianTuImageList2ImageBean() {

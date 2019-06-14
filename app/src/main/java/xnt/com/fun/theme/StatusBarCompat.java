@@ -8,7 +8,8 @@ import android.os.Build;
 import androidx.annotation.ColorInt;
 import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
-import android.support.v4.widget.DrawerLayout;
+import androidx.drawerlayout.widget.DrawerLayout;
+
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
