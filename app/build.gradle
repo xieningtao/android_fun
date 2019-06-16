@@ -48,6 +48,8 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
+    useLibrary 'org.apache.http.legacy'
 }
 
 //configurations {
@@ -97,8 +99,6 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'com.squareup.okhttp3:okhttp:3.12.0'
 
-    //如果你想应用能够兼容Android6.0，请添加此依赖(org.apache.http.legacy.jar)
-    implementation 'cn.bmob.android:http-legacy:1.0'
 
     //recycler_view，下拉刷新,移除这个，3年前更新的库
 //    implementation 'com.wuxiaolong.pullloadmorerecyclerview:library:1.1.2'

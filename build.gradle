@@ -14,6 +14,17 @@ buildscript {
     ext.kotlin_version = "1.2.51"
 
     repositories {
+        if (canPassThroughGreatWall()) {
+            jcenter()
+            google()
+        } else {
+            //切换到阿里镜像，central和jcenter的聚合仓库
+            maven { url 'https://maven.aliyun.com/nexus/content/groups/public' }
+            //gradle plugin
+            maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
+            //google
+            maven { url "https://maven.aliyun.com/nexus/content/repositories/google" }
+        }
         if (!"xieningtao".equals(System.getenv("USERNAME"))) {
             jcenter()
             google()
@@ -34,7 +45,6 @@ buildscript {
         // in the individual module build.gradle files
     }
 }
-
 
 
 allprojects {
