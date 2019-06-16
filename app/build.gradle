@@ -53,8 +53,7 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation fileTree(dir: 'libs', include: ['*.aar'])
+    implementation fileTree(dir: 'libs', include: ['*.jar',"*.aar"])
     implementation('io.socket:socket.io-client:0.6.3') {
         exclude group: 'org.json', module: 'json'
         exclude group: 'com.squareup.okhttp', module: 'okhttp'
