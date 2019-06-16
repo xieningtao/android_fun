@@ -52,12 +52,6 @@ android {
     useLibrary 'org.apache.http.legacy'
 }
 
-//configurations {
-//    compile.exclude 'com.squareup.okio:okio:1.11.0@jar'
-//}
-configurations {
-    compile.exclude group: 'com.squareup.okio'
-}
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation fileTree(dir: 'libs', include: ['*.aar'])
@@ -130,7 +124,7 @@ dependencies {
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.1.0'
 }
 configurations {
-//    all*.exclude group: "com.squareup.okio"
+    all*.exclude module: "support-compat"
 }
 
 configurations.all {
@@ -138,8 +132,9 @@ configurations.all {
         force "com.android.support:appcompat-v7:${config.support_version}"
         force "com.android.support:recyclerview-v7:${config.support_version}"
         force "com.android.support:multidex:1.0.3"
-//        force "com.google.code.gson:gson:2.8.5"
-//        force 'com.squareup.okhttp3:okhttp:3.12.0'
-//        force 'com.squareup.okio:okio:2.1.0'
+        force "com.google.code.gson:gson:2.8.5"
+        force 'com.squareup.okhttp3:okhttp:3.12.0'
+        force 'com.squareup.okio:okio:2.1.0'
+        force 'io.reactivex.rxjava2:rxjava:2.2.2'
     }
 }

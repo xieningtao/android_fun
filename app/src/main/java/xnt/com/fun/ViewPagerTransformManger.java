@@ -18,7 +18,6 @@ import com.ToxicBakery.viewpager.transforms.StackTransformer;
 import com.ToxicBakery.viewpager.transforms.TabletTransformer;
 import com.ToxicBakery.viewpager.transforms.ZoomInTransformer;
 import com.ToxicBakery.viewpager.transforms.ZoomOutSlideTransformer;
-import com.ToxicBakery.viewpager.transforms.ZoomOutTranformer;
 import com.basesmartframe.pickphoto.XTranslateTransform;
 
 import java.util.ArrayList;
@@ -48,7 +47,6 @@ public class ViewPagerTransformManger {
         TRANSFORM_CLASSES.add(new TransformerItem(TabletTransformer.class));
         TRANSFORM_CLASSES.add(new TransformerItem(ZoomInTransformer.class));
         TRANSFORM_CLASSES.add(new TransformerItem(ZoomOutSlideTransformer.class));
-        TRANSFORM_CLASSES.add(new TransformerItem(ZoomOutTranformer.class));
         TRANSFORM_CLASSES.add(new TransformerItem(XTranslateTransform.class));
     }
 
