@@ -25,6 +25,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import butterknife.BindView;
 import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.datatype.BmobDate;
@@ -53,8 +54,11 @@ public class BeautyCommentListFragment extends BaseRecycleViewFragment {
     private BeautyAdapter mAdapter;
     private String mLatestTime;
 
-    private TextView mSendTv;
-    private EditText mCommentEt;
+    @BindView(R.id.comment_send_tv)
+     TextView mSendTv;
+
+    @BindView(R.id.comment_et)
+     EditText mCommentEt;
 
     @Override
     protected boolean onRefresh() {

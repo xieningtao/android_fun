@@ -14,6 +14,7 @@ import com.basesmartframe.basepull.PullType;
 import com.basesmartframe.baseui.BaseFragment;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.constant.RefreshState;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.sf.utils.baseutil.NetWorkManagerUtil;
@@ -117,7 +118,11 @@ public abstract class BaseRecycleViewFragment extends BaseFragment {
     }
 
     protected void simpleFinishRefreshOrLoading(boolean hasMore) {
-        mSmartRefresh.finishLoadMore();
+        if(mSmartRefresh.getState() == RefreshState.Refreshing){
+            mSmartRefresh.finishRefresh();
+        }else {
+            mSmartRefresh.finishLoadMore();
+        }
         this.showHttpResultView();
     }
 
